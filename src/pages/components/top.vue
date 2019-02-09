@@ -1,5 +1,5 @@
 <template>
-  <el-row class="top-content">
+  <el-header class="top-content">
     <el-col :span="6">
       <div class="text-left padding-left">123</div>
     </el-col>
@@ -9,7 +9,7 @@
     <el-col :span="6">
       <div class="text-right padding-right">您好，李医生 | 安全退出</div>
     </el-col>
-  </el-row>
+  </el-header>
 </template>
 
 <script>
@@ -27,6 +27,11 @@
     line-height: 60px;
     background: #1A2B39;
     box-shadow: 0 2px 10px 0 rgba(1,2,3,0.14);
-    color: #ffffff;
+    font-family: MicrosoftYaHei;
+    font-size: 15px;
+    color: #FFFFFF;
+    letter-spacing: 0.16px;
+    position: relative;
+    z-index: 99;
   }
 </style>
