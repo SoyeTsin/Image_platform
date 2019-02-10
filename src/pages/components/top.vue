@@ -1,12 +1,9 @@
 <template>
   <el-header class="top-content">
-    <el-col :span="6">
+    <el-col :span="12">
       <div class="text-left padding-left">123</div>
     </el-col>
     <el-col :span="12">
-      <div class="grid-content ">&nbsp;</div>
-    </el-col>
-    <el-col :span="6">
       <div class="text-right padding-right">您好，李医生 | 安全退出</div>
     </el-col>
   </el-header>
