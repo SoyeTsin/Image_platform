@@ -1,13 +1,24 @@
 <template>
-    
+  <el-container>
+    <top></top>
+    <menu-aside></menu-aside>
+  </el-container>
 </template>
 
 <script>
-    export default {
-        name: "index"
-    }
+  import top from './components/top'
+  import menuAside from './components/aside'
+
+  export default {
+    name: "index",
+    components: {top, menuAside},
+  }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
+
+  .el-container {
+    height: 100%;
+  }
 </style>

@@ -31,6 +31,7 @@
         <div class="login-des">暂不支持注册</div>
       </div>
     </div>
+    <div class="bg-title">智能影像体验平台</div>
   </el-container>
 </template>
 
@@ -58,6 +59,11 @@
     font-size: 18px;
     color: #FFFFFF;
     margin: 60px auto 12px auto;
+    cursor: pointer;
+  }
+
+  .login-button:hover {
+    background-image: linear-gradient(90deg, rgba(0, 181, 202, 0.51) 0%, rgba(28, 211, 191, 0.5) 100%);
 
   }
 
@@ -114,7 +120,6 @@
     text-align: center;
     margin: 46px auto 28px auto;
   }
-
 
   .input-box {
     position: relative;
@@ -188,5 +193,15 @@
     }
   }
 
+  .bg-title {
+    display: block;
+    position: absolute;
+    top: 120px;
+    left: 256px;
+    font-family: PingFangSC-Thin;
+    font-size: 40px;
+    color: #FFFFFF;
+    letter-spacing: 0.44px;
+  }
 </style>
 

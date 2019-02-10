@@ -1,7 +1,11 @@
 <template>
   <el-header class="top-content">
     <el-col :span="12">
-      <div class="text-left padding-left">123</div>
+      <div class="title-logo">
+        <img src="../assets/login/password.png"/>
+        <div class="logo-line"></div>
+        <div class="text-left">智能影像体验平台</div>
+      </div>
     </el-col>
     <el-col :span="12">
       <div class="text-right padding-right">您好，李医生 | 安全退出</div>
@@ -18,12 +22,31 @@
 <style lang="scss" scoped>
   @import "../sass/common";
 
+  .title-logo {
+    display: flex;
+    justify-content: flex-start;
+
+    .logo-line {
+      display: block;
+      content: '';
+      margin: 21px 30px;
+      background: #474747;
+      width: 1px;
+      height: 18px;
+    }
+
+    img {
+      height: 25px;
+      margin: 17.5px 0;
+    }
+  }
+
   .top-content {
     width: 100%;
     height: 60px;
     line-height: 60px;
     background: #1A2B39;
-    box-shadow: 0 2px 10px 0 rgba(1,2,3,0.14);
+    box-shadow: 0 2px 10px 0 rgba(1, 2, 3, 0.14);
     font-family: MicrosoftYaHei;
     font-size: 15px;
     color: #FFFFFF;
