@@ -12,28 +12,34 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      des: '登录页面',
       path: '/login',
       name: 'login',
       component: login
     },
     {
+      des: '影像管理',
       path: '/fjjCT',
       name: 'fjjCT',
       component: fjjCT
     }, {
+      des: '主页',
       path: '/',
       name: 'index',
       component: index,
-      children: [  //这里就是二级路由的配置
+      children: [
         {
+          des: '机构管理',
           path: '/mechanism',
           name: 'mechanism',
           component: mechanism
         }, {
+          des: '用户管理',
           path: '/userinfo',
           name: 'userinfo',
           component: userinfo
-        },{
+        }, {
+          des: '个人报告',
           path: '/personalReport',
           name: 'personalReport',
           component: personalReport
