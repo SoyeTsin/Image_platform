@@ -1,5 +1,5 @@
 <template>
-  <el-header class="top-content">
+  <div class="top-content">
     <el-col :span="12">
       <div class="title-logo">
         <img src="../assets/login/password.png"/>
@@ -10,7 +10,7 @@
     <el-col :span="12">
       <div class="text-right padding-right">您好，李医生 | 安全退出</div>
     </el-col>
-  </el-header>
+  </div>
 </template>
 
 <script>
@@ -52,6 +52,6 @@
     color: #FFFFFF;
     letter-spacing: 0.16px;
     position: relative;
-    z-index: 99;
+    z-index: 100;
   }
 </style>

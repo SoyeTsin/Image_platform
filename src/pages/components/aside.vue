@@ -2,14 +2,18 @@
   <el-container>
     <el-aside width="216px" class="menu-aside"
               style="background-color:#131f2c; position: absolute;left: 0;height: 100%;padding-top: 60px;box-sizing: border-box;">
-      <div class="menu-item active">
-        <img src="../assets/login/password.png"/>
-        <div>用户管理</div>
-      </div>
-      <div class="menu-item">
-        <img src="../assets/login/password.png"/>
-        <div>机构管理</div>
-      </div>
+      <router-link to="/userinfo">
+        <div class="menu-item active">
+          <img src="../assets/login/password.png"/>
+          <div>用户管理</div>
+        </div>
+      </router-link>
+      <router-link to="/mechanism">
+        <div class="menu-item">
+          <img src="../assets/login/password.png"/>
+          <div>机构管理</div>
+        </div>
+      </router-link>
     </el-aside>
   </el-container>
 </template>
@@ -22,6 +26,7 @@
 
 <style scoped lang="scss">
   .menu-aside {
+    z-index: 99;
 
     .menu-item {
       font-family: MicrosoftYaHei;

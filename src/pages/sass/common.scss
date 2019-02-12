@@ -1,18 +1,99 @@
-.text-left{
+.text-left {
   text-align: left;
 }
-.text-right{
+
+.text-right {
   text-align: right;
 }
-.padding-left{
+
+.padding-left {
   box-sizing: border-box;
   padding-left: 20px;
 }
-.padding-right{
+
+.padding-right {
   box-sizing: border-box;
   padding-right: 20px;
 }
-.padding-content{
+
+.padding-content {
   box-sizing: border-box;
   padding: 20px;
+}
+
+.el-container {
+  background: #ffffff;
+}
+
+.bg-purple-dark {
+  background: #99a9bf;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+  width: 100%;
+}
+
+.table-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.main-title {
+  font-family: MicrosoftYaHei-Bold;
+  font-size: 18px;
+  color: #32456D;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.main-screen {
+  margin-bottom: 20px;
+}
+
+/deep/ .el-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main-input, .main-input /deep/ .el-input__inner {
+  width: 150px;
+  border-radius: 1px;
+}
+
+.el-select-dropdown {
+  border-radius: 1px;
+}
+
+.display-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-button, .add-button {
+  border-radius: 1px;
+}
+
+.add-button {
+  border: solid 1px #2FDAC5;
+  color: #2FDAC5;
+  background: #ffffff;
+  box-sizing: border-box;
+  margin-right: 28px;
+}
+
+.add-button:hover {
+  background-image: linear-gradient(90deg, #28C3D5 0%, #34EDB6 100%);
+  box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
+  border-radius: 1px;
+  border: solid 1px transparent;
+}
+
+.search-button {
+  background-image: linear-gradient(90deg, #28C3D5 0%, #34EDB6 100%);
+  box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
+  border-radius: 1px;
+  border: solid 1px transparent;
 }
