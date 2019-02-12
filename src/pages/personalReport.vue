@@ -67,7 +67,15 @@
                 </el-col>
               </el-row>
             </div>
-            <div class="report-main-right">987654321</div>
+            <div class="report-main-right">
+              <div class="ct-img">
+                CT影像
+              </div>
+              <div class="ct-button">
+                <el-button type="success" class="ct-button-1">查看影像</el-button>
+                <el-button type="success" class="ct-button-2">错误反馈</el-button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -88,9 +96,7 @@
         tableData: Array(5).fill(item),
       }
     },
-    methods: {
-
-    },
+    methods: {},
   }
 </script>
 
@@ -141,7 +147,6 @@
 
     .report-main-right {
       width: 340px;
-      border: solid 1px #2FDAC5;
     }
 
     .report-item {
@@ -152,6 +157,28 @@
       color: #30333F;
       letter-spacing: 0;
       text-align: left;
+    }
+
+    .ct-button {
+      display: flex;
+      justify-content: space-between;
+
+    }
+
+    .ct-button-1 {
+      background-image: linear-gradient(90deg, #00ACFF 3%, #49D6FF 100%);
+      box-shadow: 0 6px 10px 0 rgba(61, 181, 253, 0.25);
+      border-radius: 1px;
+      border: solid 1px transparent;
+      width: 160px;
+    }
+
+    .ct-button-2 {
+      background-image: linear-gradient(90deg, #28C3D5 0%, #34EDB6 100%);
+      box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
+      border-radius: 1px;
+      border: solid 1px transparent;
+      width: 160px;
     }
   }
 </style>
