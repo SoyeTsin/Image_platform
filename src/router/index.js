@@ -5,6 +5,7 @@ import login from '@/pages/login'
 import fjjCT from '@/pages/fjjCT'
 import mechanism from '@/pages/mechanism'
 import userinfo from '@/pages/userinfo'
+import personalReport from '@/pages/personalReport'
 
 Vue.use(Router)
 
@@ -32,6 +33,10 @@ export default new Router({
           path: '/userinfo',
           name: 'userinfo',
           component: userinfo
+        },{
+          path: '/personalReport',
+          name: 'personalReport',
+          component: personalReport
         }
       ]
     },
