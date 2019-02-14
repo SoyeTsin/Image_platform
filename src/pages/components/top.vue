@@ -2,7 +2,7 @@
   <div class="top-content">
     <el-col :span="12">
       <div class="title-logo">
-        <img src="../assets/login/password.png"/>
+        <img :src="logo"/>
         <div class="logo-line"></div>
         <div class="text-left">智能影像体验平台</div>
       </div>
@@ -14,8 +14,13 @@
 </template>
 
 <script>
+  import logo from '../assets/logo@2x.png'
+
   export default {
-    name: "top"
+    name: "top",
+    data() {
+      return {logo}
+    }
   }
 </script>
 
@@ -25,6 +30,8 @@
   .title-logo {
     display: flex;
     justify-content: flex-start;
+    box-sizing: border-box;
+    padding-left: 20px;
 
     .logo-line {
       display: block;
