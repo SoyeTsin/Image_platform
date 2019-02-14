@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="image-canvas-wrapper" :style="{cursor:isPan?'all-scroll':'auto'}"  oncontextmenu="return false" unselectable='on' onselectstart='return false;'
+    <div class="image-canvas-wrapper" oncontextmenu="return false" unselectable='on' onselectstart='return false;'
       onmousedown='return false;'>
       <!-- DICOM CANVAS -->
       <div ref="canvas" class="image-canvas" oncontextmenu="return false"></div>
@@ -55,20 +55,33 @@ export default {
         "/static/simple-study/000004.dcm",
       ],
       element:null,
-      isPan:false,//默认是否开启移动工具
       isSimpleAngle:false,//默认是否开启角度工具
       isLengthTool:false,//默认是否开启长度工具
+      isTagging:false,
+      stepList:[]
     };
   },
   methods: {
+    step(){//前进后退
+
+    },
+    stepPush(data){//保存
+        if(this.stepList.length<10){
+          this.stepList.shift()
+          this.stepList.push(data)
+        }else{
+          this.stepList.push(data)
+        }
+        console.log(this.stepList)
+    },
     init() { //初始化
       return new Promise((resolve, reject)=>{
           // 找到要渲染的元素
           let canvas  =  this.element =  this.$refs.canvas;
-
+          let then = 
           function onImageRendered(e) {
               let viewport = cornerstone.getViewport(e.target);
-              console.log(viewport)
+              this.stepPush(viewport)
           };
           canvas.addEventListener('cornerstoneimagerendered', onImageRendered);
           // 在 DOM 中将 canvas 元素注册到 cornerstone
@@ -90,7 +103,8 @@ export default {
               cornerstone.displayImage(canvas, image, viewport);
               // 激活工具
               this.initCanvasTools();
-              resolve()
+              console.log(cornerstone.getViewport(canvas))
+              resolve(cornerstone)
             },(err)=>{
               reject()
               alert(err);
@@ -136,8 +150,7 @@ export default {
       // Mouse
       cornerstoneTools.wwwc.activate(canvas, 1); // left click
       cornerstoneTools.pan.activate(canvas, 2); // middle click
-      cornerstoneTools.zoom.activate(canvas, 4); // right click
-      cornerstoneTools.zoomWheel.activate(canvas);
+      
       // // Touch / Gesture
       // cornerstoneTools.wwwcTouchDrag.activate(canvas); // - Drag
       // cornerstoneTools.zoomTouchPinch.activate(canvas); // - Pinch
@@ -182,14 +195,15 @@ export default {
         cornerstoneTools.pan.activate(this.element, 2); // 2 is middle mouse button
         cornerstoneTools.zoom.activate(this.element, 4); // 4 is right mouse button
         cornerstoneTools.probe.deactivate(this.element, 1);
-        cornerstoneTools.length.deactivate(this.element, 1);
+        // cornerstoneTools.length.deactivate(this.element, 1);
         cornerstoneTools.ellipticalRoi.deactivate(this.element, 1);
         cornerstoneTools.rectangleRoi.deactivate(this.element, 1);
-        cornerstoneTools.angle.deactivate(this.element, 1);
+        // cornerstoneTools.angle.deactivate(this.element, 1);
         cornerstoneTools.highlight.deactivate(this.element, 1);
         cornerstoneTools.freehand.deactivate(this.element, 1);
         // cornerstoneTools.eraser.deactivate(this.element, 1);
     },
+    
     rotate(rotation){  //旋转
       const viewport = cornerstone.getViewport(this.element);
       viewport.rotation += rotation;
@@ -205,12 +219,23 @@ export default {
         viewport.vflip = !viewport.vflip;
         cornerstone.setViewport(this.element, viewport);
     },
-    zoomIn(scale){//放大
+    zoom(){//放大工具
+      return{
+        activate:()=>{
+          this.disableAllTools(this.element);
+          cornerstoneTools.zoom.activate(this.element, 5);
+          cornerstoneTools.zoomWheel.activate(this.element);
+        },
+        deactivate:()=>{
+          cornerstoneTools.zoom.deactivate(this.element);
+          cornerstoneTools.zoomWheel.deactivate(this.element);
+        }
+      }
+    },
+    zoomFun(scale){
       const viewport = cornerstone.getViewport(this.element);
       viewport.scale += scale;
       cornerstone.setViewport(this.element, viewport);
-      this.disableAllTools(this.element);
-      cornerstoneTools.zoom.activate(this.element, 5);
     },
     reset(){//复原
       cornerstone.reset(this.element);
@@ -219,19 +244,16 @@ export default {
       return {
         disable:()=>{//禁用
           cornerstoneTools.simpleAngle.disable(this.element);
-          return false;
         },
         enable:()=>{ //启用
           cornerstoneTools.simpleAngle.enable(this.element);
-          return false;
         },
         activate:()=>{ //激活
           cornerstoneTools.simpleAngle.activate(this.element, 1);
-          return false;
+          this.lengthTool().deactivate()
         },
         deactivate:()=>{  //取消激活
           cornerstoneTools.simpleAngle.deactivate(this.element, 1);
-          return false;
         },
       }
     },
@@ -239,28 +261,25 @@ export default {
       return {
         disable:()=>{//禁用
           cornerstoneTools.length.disable(this.element);
-          return false;
         },
         enable:()=>{ //启用
           cornerstoneTools.length.enable(this.element);
-          return false;
         },
         activate:()=>{ //激活
           cornerstoneTools.length.activate(this.element, 1);
-          return false;
+          this.simpleAngle().deactivate()
         },
         deactivate:()=>{  //取消激活
           cornerstoneTools.length.deactivate(this.element, 1);
-          return false;
         },
       }
     },
     lengthToolFun(){//激活或关闭测量工具
       this.isLengthTool = !this.isLengthTool
+      cornerstoneTools.length.deactivate(this.element, 1)
       let lengthTool = this.lengthTool()
       if(this.isLengthTool){
         lengthTool.activate()
-        this.simpleAngle().deactivate()
         this.isSimpleAngle = false
       }else{
         lengthTool.deactivate()
@@ -268,6 +287,7 @@ export default {
     },
     simpleAngleFun(){//激活或关闭角度工具
       this.isSimpleAngle = !this.isSimpleAngle
+      cornerstoneTools.angle.deactivate(this.element, 1);
       let simpleAngle = this.simpleAngle()
       if(this.isSimpleAngle){
         simpleAngle.activate()
@@ -278,16 +298,36 @@ export default {
       }
     },
     pan(){//移动工具
-        this.isPan = !this.isPan
-        if(this.isPan){//激活
+        return {
+          activate:()=>{//激活
             this.disableAllTools();
             cornerstoneTools.pan.activate(this.element, 3); 
-        }else{//关闭
+          },
+          deactivate:()=>{//冻结
             cornerstoneTools.pan.deactivate(this.element); 
             cornerstoneTools.wwwc.activate(this.element,1);
+          }
         }
+    },
+    tagging(){//显示或隐藏标注
+      this.isTagging = !this.isTagging
+      if(this.isTagging){
+          this.lengthTool().disable()
+          this.simpleAngle().disable()
+      }else{
+          this.lengthTool().enable()
+          this.simpleAngle().enable()
+      }
+    },
+    resize(){//重置窗口大小
+      cornerstone.resize(this.element)
+    },
+    windowWidth(ww,wl){ //设置窗宽窗位
+      let viewport = cornerstone.getViewport(this.element);
+      viewport.voi.windowWidth = ww;
+      viewport.voi.windowCenter = wl;
+      cornerstone.setViewport(this.element, viewport);
     }
-   
   }
 };
 </script>
@@ -296,7 +336,6 @@ export default {
   width: 100%;
   height: 92vh;
   margin: 0 auto;
-  cursor: all-scroll;
 }
 .image-canvas {
   width: 100%;
