@@ -76,7 +76,7 @@
   border-radius: 1px;
 }
 
-.add-button {
+.add-button, .add-button:active,.add-button:valid{
   border: solid 1px #2FDAC5;
   color: #2FDAC5;
   background: #ffffff;
@@ -109,7 +109,8 @@
   cursor: pointer;
   width: 60px;
 }
-.report-title{
+
+.report-title {
   font-family: MicrosoftYaHei-Bold;
   font-size: 26px;
   color: #30333F;
