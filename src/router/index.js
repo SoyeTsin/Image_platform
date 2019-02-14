@@ -6,6 +6,8 @@ import fjjCT from '@/pages/fjjCT'
 import mechanism from '@/pages/mechanism'
 import userinfo from '@/pages/userinfo'
 import personalReport from '@/pages/personalReport'
+import report from '@/pages/report'
+
 
 Vue.use(Router)
 
@@ -43,6 +45,12 @@ export default new Router({
           path: '/personalReport',
           name: 'personalReport',
           component: personalReport
+        },
+        {
+          des: '诊断结果',
+          path: '/report',
+          name: 'report',
+          component: report
         }
       ]
     },
