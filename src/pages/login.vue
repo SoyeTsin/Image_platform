@@ -58,7 +58,14 @@
         login_bg_1,
         login_bg_2
       }
-    }
+    },
+    mounted() {
+      // axios使用
+      this.$fetch('/test')
+        .then((response) => {
+          console.log(response)
+        })
+    },
   }
 
 </script>
