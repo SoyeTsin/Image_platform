@@ -22,7 +22,7 @@
               <div class="button-validate">获取验证码</div>
             </div>
             <div class="validate-msg">
-              <img src="./assets/login/password.png"/>
+              <img src="./assets/login/warning.png"/>
               <div>
                 请输入正确的账号或验证码
               </div>

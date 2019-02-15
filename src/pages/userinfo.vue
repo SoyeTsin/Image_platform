@@ -4,7 +4,9 @@
       <el-row class="text-left main-title">用户列表</el-row>
       <el-row class="text-left main-screen">
         <el-col :span="20">
-          <el-button plain type="primary" class="add-button"><i class="el-icon-plus"></i>创建账号</el-button>
+          <el-button plain type="primary" class="add-button" @click="dialogTableVisible = true"><i
+            class="el-icon-plus"></i>创建账号
+          </el-button>
           <el-input v-model="value" placeholder="姓名" class="main-input"></el-input>
           <el-select v-model="value" placeholder="请选择" class="main-input">
             <el-option
@@ -48,8 +50,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <img src="./assets/login/username.png" class="table-icon">
-            <img src="./assets/login/username.png" class="table-icon">
+            <img :src="icon_report" class="table-icon" @click="openReport">
+            <img :src="icon_delete" class="table-icon">
           </template>
         </el-table-column>
       </el-table>
@@ -57,11 +59,81 @@
                      :current-page.sync="currentPage2" :page-sizes="[100, 200, 300, 400]" :page-size="100"
                      layout="sizes, prev, pager, next" :total="1000">
       </el-pagination>
+      <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true'>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>用户姓名
+          </el-col>
+          <el-col :span="16">
+            <el-input></el-input>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>所属机构
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="value" placeholder="请选择" class="main-input">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>所处科室
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="value" placeholder="请选择" class="main-input">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>手机号码
+          </el-col>
+          <el-col :span="16">
+            <el-input></el-input>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            权限
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="value" placeholder="请选择" class="main-input">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-button type="success" class="button-center">创建</el-button>
+        </el-row>
+      </el-dialog>
     </el-main>
+
   </el-container>
 </template>
 
 <script>
+  import icon_delete from './assets/list/delete.png'
+  import icon_report from './assets/list/report.png'
+
   export default {
     name: "userInfo",
     data() {
@@ -71,7 +143,9 @@
         address: '上海市普陀区金沙江路 1518 弄'
       };
       return {
-        tableData: Array(20).fill(item),
+        icon_delete, icon_report,
+        dialogTableVisible: false,
+        tableData: Array(10).fill(item),
         currentPage1: 5,
         currentPage2: 5,
         currentPage3: 5,
@@ -100,7 +174,10 @@
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
-      }
+      },
+      openReport() {
+        this.$router.push({path: '/personalReport'})
+      },
     },
   }
 </script>
