@@ -11,12 +11,16 @@ axios.defaults.baseURL = 'https://121.12.84.99:8080';
 axios.interceptors.request.use(
   config => {
     const token = getCookie('token');//注意使用的时候需要引入cookie方法，推荐js-cookie
+    const userId = getCookie('userId');//注意使用的时候需要引入cookie方法，推荐js-cookie
+    const phoneNum = getCookie('phoneNum');//注意使用的时候需要引入cookie方法，推荐js-cookie
     config.data = JSON.stringify(config.data);
     config.headers = {
-      'Content-Type': 'application/json;charset=UTF-8'
+      'Content-Type': 'application/json;charset=UTF-8',
     }
     if (token) {
-      config.params = {'token': token}
+      config.headers.token = token
+      config.headers.userId = userId
+      config.headers.phoneNum = phoneNum
     }
     return config;
   },
@@ -29,7 +33,7 @@ axios.interceptors.request.use(
 //http response 拦截器
 axios.interceptors.response.use(
   response => {
-    if (response.data.code == '2') {
+    if (response.data.code == '000100') {
       router.push({
         path: "/login",
         querry: {redirect: router.currentRoute.fullPath}//从哪个页面跳转

@@ -56,8 +56,9 @@
         </el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page.sync="currentPage2" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-                     layout="sizes, prev, pager, next" :total="1000">
+                     :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
+                     :page-size="pageParameter.pageSize"
+                     layout="sizes, prev, pager, next" :total="pageParameter.total">
       </el-pagination>
       <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true'>
         <el-row class="dialog-item">
@@ -142,14 +143,28 @@
         name: '王小虎',
         address: '上海市普陀区金沙江路 1518 弄'
       };
+      const pageParameter = {
+        currentPage: 0,
+        nowPage: 0,
+        pageSizes: [10, 20, 30],
+        pageSize: 10,
+        total: 100
+      }
+      const parameter = {
+        "userName": "",
+        "channelId": "",
+        "institutionId": "",
+        "provinceCode": "",
+        "cityCode": "",
+        "officeId": "",
+        "pageNum": 0
+      }
       return {
         icon_delete, icon_report,
         dialogTableVisible: false,
+        pageParameter,
+        parameter,
         tableData: Array(10).fill(item),
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4,
         options: [{
           value: '选项1',
           label: '黄金糕'
@@ -168,12 +183,23 @@
         }],
         value: ''
       }
+    }, mounted() {
+      this.getData()
     }, methods: {
+      getData() {
+        //account/queryUserList
+        this.$post('/account/queryUserList', this.parameter)
+          .then((response) => {
+            console.log(response)
+          })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.pageParameter.pageSize = val
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.pageParameter.nowPage = val
       },
       openReport() {
         this.$router.push({path: '/personalReport'})

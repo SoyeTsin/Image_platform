@@ -78,6 +78,8 @@
               return
             }
             this.$cookies.set('token', response.data.token)   //return this
+            this.$cookies.set('userId', response.data.userId)   //return this
+            this.$cookies.set('phoneNum', response.data.phoneNum)   //return this
             this.$router.push({
               path: '/userinfo'
             })
