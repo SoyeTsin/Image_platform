@@ -58,7 +58,7 @@ export default new Router({
           name: 'report',
           component: report
         }
-      ]
+      ], redirect: '/userinfo'//默认显示此子路由
     },
   ]
 })
