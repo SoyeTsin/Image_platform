@@ -15,6 +15,9 @@
   export default {
     name: "index",
     components: {top, menuAside},
+    methods() {
+
+    }
   }
 </script>
 
