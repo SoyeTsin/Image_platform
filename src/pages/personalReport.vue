@@ -2,7 +2,7 @@
   <el-container>
     <el-main>
       <div class="so-return">
-        <div class="so-button">
+        <div class="so-button" @click="returnGo">
           <i class="el-icon-arrow-left"></i>
           返回
         </div>
@@ -96,13 +96,19 @@
         tableData: Array(5).fill(item),
       }
     },
-    methods: {},
+    methods: {
+      returnGo(){
+        this.$router.go(-1)
+      },
+    },
   }
 </script>
 
 <style lang="scss" scoped>
   @import "sass/common";
+.el-main{
 
+}
   .report-nav {
     height: 26px;
   }

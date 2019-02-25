@@ -15,6 +15,24 @@
   export default {
     name: "index",
     components: {top, menuAside},
+    watch: {
+      '$router': {
+        handler() {
+          const that = this
+          debugger
+          if (route.name === '') {
+            that.onShow()
+          }
+        }
+      }
+    },
+    methods: {
+      onShow() {
+        this.$router.push({
+          path: '/userinfo'
+        })
+      }
+    }
   }
 </script>
 
@@ -26,7 +44,7 @@
   .so-content {
     height: 100%;
     width: 100%;
-    min-width: 1024px;
+    min-width: 1400px;
     box-sizing: border-box;
     padding: 80px 20px 20px 236px;
     position: absolute;

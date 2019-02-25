@@ -23,6 +23,7 @@
     "jquery": "^3.3.1",
     "node-sass": "^4.11.0",
     "vue": "^2.5.2",
+    "vue-cookies": "^1.5.12",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.1",
     "vue-slider-component": "^2.8.8"

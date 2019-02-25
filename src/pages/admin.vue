@@ -7,28 +7,25 @@
           <div class="login-title">用户登录</div>
           <div class="input-box">
             <div class="icon">
-              <img src="./assets/login/username.png">
-              <div>手机号</div>
+              <img src="./assets/login/usernameadmin.png">
+              <div>用户名</div>
             </div>
-            <input placeholder="11位手机号" class="so-input" v-model="userParameter.phoneNum"></input>
+            <input placeholder="输入用户名" class="so-input" v-model="userParameter.userName"></input>
           </div>
           <div class="input-box">
             <div class="icon">
               <img src="./assets/login/password.png">
-              <div>验证码</div>
+              <div>密码</div>
             </div>
-            <div class="validate">
-              <input placeholder="验证码" class="so-input" v-model="userParameter.smsCode"></input>
-              <div class="button-validate" @click="getSmsCode">获取验证码</div>
-            </div>
-            <div class="validate-msg">
+            <input placeholder="输入密码" type="password" class="so-input" v-model="userParameter.password"></input>
+            <div class="validate-msg" v-if="msg">
               <img src="./assets/login/warning.png"/>
               <div>
-                请输入正确的账号或验证码
+                {{msg}}
               </div>
             </div>
           </div>
-          <div class="login-button">登&nbsp;&nbsp;录</div>
+          <div class="login-button" @click="login">登&nbsp;&nbsp;录</div>
           <div class="login-des">暂不支持注册</div>
         </div>
       </div>
@@ -59,10 +56,11 @@
         login_bg_1,
         login_bg_2,
         login_kuang,
+        msg: '',
         userParameter: {
-          smsCode: '',
-          userType: 1,
-          phoneNum: '178999999',
+          userType: 0,
+          password: '123456',
+          userName: 'test1',
         }
       }
     },
@@ -80,18 +78,11 @@
               return
             }
             this.$cookies.set('token', response.data.token)   //return this
+            this.$cookies.set('userId', response.data.userId)   //return this
+            this.$cookies.set('phoneNum', response.data.phoneNum)   //return this
             this.$router.push({
               path: '/userinfo'
             })
-          })
-      },
-      getSmsCode() {
-        let parameter = {
-          phoneNum: this.userParameter.phoneNum
-        }
-        this.$post('/account/getSmsCode', parameter)
-          .then((response) => {
-            console.log(response)
           })
       }
     }

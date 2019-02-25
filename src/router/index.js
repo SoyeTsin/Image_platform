@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/pages/index'
 import login from '@/pages/login'
+import admin from '@/pages/admin'
 import fjjCT from '@/pages/fjjCT'
 import mechanism from '@/pages/mechanism'
 import userinfo from '@/pages/userinfo'
@@ -14,6 +15,11 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      des: '管理登录页面',
+      path: '/admin',
+      name: 'admin',
+      component: admin
+    }, {
       des: '登录页面',
       path: '/login',
       name: 'login',
@@ -52,7 +58,7 @@ export default new Router({
           name: 'report',
           component: report
         }
-      ]
+      ], redirect: '/userinfo'//默认显示此子路由
     },
   ]
 })

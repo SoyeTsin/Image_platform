@@ -500,6 +500,7 @@ export default {
     }
   },
   mounted(){
+    
     this.$refs.cornerstone.init(this.baseUrl+this.exampleStudyImageIds[0]).then((res)=>{
       this.cornerstone = this.$refs.cornerstone
       this.cornerstone.$el.addEventListener('mousemove', function(event) {

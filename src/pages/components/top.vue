@@ -4,7 +4,7 @@
       <div class="title-logo">
         <img :src="logo"/>
         <div class="logo-line"></div>
-        <div class="text-left">智能影像体验平台</div>
+        <div class="text-left">智能影像体验平台{{roleText}}</div>
       </div>
     </el-col>
     <el-col :span="12">
@@ -19,7 +19,10 @@
   export default {
     name: "top",
     data() {
-      return {logo}
+      return {
+        logo,
+        roleText: ''
+      }
     }
   }
 </script>
@@ -60,5 +63,6 @@
     letter-spacing: 0.16px;
     position: relative;
     z-index: 100;
+    min-width: 1400px;
   }
 </style>
