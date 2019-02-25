@@ -57,7 +57,7 @@
       <el-header height="76px">
         <div v-if="!isAside" class="shrink" @click="asideFun"><i  class="icon-fanhui iconfont"></i></div>
         <el-row type="flex" class="header-btn">
-        <el-col>
+        <!-- <el-col>
            <p>
             <img src="../../static/fjj-icon/xq.png">
             <span>向前</span>
@@ -68,7 +68,7 @@
             <img src="../../static/fjj-icon/xh.png">
             <span>向后</span>
           </p>
-        </el-col>
+        </el-col> -->
         <!-- <el-col>
            <p>
             <img src="../../static/fjj-icon/bc.png">
@@ -106,11 +106,12 @@
           </p>
         </el-col>
         <el-col :class="[active == 'ckcw'?'active':'']" style="position: relative;">
-           <p @click="activeFun('ckcw')">
+            <p @click="activeFun('ckcw')">
               <img src="../../static/fjj-icon/ckcw.png">
               <span>窗口窗位</span>
             </p>
-            <div class="ckcw" v-if="active == 'ckcw'">
+            <i class="xl-icon"><img :style="{transform:isWindow?'rotateX(180deg)':'rotateX(0deg)'}" src="../../static/fjj-icon/xl-icon.png" alt=""></i>
+            <div class="ckcw" v-if="isWindow">
               <ul>
                 <li v-for="(x,index) in windowList" :key="index" :class="[windowIndex == index?'act':'']" @click="windowFun(x.ww,x.wl,index)">{{x.name}}</li>
               </ul>
@@ -130,19 +131,19 @@
         </el-col>
         <el-col :class="[active == 'bzyc'?'active':'']">
            <p @click="activeFun('bzyc')">
-            <img src="../../static/fjj-icon/jdcl.png">
+            <img src="../../static/fjj-icon/ycbz.png">
             <span>标注隐藏</span>
           </p>
         </el-col>
          <el-col>
-           <p @click="cornerstone.reset();active = ''">
+           <p @click="activeFun('fy')">
             <img src="../../static/fjj-icon/fy.png">
             <span>复原</span>
           </p>
         </el-col>
         <el-col :class="[active == 'lztx'?'active':'']">
            <p @click="activeFun('lztx')">
-            <img src="../../static/fjj-icon/jdcl.png">
+            <img src="../../static/fjj-icon/lztx-1.png">
             <span>漏诊提醒</span>
           </p>
         </el-col>
@@ -261,7 +262,7 @@
         </div>
         <div class="left-bottom" style="left:18px;bottom:18px;">
             X : 117    Y : 247    Val : 92<br/>
-            WW : 1500   WL : -600「CT Chest 」<br/>
+            WW : {{windowList[windowIndex].ww}}   WL : {{windowList[windowIndex].wl}}「CT Chest 」<br/>
             T : 2.5mm   L : -46.8<br/>
         </div>
         <div class="right-bottom" style="right:18px;bottom:18px;">
@@ -273,7 +274,7 @@
         <div class="right">
             <p>
             <span>{{slider.value}}</span>
-            /133
+            /{{exampleStudyImageIds.length}}
             </p>
             <div class="slider">
               <div class="b-t"></div>
@@ -285,7 +286,7 @@
                   :width="slider.width" 
                   :reverse="slider.reverse" 
                   :height="slider.height" 
-                  :max="slider.max" 
+                  :max="exampleStudyImageIds.length" 
                   :min="slider.min" 
                   :tooltip="false"
                   :bg-style="slider.bgStyle" 
@@ -294,11 +295,12 @@
                   :tooltip-style="slider.tooltipStyle"
                   :dot-width="24"
                   :dot-height="38"
+                  @callback="sliderCallback"
                   v-model="slider.value">
                 </vue-slider>
             </div>
-            <a @click="sliderSwitch(true)">上</a>
-            <a @click="sliderSwitch(false)">下</a>
+            <a @click="sliderSwitch(true)"><img src="../../static/fjj-icon/fyxs.png" alt=""></a>
+            <a @click="sliderSwitch(false)"><img src="../../static/fjj-icon/fyxx.png" alt=""></a>
         </div>
       </el-main>
     </el-container>
@@ -318,29 +320,49 @@ export default {
       cornerstone:null,
       asideWidth:'280px',
       isAside:true,
-      value10:2,
       active:'',
       textarea:'',
+      isWindow:false,
       windowList:[{
         name:'默认',
         ww:400,
         wl:40
       },{
-        name:'头部扫平  （WW:1600,WL:450 )',
+        name:'头部扫平  （WW:90,WL:35 )',
+        ww:90,
+        wl:35
+      },{
+        name:'头颅骨窗  （WW:1600,WL:450 )',
+        ww:1600,
+        wl:450
+      },{
+        name:'颈椎  （WW:4000,WL:700 )',
+        ww:4000,
+        wl:700
+      },{
+        name:'肺窗  （WW:1000,WL:-650 )',
         ww:1000,
         wl:-650
       },{
-        name:'头部扫平  （WW:1600,WL:450 )',
+        name:'纵隔窗  （WW:350,WL:40 )',
+        ww:350,
+        wl:40
+      },{
+        name:'腹部  （WW:1500,WL:-700 )',
+        ww:1500,
+        wl:-700
+      },{
+        name:'肝脏  （WW:400,WL:40 )',
+        ww:400,
+        wl:40
+      },{
+        name:'关节骨窗  （WW:1600,WL:500 )',
         ww:1600,
         wl:500
       },{
-        name:'头部扫平  （WW:1600,WL:450 )',
-        ww:1600,
-        wl:500
-      },{
-        name:'头部扫平  （WW:1600,WL:450 )',
-        ww:1600,
-        wl:500
+        name:'血管  （WW:500,WL:40 )',
+        ww:500,
+        wl:40
       }],
       windowIndex:0,
       dialogVisible: false,
@@ -368,7 +390,7 @@ export default {
         processStyle:{"backgroundColor": "#34EDB6"},
         max:10,
         min:1,
-        value:4,
+        value:1,
         tooltipStyle: [
           {
             "backgroundColor": "#f05b72",
@@ -379,19 +401,29 @@ export default {
             "borderColor": "#3498db"
           }
         ]
-      }
+      },
+      baseUrl: "http://localhost:8686",
+      exampleStudyImageIds: [
+        "/static/simple-study/000002.dcm",
+        "/static/simple-study/000003.dcm",
+        "/static/simple-study/000004.dcm",
+      ],
     }
   },
   methods:{
+    sliderCallback(){
+      this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.$refs.slider.getIndex()])
+    },
     sliderSwitch(type){
       if(type){
         if(this.$refs.slider.getIndex() != 0){
           this.$refs.slider.setIndex(this.$refs.slider.getIndex()-1)
+          this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.slider.value-1])
         }
-        
       }else{
         if(this.$refs.slider.getIndex() != this.slider.max){
           this.$refs.slider.setIndex(this.$refs.slider.getIndex()+1)
+          this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.slider.value-1])
         }
       }
     },
@@ -418,6 +450,9 @@ export default {
       })
     },
     activeFun(data){
+      if(this.active == 'fd'){
+        this.cornerstone.zoomFun(0.5)
+      }
       this.active = data
       this.cornerstone.zoom().deactivate();
       this.cornerstone.pan().deactivate();
@@ -440,19 +475,32 @@ export default {
         break;
         case 'cj':
           this.cornerstone.lengthTool().activate()
+           this.cornerstone.pan().deactivate();
         break;
         case 'jd':
           this.cornerstone.simpleAngle().activate();
+          this.cornerstone.pan().deactivate();
         break;
         case 'bzyc':
           this.cornerstone.tagging();
         break;
-        
+        case 'fy':
+           this.cornerstone.reset();
+           this.active = '';
+           this.windowFun(400,40,0)
+        break;
       }
+
+      if(this.active == 'ckcw'){//是否显示窗宽床位
+        this.isWindow = !this.isWindow
+      }else{
+        this.isWindow = false
+      }
+
     }
   },
   mounted(){
-    this.$refs.cornerstone.init().then((res)=>{
+    this.$refs.cornerstone.init(this.baseUrl+this.exampleStudyImageIds[0]).then((res)=>{
       this.cornerstone = this.$refs.cornerstone
       this.cornerstone.$el.addEventListener('mousemove', function(event) {
         // console.log(event.pageX, event.pageY)
@@ -468,7 +516,17 @@ export default {
   .el-container{
     height: 100%;
     background: #000;
-    
+    .xl-icon{
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      margin-left: 18px;
+      img{
+        width: 18px;
+        height: 18px !important;
+        padding-top:0px !important;
+      }
+    }
     .el-main{
       position: relative;
       .direction,.left-top,.left-bottom,.right-bottom{
@@ -668,7 +726,6 @@ export default {
           width: 40px;
           height: 40px;
           color: #fff;
-          border: 2px solid #34EDB6;
           margin: 8px auto 0 auto;
           line-height: 40px;
           text-align: center;

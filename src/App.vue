@@ -39,6 +39,7 @@ export default {
 }
 .vue-slider-dot{
   background:url('../static/fjj-icon/hk.png');
+  background-size: 100% 100%;
   .vue-slider-dot-handle{
     background-color: #fff0 !important;
     box-shadow:0.5px 0.5px 2px 1px rgba(255, 255, 255, 0) !important;

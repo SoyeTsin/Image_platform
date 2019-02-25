@@ -48,12 +48,7 @@ export default {
   data() {
     return {
       isInitLoad: true,
-      baseUrl: "http://localhost:8686",
-      exampleStudyImageIds: [
-        "/static/simple-study/000002.dcm",
-        "/static/simple-study/000003.dcm",
-        "/static/simple-study/000004.dcm",
-      ],
+      
       element:null,
       isSimpleAngle:false,//默认是否开启角度工具
       isLengthTool:false,//默认是否开启长度工具
@@ -65,30 +60,19 @@ export default {
     step(){//前进后退
 
     },
-    stepPush(data){//保存
-        if(this.stepList.length<10){
-          this.stepList.shift()
-          this.stepList.push(data)
-        }else{
-          this.stepList.push(data)
-        }
-        console.log(this.stepList)
-    },
-    init() { //初始化
+    init(imageUrl) { //初始化
       return new Promise((resolve, reject)=>{
           // 找到要渲染的元素
           let canvas  =  this.element =  this.$refs.canvas;
           let then = 
-          function onImageRendered(e) {
-              let viewport = cornerstone.getViewport(e.target);
-              this.stepPush(viewport)
-          };
-          canvas.addEventListener('cornerstoneimagerendered', onImageRendered);
+          
+          canvas.addEventListener('cornerstoneimagerendered', e=>{
+            let viewport = cornerstone.getViewport(e.target);
+          });
           // 在 DOM 中将 canvas 元素注册到 cornerstone
           cornerstone.enable(canvas);
 
-          // 拼接 url : cornerstoneWADOImageLoader 需要 wadouri 路径头
-          const imageUrl = this.baseUrl + this.exampleStudyImageIds[0];
+
           let imageId = "wadouri:" + imageUrl;
 
           //  Load & Display
@@ -103,7 +87,8 @@ export default {
               cornerstone.displayImage(canvas, image, viewport);
               // 激活工具
               this.initCanvasTools();
-              console.log(cornerstone.getViewport(canvas))
+              
+              // console.log(cornerstone.getViewport(canvas))
               resolve(cornerstone)
             },(err)=>{
               reject()
@@ -118,11 +103,11 @@ export default {
       this.isInitLoad = false;
       
       // 为 canvasStack 找到 imageIds
-      let allImageIds = [];
-      this.exampleStudyImageIds.forEach(function(imageId) {
-        let imageUrl = "wadouri:" + _self.baseUrl + imageId;
-        allImageIds.push(imageUrl);
-      });
+      // let allImageIds = [];
+      // this.exampleStudyImageIds.forEach(function(imageId) {
+      //   let imageUrl = "wadouri:" + _self.baseUrl + imageId;
+      //   allImageIds.push(imageUrl);
+      // });
 
       
       let config = {
@@ -131,12 +116,15 @@ export default {
           maxScale: 80.0,
           preventZoomOutsideImage: true
       };
-
+      cornerstoneTools.toolColors.setToolColor('#F5A623');
+      cornerstoneTools.toolColors.setActiveColor('#06bd98');
+      cornerstoneTools.toolStyle.setActiveWidth('2')
+      cornerstoneTools.toolStyle.setToolWidth('2')
       cornerstoneTools.zoom.setConfiguration(config);
       // Create canvasStack
       let canvasStack = {
         currentImageIdIndex: 0,
-        imageIds: allImageIds
+        // imageIds: allImageIds
       };
       // Enable Inputs
       cornerstoneTools.mouseInput.enable(canvas);
@@ -148,7 +136,7 @@ export default {
       // cornerstoneTools.stackScrollWheel.activate(canvas); // Mouse wheel
       // cornerstoneTools.scrollIndicator.enable(canvas); // Position indicator
       // Mouse
-      cornerstoneTools.wwwc.activate(canvas, 1); // left click
+      // cornerstoneTools.wwwc.activate(canvas, 1); // left click
       cornerstoneTools.pan.activate(canvas, 2); // middle click
       
       // // Touch / Gesture
@@ -305,7 +293,7 @@ export default {
           },
           deactivate:()=>{//冻结
             cornerstoneTools.pan.deactivate(this.element); 
-            cornerstoneTools.wwwc.activate(this.element,1);
+            // cornerstoneTools.wwwc.activate(this.element,1);
           }
         }
     },
@@ -327,6 +315,24 @@ export default {
       viewport.voi.windowWidth = ww;
       viewport.voi.windowCenter = wl;
       cornerstone.setViewport(this.element, viewport);
+    },
+    loadImage(imageUrl){//切换图片
+        let imageId = "wadouri:" + imageUrl;
+        cornerstone.loadImage(imageId).then(
+          (image)=>{
+            // 设置元素视口
+            let viewport = cornerstone.getDefaultViewportForImage(
+              this.element,
+              image
+            );
+            // 显示图像
+            cornerstone.displayImage(this.element, image, viewport);
+            // 激活工具
+            this.initCanvasTools();
+          },(err)=>{
+            alert(err);
+          }
+        )
     }
   }
 };
