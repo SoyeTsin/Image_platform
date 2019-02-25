@@ -77,9 +77,10 @@
               this.msg = response.msg
               return
             }
-            this.$cookies.set('token', response.data.token)   //return this
-            this.$cookies.set('userId', response.data.userId)   //return this
-            this.$cookies.set('phoneNum', response.data.phoneNum)   //return this
+            localStorage.setItem('token', response.data.token)   //return this
+            localStorage.setItem('userId', response.data.userId)   //return this
+            localStorage.setItem('phoneNum', response.data.phoneNum)   //return this
+            localStorage.setItem('routerPath', this.$route.path)   //return this
             this.$router.push({
               path: '/userinfo'
             })

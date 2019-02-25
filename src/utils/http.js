@@ -5,14 +5,15 @@ import Vue from 'vue'
 
 axios.defaults.timeout = 5000;
 axios.defaults.baseURL = 'https://121.12.84.99:8080';
+// axios.defaults.baseURL = '';
 
 
 //http request 拦截器
 axios.interceptors.request.use(
   config => {
-    const token = getCookie('token');//注意使用的时候需要引入cookie方法，推荐js-cookie
-    const userId = getCookie('userId');//注意使用的时候需要引入cookie方法，推荐js-cookie
-    const phoneNum = getCookie('phoneNum');//注意使用的时候需要引入cookie方法，推荐js-cookie
+    const token = localStorage.getItem('token');//注意使用的时候需要引入cookie方法，推荐js-cookie
+    const userId = localStorage.getItem('userId');//注意使用的时候需要引入cookie方法，推荐js-cookie
+    const phoneNum = localStorage.getItem('phoneNum');//注意使用的时候需要引入cookie方法，推荐js-cookie
     config.data = JSON.stringify(config.data);
     config.headers = {
       'Content-Type': 'application/json;charset=UTF-8',
@@ -33,9 +34,10 @@ axios.interceptors.request.use(
 //http response 拦截器
 axios.interceptors.response.use(
   response => {
-    if (response.data.code == '000100') {
+    if (response.data.code == '000100' || response.data.code == '000099') {
+      let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/admin')
       router.push({
-        path: "/login",
+        path: routerPath,
         querry: {redirect: router.currentRoute.fullPath}//从哪个页面跳转
       })
     }
@@ -46,12 +48,11 @@ axios.interceptors.response.use(
   }
 )
 
-function getCookie(name) {
-  let v = window.document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-  return v ? v[2] : null;
-}
-
 /**
+ *
+ *
+ *
+ * 
  * 封装get方法
  * @param url
  * @param data
