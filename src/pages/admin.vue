@@ -10,14 +10,15 @@
               <img src="./assets/login/usernameadmin.png">
               <div>用户名</div>
             </div>
-            <input placeholder="输入用户名" class="so-input" v-model="userParameter.userName"></input>
+            <input placeholder="输入用户名" class="so-input" v-model="userParameter.userName" @keyup.enter="login"></input>
           </div>
           <div class="input-box">
             <div class="icon">
               <img src="./assets/login/password.png">
               <div>密码</div>
             </div>
-            <input placeholder="输入密码" type="password" class="so-input" v-model="userParameter.password"></input>
+            <input placeholder="输入密码" type="password" class="so-input" v-model="userParameter.password"
+                   @keyup.enter="login"></input>
             <div class="validate-msg" v-if="msg">
               <img src="./assets/login/warning.png"/>
               <div>
