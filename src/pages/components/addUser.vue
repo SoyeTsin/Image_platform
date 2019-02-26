@@ -1,85 +1,88 @@
 <template>
   <el-container>
+
     <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true'>
-      <el-row class="dialog-item">
-        <el-col :span="8" class="dialog-item-title">
-          <span class="color-red-star">*</span>用户姓名
-        </el-col>
-        <el-col :span="16">
-          <el-input v-model="parameter.userName"></el-input>
-        </el-col>
-      </el-row>
-      <el-row class="dialog-item">
-        <el-col :span="8" class="dialog-item-title">
-          <span class="color-red-star">*</span>所属渠道
-        </el-col>
-        <el-col :span="16">
-          <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
-            <el-option
-              v-for="item in channel.list"
-              :key="item.channelId"
-              :label="item.channelName"
-              :value="item.channelId">
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-      <el-row class="dialog-item">
-        <el-col :span="8" class="dialog-item-title">
-          <span class="color-red-star">*</span>所处机构
-        </el-col>
-        <el-col :span="16">
-          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input">
-            <el-option
-              v-for="item in institution.list"
-              :key="item.institutionId"
-              :label="item.institutionName"
-              :value="item.institutionId">
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-      <el-row class="dialog-item">
-        <el-col :span="8" class="dialog-item-title">
-          <span class="color-red-star">*</span>所处科室
-        </el-col>
-        <el-col :span="16">
-          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
-            <el-option
-              v-for="item in office.list"
-              :key="item.officeId"
-              :label="item.officeName"
-              :value="item.officeId">
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-      <el-row class="dialog-item">
-        <el-col :span="8" class="dialog-item-title">
-          <span class="color-red-star">*</span>手机号码
-        </el-col>
-        <el-col :span="16">
-          <el-input v-model="parameter.phoneNum"></el-input>
-        </el-col>
-      </el-row>
-      <el-row class="dialog-item">
-        <el-col :span="8" class="dialog-item-title">
-          权限
-        </el-col>
-        <el-col :span="16">
-          <el-select v-model="isEnable.value" placeholder="请选择" class="main-input">
-            <el-option
-              v-for="item in isEnable.list"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-      <el-row class="dialog-item">
-        <el-button type="success" class="button-center" @click="addUserInfo">创建</el-button>
-      </el-row>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>用户姓名
+          </el-col>
+          <el-col :span="16">
+            <el-input v-model="ruleForm.userName"></el-input>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>所属渠道
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="ruleForm.channelValue" filterable placeholder="渠道" class="main-input">
+              <el-option
+                v-for="item in channel.list"
+                :key="item.channelId"
+                :label="item.channelName"
+                :value="item.channelId">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>所处机构
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
+              <el-option
+                v-for="item in institution.list"
+                :key="item.institutionId"
+                :label="item.institutionName"
+                :value="item.institutionId">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>所处科室
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
+              <el-option
+                v-for="item in office.list"
+                :key="item.officeId"
+                :label="item.officeName"
+                :value="item.officeId">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            <span class="color-red-star">*</span>手机号码
+          </el-col>
+          <el-col :span="16">
+            <el-input v-model="ruleForm.phoneNum"></el-input>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-col :span="8" class="dialog-item-title">
+            权限
+          </el-col>
+          <el-col :span="16">
+            <el-select v-model="ruleForm.isEnableValue" placeholder="请选择" class="main-input">
+              <el-option
+                v-for="item in isEnable.list"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row class="dialog-item">
+          <el-button type="success" class="button-center" @click="submitForm('ruleForm')">创建</el-button>
+        </el-row>
+      </el-form>
     </el-dialog>
   </el-container>
 </template>
@@ -94,21 +97,51 @@
         institution: {value: '', key: null, list: []},
         office: {value: '', key: null, list: []},
         parameter: {userName: '', phoneNum: '', userId: ''},
-        isEnable: {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]}
+        isEnable: {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]},
+        ruleForm: {
+          userName: '',
+          channelValue: '',
+          institutionValue: '',
+          officeValue: '',
+          isEnableValue: '',
+          phoneNum: '',
+        },
+        rules: {
+          userName: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur'}
+          ],
+          phoneNum: [
+            {required: true, message: '请输入手机号码', trigger: 'blur'},
+            {min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur'}
+          ],
+          channelValue: [
+            {required: true, message: '请选择所属渠道', trigger: 'change'}
+          ],
+          institutionValue: [
+            {required: true, message: '请选择所属机构', trigger: 'change'}
+          ],
+          officeValue: [
+            {required: true, message: '请选择活动区域', trigger: 'change'}
+          ],
+          isEnableValue: [
+            {required: true, message: '请选择活动区域', trigger: 'change'}
+          ],
+        }
       }
     },
     computed: {
       channelValue() {
-        return this.channel.value
+        return this.ruleForm.channelValue
       },
       institutionValue() {
-        return this.institution.value
+        return this.ruleForm.institutionValue
       },
       officeValue() {
-        return this.office.value
+        return this.ruleForm.officeValue
       },
       isEnableValue() {
-        return this.isEnable.value
+        return this.ruleForm.isEnableValue
       }
     },
     watch: {
@@ -132,6 +165,17 @@
       this.queryOrganizationList()
     },
     methods: {
+      submitForm(formName) {
+        debugger
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.addUserInfo()
+          } else {
+            this.$message('请正确填写表单内容！');
+            return false;
+          }
+        });
+      },
       addUserInfo() {
         let parameter = {
           userId: this.parameter.userId,
@@ -199,6 +243,9 @@
             this.office.list = response.data
           })
       },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
     }
   }
 </script>
