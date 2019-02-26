@@ -8,7 +8,7 @@ import mechanism from '@/pages/mechanism'
 import userinfo from '@/pages/userinfo'
 import personalReport from '@/pages/personalReport'
 import report from '@/pages/report'
-
+import imageList from '@/pages/imageList'
 
 Vue.use(Router)
 
@@ -24,6 +24,12 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      des: '影像列表',
+      path: '/imageList',
+      name: 'imageList',
+      component: imageList
     },
     {
       des: '影像管理',
@@ -57,7 +63,7 @@ export default new Router({
           path: '/report',
           name: 'report',
           component: report
-        }
+        },
       ], redirect: '/userinfo'//默认显示此子路由
     },
   ]

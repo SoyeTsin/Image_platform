@@ -156,6 +156,9 @@
       </el-row>
       </el-header>
       <el-main style="padding:0px;" :style="{cursor:active == 'yd'?'all-scroll':'auto'}">
+        <div class="zoom">
+          <p>使用鼠标滚轮缩放</p>
+        </div>
         <el-dialog
           title="诊断结果"
           :visible.sync="dialogVisible"
@@ -262,7 +265,7 @@
         </div>
         <div class="left-bottom" style="left:18px;bottom:18px;">
             X : 117    Y : 247    Val : 92<br/>
-            WW : {{windowList[windowIndex].ww}}   WL : {{windowList[windowIndex].wl}}「CT Chest 」<br/>
+            WW : {{windowWidth}}   WL :{{windowCenter}} 「CT Chest 」<br/>
             T : 2.5mm   L : -46.8<br/>
         </div>
         <div class="right-bottom" style="right:18px;bottom:18px;">
@@ -413,6 +416,7 @@ export default {
   methods:{
     sliderCallback(){
       this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.$refs.slider.getIndex()])
+      this.windowFun(400,40,0)
     },
     sliderSwitch(type){
       if(type){
@@ -426,6 +430,7 @@ export default {
           this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.slider.value-1])
         }
       }
+      this.windowFun(400,40,0)
     },
     handleClose(done) {
         this.$confirm('内容未提交，是否直接关闭？')
@@ -500,7 +505,9 @@ export default {
     }
   },
   mounted(){
-    
+    this.$post('/api/serialImages').then(res=>{
+      console.log(res)
+    })
     this.$refs.cornerstone.init(this.baseUrl+this.exampleStudyImageIds[0]).then((res)=>{
       this.cornerstone = this.$refs.cornerstone
       this.cornerstone.$el.addEventListener('mousemove', function(event) {
@@ -510,6 +517,14 @@ export default {
       });
     })
   },
+  computed:{
+    windowWidth(){
+      return this.$store.state.cornerstone.voi?this.$store.state.cornerstone.voi.windowWidth:''
+    },
+    windowCenter(){
+      return this.$store.state.cornerstone.voi?this.$store.state.cornerstone.voi.windowCenter:''
+    }
+  }
 }
 </script>
 
