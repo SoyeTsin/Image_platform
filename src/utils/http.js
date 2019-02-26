@@ -4,7 +4,7 @@ import router from '../router'
 import Vue from 'vue'
 
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = 'https://121.12.84.99:8080';
+axios.defaults.baseURL = 'http://121.12.84.99:8080';
 // axios.defaults.baseURL = '';
 
 
@@ -35,8 +35,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     if (response.data.code == '000100' || response.data.code == '000099') {
-      let routerPath = decodeURIComponent(localStorage.getItem('routerPath'))
-      routerPath = (routerPath == 'null' || routerPath == null) ? '/admin' : routerPath
+      let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/admin')
       router.push({
         path: routerPath,
         querry: {redirect: router.currentRoute.fullPath}//从哪个页面跳转
@@ -53,7 +52,7 @@ axios.interceptors.response.use(
  *
  *
  *
- *
+ * 
  * 封装get方法
  * @param url
  * @param data
