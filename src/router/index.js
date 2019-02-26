@@ -25,12 +25,7 @@ export default new Router({
       name: 'login',
       component: login
     },
-    {
-      des: '影像列表',
-      path: '/imageList',
-      name: 'imageList',
-      component: imageList
-    },
+
     {
       des: '影像管理',
       path: '/fjjCT',
@@ -63,6 +58,12 @@ export default new Router({
           path: '/report',
           name: 'report',
           component: report
+        },
+        {
+          des: '影像列表',
+          path: '/imageList',
+          name: 'imageList',
+          component: imageList
         },
       ], redirect: '/userinfo'//默认显示此子路由
     },

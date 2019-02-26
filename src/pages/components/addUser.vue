@@ -1,85 +1,55 @@
 <template>
   <el-container>
 
-    <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true'>
+    <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>用户姓名
-          </el-col>
-          <el-col :span="16">
-            <el-input v-model="ruleForm.userName"></el-input>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>所属渠道
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="ruleForm.channelValue" filterable placeholder="渠道" class="main-input">
-              <el-option
-                v-for="item in channel.list"
-                :key="item.channelId"
-                :label="item.channelName"
-                :value="item.channelId">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>所处机构
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
-              <el-option
-                v-for="item in institution.list"
-                :key="item.institutionId"
-                :label="item.institutionName"
-                :value="item.institutionId">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>所处科室
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
-              <el-option
-                v-for="item in office.list"
-                :key="item.officeId"
-                :label="item.officeName"
-                :value="item.officeId">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>手机号码
-          </el-col>
-          <el-col :span="16">
-            <el-input v-model="ruleForm.phoneNum"></el-input>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            权限
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="ruleForm.isEnableValue" placeholder="请选择" class="main-input">
-              <el-option
-                v-for="item in isEnable.list"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
+        <el-form-item label="用户姓名" prop="userName" class="dialog-item">
+          <el-input v-model="ruleForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="所属渠道" prop="channelValue" class="dialog-item">
+          <el-select v-model="ruleForm.channelValue" filterable placeholder="渠道" class="main-input">
+            <el-option
+              v-for="item in channel.list"
+              :key="item.channelId"
+              :label="item.channelName"
+              :value="item.channelId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所处机构" prop="institutionValue" class="dialog-item">
+          <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
+            <el-option
+              v-for="item in institution.list"
+              :key="item.institutionId"
+              :label="item.institutionName"
+              :value="item.institutionId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所处科室" prop="officeValue" class="dialog-item">
+          <el-select v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
+            <el-option
+              v-for="item in office.list"
+              :key="item.officeId"
+              :label="item.officeName"
+              :value="item.officeId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机号码" prop="phoneNum" class="dialog-item">
+          <el-input v-model="ruleForm.phoneNum"></el-input>
+        </el-form-item>
+        <el-form-item label="权限" prop="isEnableValue" class="dialog-item">
+          <el-select v-model="ruleForm.isEnableValue" placeholder="请选择" class="main-input">
+            <el-option
+              v-for="item in isEnable.list"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-row>
           <el-button type="success" class="button-center" @click="submitForm('ruleForm')">创建</el-button>
         </el-row>
       </el-form>
@@ -100,11 +70,11 @@
         isEnable: {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]},
         ruleForm: {
           userName: '',
+          phoneNum: '',
           channelValue: '',
           institutionValue: '',
           officeValue: '',
           isEnableValue: '',
-          phoneNum: '',
         },
         rules: {
           userName: [
@@ -166,7 +136,6 @@
     },
     methods: {
       submitForm(formName) {
-        debugger
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.addUserInfo()

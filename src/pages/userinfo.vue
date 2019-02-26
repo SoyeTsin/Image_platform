@@ -261,10 +261,30 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.parameter = {
+          channelId: this.parameter.channelId,
+          institutionId: this.parameter.institutionId,
+          provinceCode: this.provinces.value,
+          cityCode: this.city.value,
+          pageNum: 1,
+          pageSize: val
+        }
+        this.getData()
         this.pageParameter.pageSize = val
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.parameter = {
+          userName: this.parameter.userName,
+          channelId: this.channel.value,
+          institutionId: this.institution.value,
+          provinceCode: this.provinces.value,
+          cityCode: this.city.value,
+          officeId: "",
+          pageNum: val,
+          pageSize: common.pageParameter.pageSize
+        }
+        this.getData()
         this.pageParameter.nowPage = val
       },
       openReport() {
