@@ -17,6 +17,7 @@
 
 <style lang="scss">
   @import "./assets/css/common.css";
+  @import "./pages/sass/alicss";
 
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -25,6 +26,7 @@
     text-align: center;
     height: 100%;
   }
+
   .submit {
     background-image: linear-gradient(90deg, #28C3D5 0%, #34EDB6 100%);
     box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
@@ -41,6 +43,7 @@
   .vue-slider-dot {
     background: url('../static/fjj-icon/hk.png');
     background-size: 100%;
+
     .vue-slider-dot-handle {
       background-color: #fff0 !important;
       box-shadow: 0.5px 0.5px 2px 1px rgba(255, 255, 255, 0) !important;

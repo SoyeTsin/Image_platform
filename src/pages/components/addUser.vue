@@ -141,7 +141,6 @@
           officeId: this.office.key,
           isEnable: this.isEnable.key
         }
-        debugger
         this.$post('/account/editUserInfo', parameter)
           .then((response) => {
             if (response.code != '000000') {
