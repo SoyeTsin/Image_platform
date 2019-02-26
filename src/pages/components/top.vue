@@ -63,6 +63,6 @@
     letter-spacing: 0.16px;
     position: relative;
     z-index: 100;
-    min-width: 1400px;
+    min-width: 1574px;
   }
 </style>
