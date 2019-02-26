@@ -46,6 +46,13 @@
       box-shadow: 0.5px 0.5px 2px 1px rgba(255, 255, 255, 0) !important;
     }
   }
+  .selected{
+      div{
+          span{
+              text-align: center;
+          }
+      }
+  }
 
   .tips {
     height: 88px;

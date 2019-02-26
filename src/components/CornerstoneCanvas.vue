@@ -57,9 +57,6 @@ export default {
     };
   },
   methods: {
-    step(){//前进后退
-
-    },
     init(imageUrl) { //初始化
       return new Promise((resolve, reject)=>{
           // 找到要渲染的元素
@@ -68,6 +65,7 @@ export default {
           
           canvas.addEventListener('cornerstoneimagerendered', e=>{
             let viewport = cornerstone.getViewport(e.target);
+            this.$store.commit('SET_CORNERSTONE',viewport)
           });
           // 在 DOM 中将 canvas 元素注册到 cornerstone
           cornerstone.enable(canvas);
@@ -87,8 +85,7 @@ export default {
               cornerstone.displayImage(canvas, image, viewport);
               // 激活工具
               this.initCanvasTools();
-              
-              // console.log(cornerstone.getViewport(canvas))
+              console.log(cornerstoneTools)
               resolve(cornerstone)
             },(err)=>{
               reject()
@@ -223,6 +220,7 @@ export default {
     zoomFun(scale){
       const viewport = cornerstone.getViewport(this.element);
       viewport.scale += scale;
+      console.log(cornerstoneTools.getToolOptions(this.element,"stack"))
       cornerstone.setViewport(this.element, viewport);
     },
     reset(){//复原
@@ -329,6 +327,7 @@ export default {
             cornerstone.displayImage(this.element, image, viewport);
             // 激活工具
             this.initCanvasTools();
+            console.log(cornerstoneTools.clearToolOptions(this.element,'length'))
           },(err)=>{
             alert(err);
           }
