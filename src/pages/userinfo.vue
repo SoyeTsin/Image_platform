@@ -4,7 +4,7 @@
       <el-row class="text-left main-title">用户列表</el-row>
       <el-row class="text-left main-screen">
         <el-col :span="20">
-          <el-button plain type="primary" class="add-button" @click="dialogTableVisible = true"><i
+          <el-button plain type="primary" class="add-button" @click="addUserFun"><i
             class="el-icon-plus"></i>创建账号
           </el-button>
           <el-input v-model="parameter.userName" placeholder="姓名" class="main-input"></el-input>
@@ -24,7 +24,7 @@
               :value="item.cityCode">
             </el-option>
           </el-select>
-          <el-select v-model="channel.value" placeholder="机构" class="main-input">
+          <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
             <el-option
               v-for="item in channel.list"
               :key="item.channelId"
@@ -32,12 +32,20 @@
               :value="item.channelId">
             </el-option>
           </el-select>
-          <el-select v-model="institution.value" placeholder="科室" class="main-input">
+          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in institution.list"
               :key="item.institutionId"
               :label="item.institutionName"
               :value="item.institutionId">
+            </el-option>
+          </el-select>
+          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
+            <el-option
+              v-for="item in office.list"
+              :key="item.officeId"
+              :label="item.officeName"
+              :value="item.officeId">
             </el-option>
           </el-select>
         </el-col>
@@ -61,8 +69,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <img :src="icon_report" class="table-icon" @click="openReport">
-            <img :src="icon_delete" class="table-icon">
+            <img :src="icon_edit" class="table-icon" @click="editUser(scope.row)">
+            <img :src="icon_delete" class="table-icon" @click="deleteUser(scope.row)">
           </template>
         </el-table-column>
       </el-table>
@@ -71,87 +79,24 @@
                      :page-size="pageParameter.pageSize"
                      layout="sizes, prev, pager, next" :total="pageParameter.total">
       </el-pagination>
-      <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true'>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>用户姓名
-          </el-col>
-          <el-col :span="16">
-            <el-input v-model="parameter.userName"></el-input>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>所属机构
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="value" placeholder="请选择" class="main-input">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>所处科室
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="value" placeholder="请选择" class="main-input">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            <span class="color-red-star">*</span>手机号码
-          </el-col>
-          <el-col :span="16">
-            <el-input></el-input>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-col :span="8" class="dialog-item-title">
-            权限
-          </el-col>
-          <el-col :span="16">
-            <el-select v-model="value" placeholder="请选择" class="main-input">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row class="dialog-item">
-          <el-button type="success" class="button-center">创建</el-button>
-        </el-row>
-      </el-dialog>
+      <addUser ref="addUser" @renewList="getData"></addUser>
     </el-main>
-
   </el-container>
 </template>
 
 <script>
   import icon_delete from './assets/list/delete.png'
+  import icon_edit from './assets/list/edit.png'
   import icon_report from './assets/list/report.png'
   import common from './common/common'
+  import addUser from './components/addUser'
 
   export default {
     name: "userInfo",
+    components: {addUser},
     data() {
       return {
-        icon_delete, icon_report,
+        icon_delete, icon_report, icon_edit,
         dialogTableVisible: false,
         pageParameter: common.pageParameter,
         parameter: {
@@ -165,31 +110,17 @@
           pageSize: common.pageParameter.pageSize
         },
         tableData: [],
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
         provinces: {value: '', list: []},
         city: {value: '', list: []},
         channel: {value: '', list: []},
         institution: {value: '', list: []},
+        office: {value: '', key: null, list: []},
         value: ''
       }
     },
     mounted() {
       this.getData()
+      this.queryOfficeList()
       this.queryRegionInfo()
     },
     computed: {
@@ -210,9 +141,11 @@
       },
       cityValue(val) {
         this.queryOrganizationList()
+        this.channel = {value: '', list: []}
       },
       channelValue(val) {
         this.queryOrganizationList(2, val)
+        this.institution = {value: '', list: []}
       }
     },
     methods: {
@@ -224,6 +157,8 @@
               return
             }
             this.tableData = response.data.list
+            this.pageParameter.total = response.data.total || 0
+            this.pageParameter.nowPage = response.data.pageNum || 0
           })
       },
       queryRegionInfo(provinceCode = '') {
@@ -262,6 +197,54 @@
               this.institution.list = response.data.institutionList
             }
           })
+      },
+      queryOfficeList() {
+        let parameter = {}
+        this.$post('/manager/queryOfficeList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.office.list = response.data
+          })
+      },
+      addUserFun() {
+        console.log()
+        this.$refs.addUser.changeDialogTableVisible()
+      },
+      editUser(user) {
+        this.$refs.addUser.changeDialogTableVisible()
+        this.$refs.addUser.editUser(user)
+      },
+      deleteUser(user) {
+        //account/delUser
+        let parameter = {
+          userId: user.userId
+        }
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$post('/account/delUser', parameter)
+            .then((response) => {
+              if (response.code != '000000') {
+                this.$message(response.msg);
+                return
+              }
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.getData()
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       },
       search() {
         this.parameter = {
