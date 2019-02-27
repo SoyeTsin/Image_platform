@@ -1,7 +1,7 @@
 <template>
   <el-container>
 
-    <el-dialog title="新建账号" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
+    <el-dialog title="账号编辑" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
         <el-form-item label="用户姓名" prop="userName" class="dialog-item">
           <el-input v-model="ruleForm.userName"></el-input>

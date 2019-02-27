@@ -129,14 +129,4 @@
 
 <style lang="scss" scoped>
   @import "sass/common";
-
-  .el-container {
-    background-color: #F3F6FC;
-
-    .el-main {
-      background: #fff;
-      margin: 20px;
-
-    }
-  }
 </style>
