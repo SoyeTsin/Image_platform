@@ -48,7 +48,6 @@ export default {
   data() {
     return {
       isInitLoad: true,
-      
       element:null,
       isSimpleAngle:false,//默认是否开启角度工具
       isLengthTool:false,//默认是否开启长度工具
@@ -65,6 +64,7 @@ export default {
           
           canvas.addEventListener('cornerstoneimagerendered', e=>{
             let viewport = cornerstone.getViewport(e.target);
+            console.log(viewport)
             this.$store.commit('SET_CORNERSTONE',viewport)
           });
           // 在 DOM 中将 canvas 元素注册到 cornerstone
@@ -84,8 +84,8 @@ export default {
               // 显示图像
               cornerstone.displayImage(canvas, image, viewport);
               // 激活工具
+              console.log(cornerstoneTools,2222)
               this.initCanvasTools();
-              console.log(cornerstoneTools)
               resolve(cornerstone)
             },(err)=>{
               reject()
@@ -110,7 +110,7 @@ export default {
       let config = {
           // invert: true,
           minScale: 0.2,
-          maxScale: 80.0,
+          maxScale: 8.0,
           preventZoomOutsideImage: true
       };
       cornerstoneTools.toolColors.setToolColor('#F5A623');
@@ -121,12 +121,13 @@ export default {
       // Create canvasStack
       let canvasStack = {
         currentImageIdIndex: 0,
+        touchEnabled: false
         // imageIds: allImageIds
       };
       // Enable Inputs
       cornerstoneTools.mouseInput.enable(canvas);
       cornerstoneTools.mouseWheelInput.enable(canvas);
-      cornerstoneTools.touchInput.enable(canvas);
+      // cornerstoneTools.touchInput.enable(canvas);
       // Set the stack as tool state
       cornerstoneTools.addStackStateManager(canvas, ["stack"]);
       cornerstoneTools.addToolState(canvas, "stack", canvasStack);
@@ -178,7 +179,7 @@ export default {
     disableAllTools(){
         cornerstoneTools.wwwc.disable(this.element);
         cornerstoneTools.pan.activate(this.element, 2); // 2 is middle mouse button
-        cornerstoneTools.zoom.activate(this.element, 4); // 4 is right mouse button
+        // cornerstoneTools.zoom.activate(this.element, 4); // 4 is right mouse button
         cornerstoneTools.probe.deactivate(this.element, 1);
         // cornerstoneTools.length.deactivate(this.element, 1);
         cornerstoneTools.ellipticalRoi.deactivate(this.element, 1);
@@ -220,8 +221,11 @@ export default {
     zoomFun(scale){
       const viewport = cornerstone.getViewport(this.element);
       viewport.scale += scale;
-      console.log(cornerstoneTools.getToolOptions(this.element,"stack"))
+      if(viewport.scale>8){
+        viewport.scale = 8
+      }
       cornerstone.setViewport(this.element, viewport);
+      
     },
     reset(){//复原
       cornerstone.reset(this.element);
@@ -327,11 +331,10 @@ export default {
             cornerstone.displayImage(this.element, image, viewport);
             // 激活工具
             this.initCanvasTools();
-            console.log(cornerstoneTools.clearToolOptions(this.element,'length'))
           },(err)=>{
             alert(err);
           }
-        )
+        ) 
     }
   }
 };
