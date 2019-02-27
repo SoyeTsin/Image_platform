@@ -9,5 +9,4 @@ common.pageParameter = {
   pageSize: 10,
   total: 100
 }
-
 module.exports = common

@@ -14,6 +14,12 @@
           <div>机构管理</div>
         </div>
       </router-link>
+      <router-link to="/imageList">
+        <div class="menu-item">
+          <img src="../assets/login/password.png"/>
+          <div>影像列表</div>
+        </div>
+      </router-link>
     </el-aside>
   </el-container>
 </template>

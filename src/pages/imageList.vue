@@ -31,11 +31,11 @@
               :value="item.value">
             </el-option>
           </el-select>
-            <el-date-picker
-                type="dates"
-                v-model="value6"
-                placeholder="检测日期">
-            </el-date-picker>
+          <el-date-picker
+            type="dates"
+            v-model="value6"
+            placeholder="检测日期">
+          </el-date-picker>
         </el-col>
         <el-col :span="4" class="display-right">
           <el-button type="success" class="search-button">查询</el-button>
@@ -59,24 +59,24 @@
         <el-table-column prop="name" label="AI检测情况">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="light" content="AI处理中AI处理中AI处理中AI处理中AI处理中" placement="bottom">
-                <span>AI处理中</span>
+              <span>AI处理中</span>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
-                <img src="./assets/image/ck.png" class="table-icon">
+              <img src="./assets/image/ck.png" class="table-icon">
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
-                <img src="./assets/image/bg.png" class="table-icon">
+              <img src="./assets/image/bg.png" class="table-icon">
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page.sync="currentPage2" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-            layout="sizes, prev, pager, next" :total="1000">
+                     :current-page.sync="currentPage2" :page-sizes="[100, 200, 300, 400]" :page-size="100"
+                     layout="sizes, prev, pager, next" :total="1000">
       </el-pagination>
     </el-main>
   </el-container>
@@ -92,7 +92,7 @@
         address: '上海市普陀区金沙江路 1518 弄'
       };
       return {
-        value6:'',
+        value6: '',
         tableData: Array(20).fill(item),
         currentPage1: 5,
         currentPage2: 5,
@@ -129,12 +129,14 @@
 
 <style lang="scss" scoped>
   @import "sass/common";
-  .el-container{
-        background-color: #F3F6FC;
-        .el-main{
-            background: #fff;
-            margin: 20px;
-            
-        }
+
+  .el-container {
+    background-color: #F3F6FC;
+
+    .el-main {
+      background: #fff;
+      margin: 20px;
+
+    }
   }
 </style>

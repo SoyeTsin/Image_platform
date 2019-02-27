@@ -50,7 +50,6 @@
   import login_bg_1 from './assets/login/login-bg-1.png'
   import login_bg_2 from './assets/login/login-bg-2.png'
   import login_kuang from './assets/login/login-kuang.png'
-
   export default {
     name: "login",
     components: {top},
@@ -79,10 +78,10 @@
               this.msg = response.msg
               return
             }
-            this.$cookies.set('token', response.data.token)   //return this
-            this.$cookies.set('userId', response.data.userId)   //return this
-            this.$cookies.set('phoneNum', response.data.phoneNum)   //return this
-            this.$cookies.set('routerPath', this.$route.path)   //return this
+            // common.token = response.data.token
+            // common.userId = response.data.userId
+            // common.phoneNum = response.data.phoneNum
+            // common.routerPath = this.$route.path
             this.$router.push({
               path: '/userinfo'
             })
