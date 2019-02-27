@@ -8,7 +8,7 @@ import router from './router'
 import { sync } from 'vuex-router-sync'
 import store from './store'
 import axios from 'axios'
-import {post, fetch, patch, put} from './utils/http'
+import {post, fetch, patch, put} from './pages/utils/http'
 //定义全局变量
 Vue.prototype.$post = post;
 Vue.prototype.$fetch = fetch;
