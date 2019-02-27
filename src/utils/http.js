@@ -4,7 +4,7 @@ import router from '../router'
 import Vue from 'vue'
 
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = 'http://121.12.84.99:8080';
+axios.defaults.baseURL = 'https://generic-stg1.yingxiang.pingan.com:8080';
 // axios.defaults.baseURL = '';
 
 

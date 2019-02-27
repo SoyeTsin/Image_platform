@@ -136,7 +136,7 @@
           </p>
         </el-col>
          <el-col>
-           <p @click="activeFun('fy')">
+           <p @click="activeFun('fy');">
             <img src="../../static/fjj-icon/fy.png">
             <span>复原</span>
           </p>
@@ -156,8 +156,9 @@
       </el-row>
       </el-header>
       <el-main style="padding:0px;" :style="{cursor:active == 'yd'?'all-scroll':'auto'}">
-        <div class="zoom">
+        <div class="zoom" v-if="active == 'fd'">
           <p>使用鼠标滚轮缩放</p>
+          <p>{{scale}}%</p>
         </div>
         <el-dialog
           title="诊断结果"
@@ -264,12 +265,12 @@
             CT   LUNG   SCREEN
         </div>
         <div class="left-bottom" style="left:18px;bottom:18px;">
-            X : 117    Y : 247    Val : 92<br/>
-            WW : {{windowWidth}}   WL :{{windowCenter}} 「CT Chest 」<br/>
-            T : 2.5mm   L : -46.8<br/>
+            X : 117 &nbsp&nbsp   Y : 247 &nbsp&nbsp  Val : 92<br/>
+            WW : {{windowWidth}} &nbsp&nbsp  WL :{{windowCenter}} 「CT Chest 」<br/>
+            T : 2.5mm &nbsp&nbsp  L : -46.8<br/>
         </div>
         <div class="right-bottom" style="right:18px;bottom:18px;">
-            50mA  140KV<br/>
+            50mA &nbsp&nbsp 140KV<br/>
             2018.02.01<br/>
              14:21:12<br/>
         </div>
@@ -405,7 +406,7 @@ export default {
           }
         ]
       },
-      baseUrl: "http://localhost:8686",
+      baseUrl: "http://localhost:8686",//https://121.12.84.99
       exampleStudyImageIds: [
         "/static/simple-study/000002.dcm",
         "/static/simple-study/000003.dcm",
@@ -455,9 +456,7 @@ export default {
       })
     },
     activeFun(data){
-      if(this.active == 'fd'){
-        this.cornerstone.zoomFun(0.5)
-      }
+      
       this.active = data
       this.cornerstone.zoom().deactivate();
       this.cornerstone.pan().deactivate();
@@ -496,6 +495,10 @@ export default {
         break;
       }
 
+      if(this.active == 'fd'){
+        this.cornerstone.zoomFun(0.5)
+      }
+
       if(this.active == 'ckcw'){//是否显示窗宽床位
         this.isWindow = !this.isWindow
       }else{
@@ -523,7 +526,11 @@ export default {
     },
     windowCenter(){
       return this.$store.state.cornerstone.voi?this.$store.state.cornerstone.voi.windowCenter:''
+    },
+    scale(){
+      return this.$store.state.cornerstone.scale?Math.round(this.$store.state.cornerstone.scale*100):''
     }
+    
   }
 }
 </script>
@@ -532,6 +539,24 @@ export default {
   .el-container{
     height: 100%;
     background: #000;
+    .zoom{
+      position: absolute;
+      top: 20px;
+      z-index: 10;
+      left:50%;
+      transform:translate(-50%,0%);
+      p{
+        display: block;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        margin-bottom: 10px;
+        width: 200px;
+        border: 1px solid #0BC69F;
+        background: #00000078;
+        color: #fff;
+      }
+    }
     .xl-icon{
       position: absolute;
       top: 16px;
