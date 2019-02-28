@@ -33,7 +33,7 @@ axios.interceptors.request.use(
 //http response 拦截器
 axios.interceptors.response.use(
   response => {
-    if (response.data.code == '000100' || response.data.code == '000099') {
+    if (response.data.code == '000100' || response.data.code == '000099' || response.data.code == '001099' || response.data.code == '001100') {
       let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/admin')
       router.push({
         path: routerPath,
@@ -51,7 +51,7 @@ axios.interceptors.response.use(
  *
  *
  *
- * 
+ *
  * 封装get方法
  * @param url
  * @param data

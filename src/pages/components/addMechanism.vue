@@ -39,47 +39,18 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="上级机构" prop="channelValue" class="dialog-item">
-              <el-select v-model="ruleForm.channelValue" filterable placeholder="渠道" class="main-input">
-                <el-option
-                  v-for="item in channel.list"
-                  :key="item.channelId"
-                  :label="item.channelName"
-                  :value="item.channelId">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="institutionValue" class="dialog-item">
-              <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
-                <el-option
-                  v-for="item in institution.list"
-                  :key="item.institutionId"
-                  :label="item.institutionName"
-                  :value="item.institutionId">
-                </el-option>
-              </el-select>
+              <ELTreeSelect
+                ref="treeSelect"
+                v-model="ids"
+                :selectParams="selectParams"
+                :treeParams="elTreeParams"
+                @node-click="fun"
+                @select-clear="fun"
+                @searchFun="fun"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="下级机构" prop="officeValue" class="dialog-item">
-              <el-select v-model="ruleForm.channelValue" filterable placeholder="渠道" class="main-input">
-                <el-option
-                  v-for="item in channel.list"
-                  :key="item.channelId"
-                  :label="item.channelName"
-                  :value="item.channelId">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="institutionValue" class="dialog-item">
-              <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
-                <el-option
-                  v-for="item in institution.list"
-                  :key="item.institutionId"
-                  :label="item.institutionName"
-                  :value="item.institutionId">
-                </el-option>
-              </el-select>
-            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
@@ -101,11 +72,39 @@
 </template>
 
 <script>
+  import ELTreeSelect from 'el-tree-select';
+
   export default {
     name: "addUser",
+    components: {ELTreeSelect},
     data() {
       return {
         dialogTableVisible: true,
+        values: ['3'],
+        selectParams: {
+          'multiple': true,
+          'clearable': true,
+          'placeholder': '请输入内容'
+        },
+        treeParams: {
+          'default-expand-all': true,
+          'filterable': true,
+          'check-strictly': true,
+          'render-content': this._renderFun,
+          'data': [{
+            flowId: '1', name: '哎哎哎',
+            children: [{flowId: '3', name: '啊啊啊啊'}]
+          },
+            {
+              flowId: '2',
+              name: '发生的'
+            }],
+          'props': {
+            children: 'children',
+            label: 'name',
+            value: 'flowId'
+          }
+        },
         channel: {value: '', key: null, list: []},
         institution: {value: '', key: null, list: []},
         office: {value: '', key: null, list: []},

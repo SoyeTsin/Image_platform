@@ -7,20 +7,28 @@
           <el-button plain type="primary" class="add-button" @click="dialogTableVisible = true"><i
             class="el-icon-refresh"></i>刷新数据
           </el-button>
-          <el-select v-model="value" placeholder="所在机构" class="main-input">
+          <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in channel.list"
+              :key="item.channelId"
+              :label="item.channelName"
+              :value="item.channelId">
+            </el-option>
+          </el-select>
+          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input main-right">
+            <el-option
+              v-for="item in institution.list"
+              :key="item.institutionId"
+              :label="item.institutionName"
+              :value="item.institutionId">
             </el-option>
           </el-select>
           <el-select v-model="value" placeholder="全部AI病种" class="main-input">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in disease.list"
+              :key="item.diseaseType"
+              :label="item.diseaseName"
+              :value="item.diseaseType">
             </el-option>
           </el-select>
           <el-select v-model="value" placeholder="全部检查情况" class="main-input">
@@ -75,48 +83,124 @@
         </el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page.sync="currentPage2" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-                     layout="sizes, prev, pager, next" :total="1000">
+                     :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
+                     :page-size="pageParameter.pageSize"
+                     layout="sizes, prev, pager, next" :total="pageParameter.total">
       </el-pagination>
     </el-main>
   </el-container>
 </template>
 
 <script>
+  import common from './common/common'
+
   export default {
     name: "mechanism",
     data() {
-      const item = {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      };
       return {
+        channel: {value: '', key: null, list: []},
+        institution: {value: '', key: null, list: []},
+        disease: {value: '', key: null, list: []},
+        options: '',
+        value: '',
         value6: '',
-        tableData: Array(20).fill(item),
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4,
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        value: ''
+        tableData: [],
+        pageParameter: common.pageParameter,
+        parameter: {
+          institutionId: '',
+          diseaseType: '',
+          aiMsg: '',
+          examDate: '',
+          pageNum: 1,
+          pageSize: common.pageParameter.pageSize
+        }
       }
-    }, methods: {
+    },
+    computed: {
+      channelValue() {
+        return this.channel.value
+      },
+      institutionIdValue() {
+        return this.institution.value
+      },
+      diseaseValue() {
+        return this.disease.value
+      },
+    },
+    watch: {
+      channelValue(val) {
+        let channelId = val
+        if (val == this.channel.list[0].channelName) {
+          channelId = this.channel.list[0].channelId
+        }
+        this.queryOrganizationList(2, channelId)
+      },
+      institutionIdValue(val) {
+        let institutionId = val
+        if (val == this.institution.list[0].institutionName) {
+          institutionId = this.institution.list[0].institutionId
+        }
+        this.findAllDiseaseTypeCountList(institutionId)
+      },
+      diseaseValue(val) {
+        console.log(val)
+      }
+    },
+    mounted() {
+
+      this.queryOrganizationList()
+    },
+    methods: {
+      getData() {
+        this.$post('/api/serials', this.parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.tableData = response.data.list
+            this.pageParameter.total = response.data.total || 0
+            this.pageParameter.nowPage = response.data.pageNum || 0
+          })
+      },
+      queryOrganizationList(dataType = 1, channelId = '') {
+        let parameter = {
+          // provinceCode: this.provinces.value,
+          // cityCode: this.city.value,
+          channelId,
+          dataType
+        }
+        this.$post('/manager/queryOrganizationList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            if (dataType == 1) {
+              this.channel.list = response.data.channelList
+              this.channel.value = response.data.channelList[0].channelName
+              this.queryOrganizationList(2, response.data.channelList[0].channelId)
+            } else {
+              this.institution.list = response.data.institutionList
+              this.institution.value = response.data.institutionList[0].institutionName
+              this.parameter.institutionId = response.data.institutionList[0].institutionId
+            }
+          })
+      },
+      findAllDiseaseTypeCountList(institutionId) {
+        let parameter = {
+          institutionId
+        }
+        this.$post('/api/findAllDiseaseTypeCountList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.parameter.aiMsg = response.msg
+            this.getData()
+          })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
