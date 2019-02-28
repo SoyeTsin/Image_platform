@@ -7,6 +7,26 @@
             <i class="el-icon-arrow-left"></i>
             返回
           </div>
+          <div class="screen">
+            <el-select v-model="value" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-date-picker
+              v-model="value7"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions2">
+            </el-date-picker>
+          </div>
         </div>
         <div class="report-main">
           <div class="report-title">
@@ -52,6 +72,42 @@
       return {
         serverData: [],
         pieData: [],
+        pickerOptions2: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+        options: [{
+          value: '0',
+          label: '肺结节'
+        }, {
+          value: '1',
+          label: '双皮奶'
+        }],
+        value: '肺结节',
+        value7: '',
       }
     },
     mounted() {
@@ -145,8 +201,7 @@
 
   .report-body {
     width: 1260px;
-    text-align: center;
-    margin: auto;
+    margin: 20px 40px;
 
     .button-right {
       margin-top: 24px;

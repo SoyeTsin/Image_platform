@@ -19,6 +19,7 @@
   width: 160px;
   border: solid 1px transparent;
 }
+
 .button-center-def {
   text-align: center;
   margin: auto;
@@ -134,7 +135,10 @@
   width: 100%;
   text-align: left;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .so-button {
