@@ -101,6 +101,7 @@
         channel: {value: '', key: null, list: []},
         institution: {value: '', key: null, list: []},
         disease: {value: '', key: null, list: []},
+        aiResultTypes:{value: '', key: null, list: []},
         options: '',
         value: '',
         value6: '',
@@ -147,7 +148,7 @@
       }
     },
     mounted() {
-
+      this.aiResultTypes()
       this.queryOrganizationList()
     },
     methods: {
@@ -199,6 +200,17 @@
             }
             this.parameter.aiMsg = response.msg
             this.getData()
+          })
+      },
+      aiResultTypes() {
+        let parameter = {}
+        this.$post('/images/aiResultTypes', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.aiResultTypes.list = response.data
           })
       },
       handleSizeChange(val) {
