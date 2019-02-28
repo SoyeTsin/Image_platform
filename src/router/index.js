@@ -7,6 +7,7 @@ import fjjCT from '@/pages/fjjCT'
 import mechanism from '@/pages/mechanism'
 import userinfo from '@/pages/userinfo'
 import personalReport from '@/pages/personalReport'
+import statisticalReport from '@/pages/statisticalReport'
 import report from '@/pages/report'
 import imageList from '@/pages/imageList'
 
@@ -52,6 +53,11 @@ export default new Router({
           path: '/personalReport',
           name: 'personalReport',
           component: personalReport
+        }, {
+          des: '统计报告',
+          path: '/statisticalReport',
+          name: 'statisticalReport',
+          component: statisticalReport
         },
         {
           des: '诊断结果',
