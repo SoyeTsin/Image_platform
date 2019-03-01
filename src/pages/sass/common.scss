@@ -20,6 +20,20 @@
   border: solid 1px transparent;
 }
 
+.button-center-def {
+  text-align: center;
+  margin: auto;
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  opacity: 0.5;
+  background: #FFFFFF;
+  border: 1px solid #C9C9C9;
+  border-radius: 1px;
+  box-shadow: 0 6px 10px 0 rgba(217, 217, 217, 0.25);
+  width: 160px;
+}
+
 .padding-left {
   box-sizing: border-box;
   padding-left: 20px;
@@ -81,6 +95,9 @@
   width: 150px;
   border-radius: 1px;
 }
+.main-right{
+  margin-right: 10px;
+}
 
 .el-select-dropdown {
   border-radius: 1px;
@@ -121,7 +138,10 @@
   width: 100%;
   text-align: left;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .so-button {
@@ -135,6 +155,7 @@
   color: #30333F;
   letter-spacing: 0;
   line-height: 36px;
+  margin-bottom: 60px;
 }
 
 .dialog-item /deep/ .el-input__inner, .dialog-item /deep/ .el-select {

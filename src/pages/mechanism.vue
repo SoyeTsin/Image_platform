@@ -52,6 +52,7 @@
                      :page-size="pageParameter.pageSize"
                      layout="sizes, prev, pager, next" :total="pageParameter.total">
       </el-pagination>
+      <addMechanism ref="addMechanism" @renewList="getData"></addMechanism>
     </el-main>
   </el-container>
 </template>
@@ -59,9 +60,11 @@
 <script>
   import common from './common/common'
   import icon_edit from './assets/list/edit.png'
+  import addMechanism from './components/addMechanism'
 
   export default {
     name: "mechanism",
+    components: {addMechanism},
     data() {
       return {
         icon_edit,
@@ -139,6 +142,10 @@
           pageSize: common.pageParameter.pageSize
         }
         this.getData()
+      },
+      editUser(user) {
+        this.$refs.addMechanism.changeDialogTableVisible()
+        this.$refs.addMechanism.editMechanism(user)
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

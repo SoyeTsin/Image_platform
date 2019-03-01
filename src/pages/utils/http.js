@@ -7,7 +7,6 @@ axios.defaults.timeout = 5000;
 axios.defaults.baseURL = 'https://generic-stg1.yingxiang.pingan.com:8080';
 // axios.defaults.baseURL = '';
 
-
 //http request 拦截器
 axios.interceptors.request.use(
   config => {
@@ -34,7 +33,7 @@ axios.interceptors.request.use(
 //http response 拦截器
 axios.interceptors.response.use(
   response => {
-    if (response.data.code == '000100' || response.data.code == '000099') {
+    if (response.data.code == '000100' || response.data.code == '000099' || response.data.code == '001099' || response.data.code == '001100') {
       let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/admin')
       router.push({
         path: routerPath,
@@ -52,7 +51,7 @@ axios.interceptors.response.use(
  *
  *
  *
- * 
+ *
  * 封装get方法
  * @param url
  * @param data
