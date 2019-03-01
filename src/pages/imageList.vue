@@ -50,24 +50,27 @@
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
-        <el-table-column prop="name" label="影像编号" width="120">
+        <el-table-column prop="serialUID" label="影像编号">
         </el-table-column>
-        <el-table-column prop="name" label="检查时间">
+        <el-table-column prop="examDate" label="检查时间">
         </el-table-column>
-        <el-table-column prop="name" label="姓名">
+        <el-table-column prop="patientName" label="姓名">
         </el-table-column>
-        <el-table-column prop="name" label="性别">
-        </el-table-column>
-        <el-table-column prop="name" label="年龄">
-        </el-table-column>
-        <el-table-column prop="name" label="拍摄部位">
-        </el-table-column>
-        <el-table-column prop="name" label="检测设备">
-        </el-table-column>
-        <el-table-column prop="name" label="AI检测情况">
+        <el-table-column label="性别">
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="light" content="AI处理中AI处理中AI处理中AI处理中AI处理中" placement="bottom">
-              <span>AI处理中</span>
+            {{ scope.row.gender|genderFilter }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="studyAge" label="年龄">
+        </el-table-column>
+        <el-table-column prop="bodyPartExamined" label="拍摄部位">
+        </el-table-column>
+        <el-table-column prop="modality" label="检测设备">
+        </el-table-column>
+        <el-table-column label="AI检测情况">
+          <template slot-scope="scope">
+            <el-tooltip class="item" effect="light" :content="scope.row.aiMsg"placement="bottom">
+              <span>{{scope.row.aiMsg}}</span>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -116,6 +119,17 @@
         }
       }
     },
+    filters: {
+      genderFilter(value) {
+        if (value == 'm') {
+          return '男'
+        } else if (value == 'f') {
+          return '女'
+        } else {
+          return '未知'
+        }
+      }
+    },
     computed: {
       channelValue() {
         return this.channel.value
@@ -129,6 +143,7 @@
       aiResultValue() {
         return this.aiResult.value
       },
+
     },
     watch: {
       channelValue(val) {
