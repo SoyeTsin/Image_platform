@@ -1,104 +1,113 @@
 <template>
   <el-container>
+    <el-header>
+      <top></top>
+    </el-header>
     <el-main>
-      <el-row class="text-left main-title">影像列表</el-row>
-      <el-row class="text-left main-screen">
-        <el-col :span="20">
-          <el-button plain type="primary" class="add-button" @click="refresh"><i
-            class="el-icon-refresh"></i>刷新数据
-          </el-button>
-          <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
-            <el-option
-              v-for="item in channel.list"
-              :key="item.channelId"
-              :label="item.channelName"
-              :value="item.channelId">
-            </el-option>
-          </el-select>
-          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input main-right">
-            <el-option
-              v-for="item in institution.list"
-              :key="item.institutionId"
-              :label="item.institutionName"
-              :value="item.institutionId">
-            </el-option>
-          </el-select>
-          <el-select v-model="aiResult.value" placeholder="全部AI病种" class="main-input">
-            <el-option
-              v-for="item in aiResult.list"
-              :key="item.id"
-              :label="item.val"
-              :value="item.id">
-            </el-option>
-          </el-select>
-          <el-select v-model="disease.value" placeholder="全部检查情况" class="main-input">
-            <el-option
-              v-for="item in disease.list"
-              :key="item.id"
-              :label="item.val"
-              :value="item.id">
-            </el-option>
-          </el-select>
-          <el-date-picker
-            type="date"
-            v-model="parameter.examDate"
-            placeholder="检测日期">
-          </el-date-picker>
-        </el-col>
-        <el-col :span="4" class="display-right">
-          <el-button type="success" class="search-button" @click="search">查询</el-button>
-        </el-col>
-      </el-row>
-      <el-table :data="tableData" stripe>
-        <el-table-column prop="serialUID" label="影像编号" width="210">
-        </el-table-column>
-        <el-table-column prop="examDate" label="检查时间" width="150">
-        </el-table-column>
-        <el-table-column prop="patientName" label="姓名">
-        </el-table-column>
-        <el-table-column label="性别">
-          <template slot-scope="scope">
-            {{ scope.row.gender|genderFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="studyAge" label="年龄">
-        </el-table-column>
-        <el-table-column prop="bodyPartExamined" label="拍摄部位">
-        </el-table-column>
-        <el-table-column prop="modality" label="检测设备">
-        </el-table-column>
-        <el-table-column label="AI检测情况">
-          <template slot-scope="scope">
-            <el-tooltip class="item" effect="light" :content="scope.row.aiMsg" placement="bottom">
-              <span>{{scope.row.aiMsg}}</span>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
-              <img src="./assets/image/ck.png" class="table-icon">
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
-              <img src="./assets/image/bg.png" class="table-icon">
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
-                     :page-size="pageParameter.pageSize"
-                     layout="sizes, prev, pager, next" :total="pageParameter.total">
-      </el-pagination>
+      <div class="so-content">
+        <el-row class="text-left main-title">影像列表</el-row>
+        <el-row class="text-left main-screen">
+          <el-col :span="20">
+            <el-button plain type="primary" class="add-button" @click="refresh"><i
+              class="el-icon-refresh"></i>刷新数据
+            </el-button>
+            <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
+              <el-option
+                v-for="item in channel.list"
+                :key="item.channelId"
+                :label="item.channelName"
+                :value="item.channelId">
+              </el-option>
+            </el-select>
+            <el-select v-model="institution.value" filterable placeholder="机构" class="main-input main-right">
+              <el-option
+                v-for="item in institution.list"
+                :key="item.institutionId"
+                :label="item.institutionName"
+                :value="item.institutionId">
+              </el-option>
+            </el-select>
+            <el-select v-model="aiResult.value" placeholder="全部AI病种" class="main-input">
+              <el-option
+                v-for="item in aiResult.list"
+                :key="item.id"
+                :label="item.val"
+                :value="item.id">
+              </el-option>
+            </el-select>
+            <el-select v-model="disease.value" placeholder="全部检查情况" class="main-input">
+              <el-option
+                v-for="item in disease.list"
+                :key="item.id"
+                :label="item.val"
+                :value="item.id">
+              </el-option>
+            </el-select>
+            <el-date-picker
+              type="date"
+              v-model="parameter.examDate"
+              placeholder="检测日期">
+            </el-date-picker>
+          </el-col>
+          <el-col :span="4" class="display-right">
+            <el-button type="success" class="search-button" @click="search">查询</el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="tableData" stripe>
+          <el-table-column prop="serialUID" label="影像编号" width="210">
+          </el-table-column>
+          <el-table-column prop="examDate" label="检查时间" width="150">
+          </el-table-column>
+          <el-table-column prop="patientName" label="姓名">
+          </el-table-column>
+          <el-table-column label="性别">
+            <template slot-scope="scope">
+              {{ scope.row.gender|genderFilter }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="studyAge" label="年龄">
+          </el-table-column>
+          <el-table-column prop="bodyPartExamined" label="拍摄部位">
+          </el-table-column>
+          <el-table-column prop="modality" label="检测设备">
+          </el-table-column>
+          <el-table-column label="AI检测情况">
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="light" :content="scope.row.aiMsg" placement="bottom">
+                <span>{{scope.row.aiMsg}}</span>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
+                <img src="./assets/image/ck.png" class="table-icon">
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
+                <img src="./assets/image/bg.png" class="table-icon">
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                       :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
+                       :page-size="pageParameter.pageSize"
+                       layout="sizes, prev, pager, next" :total="pageParameter.total">
+        </el-pagination>
+      </div>
+
     </el-main>
+
   </el-container>
 </template>
 
 <script>
+  import top from './components/top'
   import common from './common/common'
 
   export default {
     name: "mechanism",
+    components: {top},
     data() {
       return {
         channel: {value: '', key: null, list: []},
@@ -314,4 +323,21 @@
 
 <style lang="scss" scoped>
   @import "sass/common";
+
+  .el-header {
+    padding: 0;
+  }
+
+  .el-main {
+    box-sizing: border-box;
+    padding: 20px;
+    background: rgb(246, 246, 246);
+    height: 100%;
+  }
+
+  .so-content {
+    box-sizing: border-box;
+    padding: 20px;
+    background: #ffffff;
+  }
 </style>

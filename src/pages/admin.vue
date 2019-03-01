@@ -51,6 +51,12 @@
   export default {
     name: "login",
     components: {top},
+    computed() {
+      userNameVal()
+      {
+        return this.userParameter.userName
+      }
+    },
     data() {
       return {
         login_bg_1,
@@ -85,6 +91,9 @@
               path: '/userinfo'
             })
           })
+      },
+      initMsg() {
+        this.msg = ''
       }
     }
   }

@@ -21,14 +21,14 @@
               <input placeholder="验证码" class="so-input" v-model="userParameter.smsCode"></input>
               <div class="button-validate" @click="getSmsCode">获取验证码</div>
             </div>
-            <div class="validate-msg">
+            <div class="validate-msg" v-if="msg">
               <img src="./assets/login/warning.png"/>
               <div>
-                请输入正确的账号或验证码
+                {{msg}}
               </div>
             </div>
           </div>
-          <div class="login-button">登&nbsp;&nbsp;录</div>
+          <div class="login-button"  @click="login">登&nbsp;&nbsp;录</div>
           <div class="login-des">暂不支持注册</div>
         </div>
       </div>
@@ -50,18 +50,20 @@
   import login_bg_1 from './assets/login/login-bg-1.png'
   import login_bg_2 from './assets/login/login-bg-2.png'
   import login_kuang from './assets/login/login-kuang.png'
+
   export default {
     name: "login",
     components: {top},
     data() {
       return {
+        msg: '',
         login_bg_1,
         login_bg_2,
         login_kuang,
         userParameter: {
-          smsCode: '',
+          smsCode: '647601',
           userType: 1,
-          phoneNum: '178999999',
+          phoneNum: '13088869730',
         }
       }
     },
@@ -78,23 +80,31 @@
               this.msg = response.msg
               return
             }
-            // common.token = response.data.token
-            // common.userId = response.data.userId
-            // common.phoneNum = response.data.phoneNum
-            // common.routerPath = this.$route.path
+            localStorage.setItem('token', response.data.token)   //return this
+            localStorage.setItem('userId', response.data.userId)   //return this
+            localStorage.setItem('phoneNum', response.data.phoneNum)   //return this
+            localStorage.setItem('routerPath', this.$route.path)   //return this
             this.$router.push({
-              path: '/userinfo'
+              path: '/imageList'
             })
           })
       },
       getSmsCode() {
+        this.initMsg()
         let parameter = {
           phoneNum: this.userParameter.phoneNum
         }
         this.$post('/account/getSmsCode', parameter)
           .then((response) => {
             console.log(response)
+            if (response.code != '000000') {
+              this.msg = response.msg
+              return
+            }
           })
+      },
+      initMsg() {
+        this.msg = ''
       }
     }
   }
