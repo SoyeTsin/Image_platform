@@ -6,23 +6,14 @@
         <el-form-item label="用户姓名" prop="userName" class="dialog-item">
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
-        <el-form-item label="所属渠道" prop="channelValue" class="dialog-item">
-          <el-select v-model="ruleForm.channelValue" filterable placeholder="渠道" class="main-input">
-            <el-option
-              v-for="item in channel.list"
-              :key="item.channelId"
-              :label="item.channelName"
-              :value="item.channelId">
-            </el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="所处机构" prop="institutionValue" class="dialog-item">
           <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in institution.list"
-              :key="item.institutionId"
-              :label="item.institutionName"
-              :value="item.institutionId">
+              :key="item.flowId"
+              :label="item.name"
+              :value="item.flowId"
+              :disabled="item.disabled">
             </el-option>
           </el-select>
         </el-form-item>
@@ -50,7 +41,7 @@
           </el-select>
         </el-form-item>
         <el-row>
-          <el-button type="success" class="button-center" @click="submitForm('ruleForm')">创建</el-button>
+          <el-button type="success" class="button-center" @click="submitForm('ruleForm')">确定</el-button>
         </el-row>
       </el-form>
     </el-dialog>
@@ -116,7 +107,6 @@
     },
     watch: {
       channelValue(val) {
-        this.queryOrganizationList(2, val)
         this.channel.key = val
       },
       institutionValue(val) {
@@ -148,16 +138,16 @@
       addUserInfo() {
         let parameter = {
           userId: this.parameter.userId,
-          userName: this.parameter.userName,
-          phoneNum: this.parameter.phoneNum,
-          institutionId: this.institution.key,
-          officeId: this.office.key,
-          isEnable: this.isEnable.key
+          userName: this.ruleForm.userName,
+          phoneNum: this.ruleForm.phoneNum,
+          institutionId: this.ruleForm.institutionValue,
+          officeId: this.ruleForm.officeValue,
+          isEnable: this.ruleForm.isEnableValue
         }
         this.$post('/account/editUserInfo', parameter)
           .then((response) => {
+            this.$message(response.msg);
             if (response.code != '000000') {
-              this.$message(response.msg);
               return
             }
             this.dialogTableVisible = false
@@ -167,39 +157,14 @@
       editUser(user) {
         console.log(user)
         this.parameter.userId = user.userId
-        this.parameter.userName = user.userName
-        this.parameter.phoneNum = user.phoneNum
-        this.channel.value = user.institution.channelName
-        this.channel.key = user.institution.channelId
-        this.institution.value = user.institution.institutionName
-        this.institution.key = user.institution.institutionId
-        this.office.value = user.office.officeName
-        this.office.key = user.office.officeId
-        this.isEnable.value = '启用'
-        this.isEnable.key = 0
+        this.ruleForm.userName = user.userName
+        this.ruleForm.phoneNum = user.phoneNum
+        this.ruleForm.institutionValue = user.institution.institutionName
+        this.ruleForm.officeValue = user.office.officeName
+        this.ruleForm.isEnableValue = '启用'
       },
       changeDialogTableVisible() {
         this.dialogTableVisible = !this.dialogTableVisible
-      },
-      queryOrganizationList(dataType = 1, channelId = '') {
-        let parameter = {
-          // provinceCode: this.provinces.value,
-          // cityCode: this.city.value,
-          channelId,
-          dataType
-        }
-        this.$post('/manager/queryOrganizationList', parameter)
-          .then((response) => {
-            if (response.code != '000000') {
-              this.$message(response.msg);
-              return
-            }
-            if (dataType == 1) {
-              this.channel.list = response.data.channelList
-            } else {
-              this.institution.list = response.data.institutionList
-            }
-          })
       },
       queryOfficeList() {
         let parameter = {}
@@ -210,6 +175,39 @@
               return
             }
             this.office.list = response.data
+          })
+      },
+      queryOrganizationList() {
+        let parameter = {
+          dataType: 0
+        }
+        this.$post('/manager/queryOrganizationList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            let newData = response.data.group
+            let list = []
+            for (let i in newData) {
+              let m = newData[i]
+              let n = {
+                disabled: true,
+                name: '- ' + m.channelName,
+                flowId: m.channelId,
+              }
+              let y = {}
+              list.push(n)
+              for (let j in m.institutions) {
+                y = {
+                  name: '-- ' + m.institutions[j].institutionName,
+                  flowId: m.institutions[j].institutionId,
+                  type: 1
+                }
+                list.push(y)
+              }
+            }
+            this.institution.list = list
           })
       },
       resetForm(formName) {

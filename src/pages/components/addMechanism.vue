@@ -12,10 +12,10 @@
               {{parameter.channelName}}
             </el-form-item>
             <el-form-item label="渠道联系人" prop="channelUser" class="">
-              <el-input v-model="parameter.channelUser"></el-input>
+              <el-input v-model="ruleForm.channelUser"></el-input>
             </el-form-item>
             <el-form-item label="机构联系人" prop="institutionUser" class="">
-              <el-input v-model="parameter.institutionUser"></el-input>
+              <el-input v-model="ruleForm.institutionUser"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -25,11 +25,11 @@
             <el-form-item label="所在地区：" prop="provinceName" class="">
               {{parameter.provinceName}}{{parameter.cityName}}
             </el-form-item>
-            <el-form-item label="联系方式" prop="channelUserPhoneNum" class="">
-              <el-input v-model="parameter.institutionUserPhoneNum"></el-input>
+            <el-form-item label="联系方式" prop="channelContact" class="">
+              <el-input v-model.number="ruleForm.channelContact"></el-input>
             </el-form-item>
-            <el-form-item label="联系方式" prop="institutionUserPhoneNum" class="">
-              <el-input v-model="parameter.institutionUserPhoneNum"></el-input>
+            <el-form-item label="联系方式" prop="institutionContact" class="">
+              <el-input v-model.number="ruleForm.institutionContact"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -38,19 +38,30 @@
 
           </el-col>
           <el-col :span="24">
-            <el-form-item label="上级机构" prop="channelValue" class="dialog-item">
-              <ELTreeSelect
-                ref="treeSelect"
-                v-model="ids"
-                :selectParams="selectParams"
-                :treeParams="elTreeParams"
-                @node-click="fun"
-                @select-clear="fun"
-                @searchFun="fun"
-              />
+            <el-form-item label="上级机构" prop="upRelate" class="dialog-item">
+              <el-select v-model="ruleForm.upRelate" filterable placeholder="机构" class="main-input">
+                <el-option
+                  v-for="item in upRelate.list"
+                  :key="item.flowId"
+                  :label="item.name"
+                  :value="item.flowId"
+                  :disabled="item.disabled">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
+            <el-form-item label="下级机构" prop="downRelate" class="dialog-item">
+              <el-select v-model="ruleForm.downRelate" filterable placeholder="机构" class="main-input">
+                <el-option
+                  v-for="item in downRelate.list"
+                  :key="item.flowId"
+                  :label="item.name"
+                  :value="item.flowId"
+                  :disabled="item.disabled">
+                </el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
@@ -61,7 +72,7 @@
             <el-button class="button-center-def" @click="dialogTableVisible=false">跳过</el-button>
           </el-col>
           <el-col :span="8">
-            <el-button type="success" class="button-center" @click="submitForm('ruleForm')">创建</el-button>
+            <el-button type="success" class="button-center" @click="submitForm('ruleForm')">确定</el-button>
           </el-col>
           <el-col :span="4">
           </el-col>
@@ -72,72 +83,59 @@
 </template>
 
 <script>
-  import ELTreeSelect from 'el-tree-select';
-
   export default {
     name: "addUser",
-    components: {ELTreeSelect},
+    components: {},
     data() {
-      return {
-        dialogTableVisible: true,
-        values: ['3'],
-        selectParams: {
-          'multiple': true,
-          'clearable': true,
-          'placeholder': '请输入内容'
-        },
-        treeParams: {
-          'default-expand-all': true,
-          'filterable': true,
-          'check-strictly': true,
-          'render-content': this._renderFun,
-          'data': [{
-            flowId: '1', name: '哎哎哎',
-            children: [{flowId: '3', name: '啊啊啊啊'}]
-          },
-            {
-              flowId: '2',
-              name: '发生的'
-            }],
-          'props': {
-            children: 'children',
-            label: 'name',
-            value: 'flowId'
+      var checkPhone = (rule, value, callback) => {
+        if (!value) {
+          // return callback(new Error('手机号不能为空'));
+          callback();
+        } else {
+          const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+          console.log(reg.test(value));
+          if (reg.test(value)) {
+            callback();
+          } else {
+            return callback(new Error('请输入正确的手机号'));
           }
-        },
-        channel: {value: '', key: null, list: []},
-        institution: {value: '', key: null, list: []},
+        }
+      };
+      return {
+        dialogTableVisible: false,
+        upRelate: {value: '', key: null, list: []},
+        downRelate: {value: '', key: null, list: []},
         office: {value: '', key: null, list: []},
         parameter: {userName: '', phoneNum: '', userId: ''},
         isEnable: {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]},
         ruleForm: {
-          userName: '',
-          phoneNum: '',
-          channelValue: '',
-          institutionValue: '',
-          officeValue: '',
-          isEnableValue: '',
+          upRelate: '',
+          downRelate: '',
+          channelUser: '',
+          institutionUser: '',
+          channelContact: '',
+          institutionContact: '',
         },
         rules: {
-          userName: [
-            {required: true, message: '请输入用户名', trigger: 'blur'},
-            {min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur'}
+          upRelate: [
+            {required: false, message: '请选择所属上级机构', trigger: 'change'}
           ],
-          phoneNum: [
-            {required: true, message: '请输入手机号码', trigger: 'blur'},
-            {min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur'}
+          downRelate: [
+            {required: false, message: '请选择所属下级机构', trigger: 'change'}
           ],
-          channelValue: [
-            {required: true, message: '请选择所属渠道', trigger: 'change'}
+          channelUser: [
+            {required: false, message: '请输入渠道联系人', trigger: 'blur'},
+            {min: 2, max: 25, message: '长度为2 到 25 个字符', trigger: 'blur'}
           ],
-          institutionValue: [
-            {required: true, message: '请选择所属机构', trigger: 'change'}
+          institutionUser: [
+            {required: false, message: '请输入机构联系人', trigger: 'blur'},
+            {min: 2, max: 25, message: '长度为2 到 25 个字符', trigger: 'blur'}
           ],
-          officeValue: [
-            {required: true, message: '请选择活动区域', trigger: 'change'}
+          channelContact: [
+            {validator: checkPhone, trigger: 'blur'}
           ],
-          isEnableValue: [
-            {required: true, message: '请选择活动区域', trigger: 'change'}
+          institutionContact: [
+            {validator: checkPhone, trigger: 'blur'}
           ],
         }
       }
@@ -158,11 +156,10 @@
     },
     watch: {
       channelValue(val) {
-        this.queryOrganizationList(2, val)
-        this.channel.key = val
+        this.upRelate.key = val
       },
       institutionValue(val) {
-        this.institution.key = val
+        this.downRelate.key = val
       },
       officeValue(val) {
         this.office.key = val
@@ -173,37 +170,70 @@
       }
     },
     mounted() {
-      this.queryOfficeList()
       this.queryOrganizationList()
+      this.queryOfficeList()
     },
     methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addUserInfo()
+            this.addMechanism()
           } else {
             this.$message('请正确填写表单内容！');
             return false;
           }
         });
       },
+      addMechanism() {
+        let parameter = {
+          "institutionId": this.parameter.institutionId,
+          "channelUser": this.ruleForm.channelUser,
+          "channelContact": this.ruleForm.channelContact,
+          "institutionUser": this.ruleForm.institutionUser,
+          "institutionContact": this.ruleForm.institutionContact,
+          "father_institutions": this.ruleForm.upRelate,
+          "child_institutions": this.ruleForm.downRelate
+        }
+        this.$post('/manager/editInstitutionInfo', parameter)
+          .then((response) => {
+            this.$message(response.msg);
+            if (response.code != '000000') {
+              return
+            }
+            this.dialogTableVisible = false
+            this.$emit('renewList')
+          })
+      },
       editMechanism(obj) {
         console.log(obj)
-        this.parameter = obj
-        this.ruleForm.channelValue = obj.channelName
-        this.ruleForm.institutionValue = obj.institutionName
-        this.queryRelateInstitutionList(1)
-        this.queryRelateInstitutionList(2)
+        this.parameter = JSON.parse(JSON.stringify(obj))
+        this.ruleForm.channelUser = this.parameter.channelUser
+        this.ruleForm.channelContact = this.parameter.channelContact
+        this.ruleForm.institutionUser = this.parameter.institutionUser
+        this.ruleForm.institutionContact = this.parameter.institutionContact
+
+        this.queryRelateInstitutionList(this.parameter.institutionId)
+      },
+      queryRelateInstitutionList(institutionId) {
+        let parameter = {institutionId, relateType: 0}
+        this.$post('manager/queryRelateInstitutionList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            let upRelate = response.data.upRelate
+            this.ruleForm.upRelate = upRelate.length > 0 ? upRelate[0].institutionName : ''
+            let downRelate = response.data.downRelate
+            this.ruleForm.downRelate = downRelate.length > 0 ? downRelate[0].institutionName : ''
+          })
       },
       changeDialogTableVisible() {
         this.dialogTableVisible = !this.dialogTableVisible
       },
-      queryOrganizationList(dataType = 1, channelId = '') {
+      queryOrganizationList() {
         let parameter = {
-          // provinceCode: this.provinces.value,
-          // cityCode: this.city.value,
-          channelId,
-          dataType
+          dataType: 0
         }
         this.$post('/manager/queryOrganizationList', parameter)
           .then((response) => {
@@ -211,11 +241,28 @@
               this.$message(response.msg);
               return
             }
-            if (dataType == 1) {
-              this.channel.list = response.data.channelList
-            } else {
-              this.institution.list = response.data.institutionList
+            let newData = response.data.group
+            let list = []
+            for (let i in newData) {
+              let m = newData[i]
+              let n = {
+                disabled: true,
+                name: '- ' + m.channelName,
+                flowId: m.channelId,
+              }
+              let y = {}
+              list.push(n)
+              for (let j in m.institutions) {
+                y = {
+                  name: '-- ' + m.institutions[j].institutionName,
+                  flowId: m.institutions[j].institutionId,
+                  type: 1
+                }
+                list.push(y)
+              }
             }
+            this.upRelate.list = list
+            this.downRelate.list = list
           })
       },
       queryOfficeList() {
@@ -229,23 +276,7 @@
             this.office.list = response.data
           })
       },
-      queryRelateInstitutionList(relateType) {
-        let parameter = {
-          relateType,
-          institutionId: ''
-        }
-        this.$post('/manager/queryRelateInstitutionList', parameter)
-          .then((response) => {
-            if (response.code != '000000') {
-              this.$message(response.msg);
-              return
-            }
-            if (relateType == 1) {
-              this.upRelate = response.data
-            } else if (relateType == 2) {
-              this.downRelate = response.data
-            }
-          })
+      treeChangeFun() {
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();

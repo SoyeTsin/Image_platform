@@ -50,7 +50,7 @@
           </el-select>
         </el-col>
         <el-col :span="4" class="display-right">
-          <el-button type="success" class="search-button" @click="search">搜索</el-button>
+          <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
@@ -58,7 +58,16 @@
         </el-table-column>
         <el-table-column prop="office.officeName" label="所在科室">
         </el-table-column>
-        <el-table-column prop="institution.institutionName" label="所在医院">
+        <el-table-column label="所在医院">
+          <template slot-scope="scope" :title="scope.row.institution.channelName">
+            <el-popover
+              ref="popover"
+              width="200"
+              trigger="hover"
+              :content="scope.row.institution.channelName+'      '+scope.row.institution.institutionName">
+            </el-popover>
+            <el-col v-popover:popover>{{ scope.row.institution.institutionName }}</el-col>
+          </template>
         </el-table-column>
         <el-table-column label="所在地区">
           <template slot-scope="scope">
