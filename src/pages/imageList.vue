@@ -23,30 +23,30 @@
               :value="item.institutionId">
             </el-option>
           </el-select>
-          <el-select v-model="value" placeholder="全部AI病种" class="main-input">
+          <el-select v-model="aiResult.value" placeholder="全部AI病种" class="main-input">
             <el-option
-              v-for="item in disease.list"
-              :key="item.diseaseType"
-              :label="item.diseaseName"
-              :value="item.diseaseType">
+              v-for="item in aiResult.list"
+              :key="item.id"
+              :label="item.val"
+              :value="item.id">
             </el-option>
           </el-select>
-          <el-select v-model="value" placeholder="全部检查情况" class="main-input">
+          <el-select v-model="disease.value" placeholder="全部检查情况" class="main-input">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in disease.list"
+              :key="item.id"
+              :label="item.val"
+              :value="item.id">
             </el-option>
           </el-select>
           <el-date-picker
-            type="dates"
-            v-model="value6"
+            type="date"
+            v-model="parameter.examDate"
             placeholder="检测日期">
           </el-date-picker>
         </el-col>
         <el-col :span="4" class="display-right">
-          <el-button type="success" class="search-button">查询</el-button>
+          <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
@@ -104,7 +104,6 @@
         aiResult: {value: '', key: null, list: []},
         options: '',
         value: '',
-        value6: '',
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
@@ -127,6 +126,9 @@
       diseaseValue() {
         return this.disease.value
       },
+      aiResultValue() {
+        return this.aiResult.value
+      },
     },
     watch: {
       channelValue(val) {
@@ -141,22 +143,27 @@
         if (val == this.institution.list[0].institutionName) {
           institutionId = this.institution.list[0].institutionId
         }
+        this.institution.key = institutionId
         this.findAllDiseaseTypeCountList(institutionId)
       },
       diseaseValue(val) {
         console.log(val)
+        this.disease.key = val
+      },
+      aiResultValue(val) {
+        this.aiResult.key = val
       }
     },
     mounted() {
       this.diseaseType()
-      this.aiResultTypes()
+      this.getAiResult()
       this.queryOrganizationList()
     },
     methods: {
       getData() {
         this.$post('/api/serials', this.parameter)
           .then((response) => {
-            if (response.code != '000000') {diseaseType
+            if (response.code != '000000') {
               this.$message(response.msg);
               return
             }
@@ -199,31 +206,58 @@
               this.$message(response.msg);
               return
             }
-            this.parameter.aiMsg = response.msg
+            // this.parameter.aiMsg = response.msg
             this.getData()
           })
       },
-      aiResultTypes() {
+      getAiResult() {
         let parameter = {}
-        this.$post('/images/aiResultTypes', parameter)
+        this.$fetch('/api/aiResult', parameter)
           .then((response) => {
             if (response.code != '000000') {
               this.$message(response.msg);
               return
             }
-            this.aiResultTypes.list = response.data
+            let list = [];
+            for (let i in  response.data) {
+              list.push({
+                id: i,
+                val: response.data[i]
+              })
+            }
+            this.aiResult.list = list
           })
       },
       diseaseType() {
         let parameter = {}
-        this.$post('/api/diseaseType', parameter)
+        this.$fetch('/api/diseaseType', parameter)
           .then((response) => {
             if (response.code != '000000') {
               this.$message(response.msg);
               return
             }
-            this.disease.list = response.data
+            let list = [];
+            for (let i in  response.data) {
+              list.push({
+                id: i,
+                val: response.data[i]
+              })
+            }
+            this.disease.list = list
           })
+      },
+      search() {
+        let newDate = new Date(this.parameter.examDate)
+        let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
+        this.parameter = {
+          institutionId: this.institution.key,
+          diseaseType: this.disease.key * 1,
+          aiMsg: this.aiResult.key,
+          examDate: time,
+          pageNum: 1,
+          pageSize: common.pageParameter.pageSize
+        }
+        this.getData()
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

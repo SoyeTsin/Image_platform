@@ -24,7 +24,7 @@
           <el-input v-model="parameter.institutionId" placeholder="机构" class="main-input"></el-input>
         </el-col>
         <el-col :span="4" class="display-right">
-          <el-button type="success" class="search-button" @click="search">搜索</el-button>
+          <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
