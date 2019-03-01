@@ -101,7 +101,7 @@
         channel: {value: '', key: null, list: []},
         institution: {value: '', key: null, list: []},
         disease: {value: '', key: null, list: []},
-        aiResultTypes:{value: '', key: null, list: []},
+        aiResult: {value: '', key: null, list: []},
         options: '',
         value: '',
         value6: '',
@@ -148,6 +148,7 @@
       }
     },
     mounted() {
+      this.diseaseType()
       this.aiResultTypes()
       this.queryOrganizationList()
     },
@@ -155,7 +156,7 @@
       getData() {
         this.$post('/api/serials', this.parameter)
           .then((response) => {
-            if (response.code != '000000') {
+            if (response.code != '000000') {diseaseType
               this.$message(response.msg);
               return
             }
@@ -211,6 +212,17 @@
               return
             }
             this.aiResultTypes.list = response.data
+          })
+      },
+      diseaseType() {
+        let parameter = {}
+        this.$post('/api/diseaseType', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.disease.list = response.data
           })
       },
       handleSizeChange(val) {

@@ -58,7 +58,16 @@
         </el-table-column>
         <el-table-column prop="office.officeName" label="所在科室">
         </el-table-column>
-        <el-table-column prop="institution.institutionName" label="所在医院">
+        <el-table-column label="所在医院">
+          <template slot-scope="scope" :title="scope.row.institution.channelName">
+            <el-popover
+              ref="popover"
+              width="200"
+              trigger="hover"
+              :content="scope.row.institution.channelName+'      '+scope.row.institution.institutionName">
+            </el-popover>
+            <el-col v-popover:popover>{{ scope.row.institution.institutionName }}</el-col>
+          </template>
         </el-table-column>
         <el-table-column label="所在地区">
           <template slot-scope="scope">
