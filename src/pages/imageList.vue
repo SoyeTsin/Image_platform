@@ -4,7 +4,7 @@
       <el-row class="text-left main-title">影像列表</el-row>
       <el-row class="text-left main-screen">
         <el-col :span="20">
-          <el-button plain type="primary" class="add-button" @click="dialogTableVisible = true"><i
+          <el-button plain type="primary" class="add-button" @click="refresh"><i
             class="el-icon-refresh"></i>刷新数据
           </el-button>
           <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
@@ -50,9 +50,9 @@
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
-        <el-table-column prop="serialUID" label="影像编号">
+        <el-table-column prop="serialUID" label="影像编号" width="210">
         </el-table-column>
-        <el-table-column prop="examDate" label="检查时间">
+        <el-table-column prop="examDate" label="检查时间" width="150">
         </el-table-column>
         <el-table-column prop="patientName" label="姓名">
         </el-table-column>
@@ -69,7 +69,7 @@
         </el-table-column>
         <el-table-column label="AI检测情况">
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="light" :content="scope.row.aiMsg"placement="bottom">
+            <el-tooltip class="item" effect="light" :content="scope.row.aiMsg" placement="bottom">
               <span>{{scope.row.aiMsg}}</span>
             </el-tooltip>
           </template>
@@ -175,12 +175,15 @@
       this.queryOrganizationList()
     },
     methods: {
-      getData() {
+      getData(msg = '') {
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
               this.$message(response.msg);
               return
+            }
+            if (msg) {
+              this.$message(msg);
             }
             this.tableData = response.data.list
             this.pageParameter.total = response.data.total || 0
@@ -268,7 +271,7 @@
           institutionId: this.institution.key,
           diseaseType: this.disease.key * 1,
           aiMsg: this.aiResult.key,
-          examDate: time,
+          examDate: this.parameter.examDate ? time : '',
           pageNum: 1,
           pageSize: common.pageParameter.pageSize
         }
@@ -276,9 +279,34 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        let newDate = new Date(this.parameter.examDate)
+        let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
+        this.parameter = {
+          institutionId: this.institution.key,
+          diseaseType: this.disease.key * 1,
+          aiMsg: this.aiResult.key,
+          examDate: this.parameter.examDate ? time : '',
+          pageNum: 1,
+          pageSize: val
+        }
+        this.getData()
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        let newDate = new Date(this.parameter.examDate)
+        let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
+        this.parameter = {
+          institutionId: this.institution.key,
+          diseaseType: this.disease.key * 1,
+          aiMsg: this.aiResult.key,
+          examDate: this.parameter.examDate ? time : '',
+          pageNum: val,
+          pageSize: common.pageParameter.pageSize
+        }
+        this.getData()
+      },
+      refresh() {
+        this.getData('刷新成功')
       }
     },
   }
