@@ -19,7 +19,7 @@
       <div class="info-list">
           <div class="title">
             <h4>AI检测信息（5） </h4>
-            <span> <img src="../../static/fjj-icon/yc.png" alt=""></span>
+            <span @click="isDetail = !isDetail"> <img src="../../static/fjj-icon/yc.png" alt=""></span>
           </div>
           <div class="list">
             <div class="nature">
@@ -29,7 +29,7 @@
               <span>概率</span>
             </div>
              <ul>
-               <li v-for="(x,index) in 4" :class="[x == 1?'active':'']" :key="index">
+               <li v-for="(x,index) in 4" :class="[x == 1?'active':'']" :key="index" @click="isDetail = true">
                  <span>LX_001</span>
                  <el-popover
                   placement="bottom"
@@ -141,11 +141,26 @@
             <span>复原</span>
           </p>
         </el-col>
-        <el-col :class="[active == 'lztx'?'active':'']">
-           <p @click="activeFun('lztx')">
-            <img src="../../static/fjj-icon/lztx-1.png">
-            <span>漏诊提醒</span>
-          </p>
+        <el-col>
+          <el-popover
+              placement="top"
+              v-model="isRemind"
+              width="216"
+              trigger="click">
+              <div class="tips">
+                <p style="text-align: center;padding-top: 18px;">是否出现漏诊？</p>
+                <div class="btn">
+                  <span @click="isRemind = false">否</span>
+                  <span>是</span>
+                </div>
+              </div>
+              <i slot="reference">
+                  <p @click="activeFun('lztx')">
+                    <img src="../../static/fjj-icon/lztx-1.png">
+                    <span>漏诊提醒</span>
+                  </p>
+              </i>
+            </el-popover>
         </el-col>
         <el-col>
           <p>
@@ -190,11 +205,11 @@
           </span>
         </el-dialog>
 
-        <div class="popup">
+        <div class="popup" v-if="isDetail">
           <div class="title">
               <i></i>
               <h4>AI诊断结果</h4>
-              <i><img src="../../static/fjj-icon/yxgb.png" alt=""></i>
+              <i @click="isDetail = false"><img src="../../static/fjj-icon/yxgb.png" alt=""></i>
           </div>
           <div class="text">
             <p>
@@ -215,6 +230,7 @@
             <el-popover
               placement="top"
               width="216"
+              v-model="isCorrect"
               trigger="click">
               <div class="tips" style="height: 159px;padding: 8px;">
                 <p style="padding-bottom: 20px;">信息修正</p>
@@ -224,7 +240,7 @@
                   <span><input type="text" placeholder="请输入"></span>
                 </p>
                 <div class="btn">
-                  <span>取消</span>
+                  <span @click="isCorrect = false">取消</span>
                   <span>确定</span>
                 </div>
               </div>
@@ -235,11 +251,12 @@
             <el-popover
               placement="top"
               width="216"
+              v-model="isDelete"
               trigger="click">
               <div class="tips">
                 <p style="text-align: center;padding-top: 18px;">是否确定删除AI提示？</p>
                 <div class="btn">
-                  <span>取消</span>
+                  <span @click="isDelete = false">取消</span>
                   <span>删除</span>
                 </div>
               </div>
@@ -274,7 +291,7 @@
             2018.02.01<br/>
              14:21:12<br/>
         </div>
-        <cornerstone-canvas ref="cornerstone"></cornerstone-canvas>
+        <cornerstone-canvas height="92vh" width="100%" ref="cornerstone"></cornerstone-canvas>
         <div class="right">
             <p>
             <span>{{slider.value}}</span>
@@ -412,6 +429,10 @@ export default {
         "/static/simple-study/000003.dcm",
         "/static/simple-study/000004.dcm",
       ],
+      isRemind:false,
+      isCorrect:false,
+      isDelete:false,
+      isDetail:false
     }
   },
   methods:{
@@ -508,7 +529,17 @@ export default {
     }
   },
   mounted(){
-    this.$post('/api/serialImages').then(res=>{
+    // 003131010100000080000000
+    // 043131010100000150000000
+    // 0021210300000140000000
+    // 0032320100000280000000
+    // 0032320100000290000000
+    // 0022220600000390000000
+    // 0013130200000400000000
+    // 0061610300000460000000
+    // 0021210600001400000000
+    // 0021211300001410000000
+    this.$post('/api/serials',{pageNum:1,institutionId:'005050024000004510000000',pageSize:10}).then(res=>{
       console.log(res)
     })
     this.$refs.cornerstone.init(this.baseUrl+this.exampleStudyImageIds[0]).then((res)=>{
@@ -536,6 +567,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
   .el-container{
     height: 100%;
     background: #000;
