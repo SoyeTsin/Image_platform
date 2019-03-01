@@ -4,22 +4,22 @@
       <div class="top">
         <i class="icon-fanhui iconfont" style="cursor: pointer;" @click="asideFun"></i>
         <i style="padding-left: 26.5px;"><img src="../../static/fjj-icon/yx.png" alt=""></i>
-        <p>MD12903  肺部CT</p>
+        <p>{{detail.modality}}</p>
       </div>
       <div class="info">
         <div class="img">
           <img src="" alt="">
-          <span>12张</span>
+          <span>{{detail.imageCount}}张</span>
         </div>
         <div class="text">
-          <p><span>河西</span> <span>男</span> <span>30岁</span></p>
-          <p><span>2018年7月21日</span></p>
+          <p><span>{{detail.patientName}}</span> <span>{{detail.sex==0?'男':'女'}}</span>{{detail.studyAge}}<span>岁</span></p>
+          <p><span>{{detail.examDate}}</span></p>
         </div>
       </div>
       <div class="info-list">
           <div class="title">
-            <h4>AI检测信息（5） </h4>
-            <span> <img src="../../static/fjj-icon/yc.png" alt=""></span>
+            <h4>AI检测信息（{{exampleStudyImageIds.length}}） </h4>
+            <span @click="isDetail = !isDetail"> <img src="../../static/fjj-icon/yc.png" alt=""></span>
           </div>
           <div class="list">
             <div class="nature">
@@ -29,17 +29,17 @@
               <span>概率</span>
             </div>
              <ul>
-               <li v-for="(x,index) in 4" :class="[x == 1?'active':'']" :key="index">
-                 <span>LX_001</span>
+               <li v-for="(x,index) in exampleStudyImageIds" :class="[index == listIndex?'active':'']" :key="index" @click="listClick(index,x)">
+                 <span>{{index+1}}</span>
                  <el-popover
                   placement="bottom"
                   width="200"
                   trigger="hover"
-                  content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-                  <span slot="reference">描述描…</span>
+                  :content="x.diseaseDesc">
+                  <span slot="reference">{{x.diseaseDesc}}</span>
                 </el-popover>
-                 <span>43-38</span>
-                 <span>80%</span>
+                 <span>{{x.imageNo}}</span>
+                 <span>{{x.probability}}%</span>
                </li>
              </ul>
           </div>
@@ -141,11 +141,26 @@
             <span>复原</span>
           </p>
         </el-col>
-        <el-col :class="[active == 'lztx'?'active':'']">
-           <p @click="activeFun('lztx')">
-            <img src="../../static/fjj-icon/lztx-1.png">
-            <span>漏诊提醒</span>
-          </p>
+        <el-col>
+          <el-popover
+              placement="top"
+              v-model="isRemind"
+              width="216"
+              trigger="click">
+              <div class="tips">
+                <p style="text-align: center;padding-top: 18px;">是否出现漏诊？</p>
+                <div class="btn">
+                  <span @click="isRemind = false">否</span>
+                  <span>是</span>
+                </div>
+              </div>
+              <i slot="reference">
+                  <p @click="activeFun('lztx')">
+                    <img src="../../static/fjj-icon/lztx-1.png">
+                    <span>漏诊提醒</span>
+                  </p>
+              </i>
+            </el-popover>
         </el-col>
         <el-col>
           <p>
@@ -190,20 +205,20 @@
           </span>
         </el-dialog>
 
-        <div class="popup">
+        <div class="popup" v-if="isDetail">
           <div class="title">
               <i></i>
               <h4>AI诊断结果</h4>
-              <i><img src="../../static/fjj-icon/yxgb.png" alt=""></i>
+              <i @click="isDetail = false"><img src="../../static/fjj-icon/yxgb.png" alt=""></i>
           </div>
           <div class="text">
             <p>
-              病灶描述：肺结节LX_002
+              病灶描述：{{listDetail.diseaseDesc}}
             </p>
-            <p>直径：3mm</p>
-            <p>密度：22Hu</p>
-            <p>可能概率：93%</p>
-            <p>坐标：X21  Y36   Z72</p>
+            <p>直径：{{listDetail.diameter}}</p>
+            <p>密度：{{listDetail.density}}</p>
+            <p>可能概率：{{listDetail.probability}}</p>
+            <p>坐标：{{listDetail.location}}</p>
           </div>
           <div class="popup-btn">
             <i>
@@ -215,6 +230,7 @@
             <el-popover
               placement="top"
               width="216"
+              v-model="isCorrect"
               trigger="click">
               <div class="tips" style="height: 159px;padding: 8px;">
                 <p style="padding-bottom: 20px;">信息修正</p>
@@ -224,7 +240,7 @@
                   <span><input type="text" placeholder="请输入"></span>
                 </p>
                 <div class="btn">
-                  <span>取消</span>
+                  <span @click="isCorrect = false">取消</span>
                   <span>确定</span>
                 </div>
               </div>
@@ -235,11 +251,12 @@
             <el-popover
               placement="top"
               width="216"
+              v-model="isDelete"
               trigger="click">
               <div class="tips">
                 <p style="text-align: center;padding-top: 18px;">是否确定删除AI提示？</p>
                 <div class="btn">
-                  <span>取消</span>
+                  <span @click="isDelete = false">取消</span>
                   <span>删除</span>
                 </div>
               </div>
@@ -265,7 +282,7 @@
             CT   LUNG   SCREEN
         </div>
         <div class="left-bottom" style="left:18px;bottom:18px;">
-            X : 117 &nbsp&nbsp   Y : 247 &nbsp&nbsp  Val : 92<br/>
+            X : {{pixel.pageX}} &nbsp&nbsp   Y : {{pixel.pageY}} &nbsp&nbsp  Val : {{pixel.pageY+pixel.pageX}}<br/>
             WW : {{windowWidth}} &nbsp&nbsp  WL :{{windowCenter}} 「CT Chest 」<br/>
             T : 2.5mm &nbsp&nbsp  L : -46.8<br/>
         </div>
@@ -274,7 +291,7 @@
             2018.02.01<br/>
              14:21:12<br/>
         </div>
-        <cornerstone-canvas ref="cornerstone"></cornerstone-canvas>
+        <cornerstone-canvas height="92vh" width="100%" ref="cornerstone"></cornerstone-canvas>
         <div class="right">
             <p>
             <span>{{slider.value}}</span>
@@ -407,28 +424,40 @@ export default {
         ]
       },
       baseUrl: "http://localhost:8686",//https://121.12.84.99
-      exampleStudyImageIds: [
-        "/static/simple-study/000002.dcm",
-        "/static/simple-study/000003.dcm",
-        "/static/simple-study/000004.dcm",
-      ],
+      exampleStudyImageIds: [],
+      isRemind:false,
+      isCorrect:false,
+      isDelete:false,
+      isDetail:false,
+      detail:null,
+      listIndex:0,
+      listDetail:null,
+      pixel:{
+        pageX:0,
+        pageY:0
+      }
     }
   },
   methods:{
+    listClick(index,data){//点击列表
+      this.listIndex = index
+      this.listDetail = data
+      this.isDetail = true
+    },
     sliderCallback(){
-      this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.$refs.slider.getIndex()])
+      this.cornerstone.loadImage(this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl)
       this.windowFun(400,40,0)
     },
     sliderSwitch(type){
       if(type){
         if(this.$refs.slider.getIndex() != 0){
           this.$refs.slider.setIndex(this.$refs.slider.getIndex()-1)
-          this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.slider.value-1])
+          this.cornerstone.loadImage(this.exampleStudyImageIds[this.slider.value-1].imageUrl)
         }
       }else{
         if(this.$refs.slider.getIndex() != this.slider.max){
           this.$refs.slider.setIndex(this.$refs.slider.getIndex()+1)
-          this.cornerstone.loadImage(this.baseUrl+this.exampleStudyImageIds[this.slider.value-1])
+          this.cornerstone.loadImage(this.exampleStudyImageIds[this.slider.value-1].imageUrl)
         }
       }
       this.windowFun(400,40,0)
@@ -508,17 +537,41 @@ export default {
     }
   },
   mounted(){
-    this.$post('/api/serialImages').then(res=>{
+
+    let data = {
+        institutionId:'005050024000004510000000',
+        serialUID: "serialuid15504731130780001",
+        channelId: "0001200000",
+        diseaseType: "0"
+    }
+
+    this.$post('/api/serials',{pageNum:1,institutionId:'005050024000004510000000',pageSize:10}).then(res=>{
       console.log(res)
     })
-    this.$refs.cornerstone.init(this.baseUrl+this.exampleStudyImageIds[0]).then((res)=>{
-      this.cornerstone = this.$refs.cornerstone
-      this.cornerstone.$el.addEventListener('mousemove', function(event) {
-        // console.log(event.pageX, event.pageY)
-        // const pixelCoords = res.pageToPixel(this.cornerstone.$el, event.pageX, event.pageY);
-        // document.getElementById('coords').textContent = "pageX=" + event.pageX + ", pageY=" + event.pageY + ", pixelX=" + pixelCoords.x + ", pixelY=" + pixelCoords.y;
-      });
+
+    this.$post('/api/serial',data).then(res=>{
+      console.log(res,3333)
+      this.detail = res.data
     })
+    
+    this.$post('/api/serialImages',data).then(res=>{
+        this.exampleStudyImageIds = res.data
+        this.slider.max = res.data.lenght
+        console.log(this.exampleStudyImageIds[0].imageUrl)
+        this.$refs.cornerstone.init(this.exampleStudyImageIds[0].imageUrl).then((res)=>{
+        this.cornerstone = this.$refs.cornerstone
+        this.cornerstone.$el.addEventListener('mousemove', function(event) {
+          this.pixel = {
+            pageX:event.pageX,
+            pageY:event.pageY
+          }
+          // console.log(event.pageX, event.pageY)
+          // const pixelCoords = res.pageToPixel(this.cornerstone.$el, event.pageX, event.pageY);
+          // document.getElementById('coords').textContent = "pageX=" + event.pageX + ", pageY=" + event.pageY + ", pixelX=" + pixelCoords.x + ", pixelY=" + pixelCoords.y;
+        });
+      })
+    })
+    
   },
   computed:{
     windowWidth(){
@@ -536,6 +589,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
   .el-container{
     height: 100%;
     background: #000;
@@ -604,6 +658,7 @@ export default {
         font-size: 15px;
         padding: 20px;
         line-height: 26px;
+        text-align: left;
       }
       .popup-btn{
         height: 44px;

@@ -51,7 +51,7 @@
             </div>
             <div class="report-main-right">
               <div class="ct-img">
-                CT影像
+                <cornerstone-canvas height="100%" width="100%" ref="cornerstone"></cornerstone-canvas>
               </div>
               <div class="ct-button">
                 <el-button type="success" class="ct-button-2">打印</el-button>
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import CornerstoneCanvas from '@/components/CornerstoneCanvas'
   export default {
     name: "userInfo",
     data() {
@@ -75,15 +76,28 @@
       };
       return {
         tableData: Array(5).fill(item),
+        baseUrl: "http://localhost:8686",//https://121.12.84.99
+        exampleStudyImageIds: [
+          "/static/simple-study/000002.dcm",
+          "/static/simple-study/000003.dcm",
+          "/static/simple-study/000004.dcm",
+        ],
       }
     },
+    components: {
+      CornerstoneCanvas
+    },
     methods: {},
+    mounted(){
+        this.$refs.cornerstone.init(this.baseUrl+this.exampleStudyImageIds[0]).then((res)=>{
+        this.cornerstone = this.$refs.cornerstone
+      })
+    }
   }
 </script>
 
 <style lang="scss" scoped>
   @import "sass/common";
-
   .report-nav {
     height: 26px;
   }

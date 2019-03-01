@@ -1,12 +1,9 @@
 <template>
-  <div>
-    <div class="image-canvas-wrapper" oncontextmenu="return false" unselectable='on' onselectstart='return false;'
+    <div class="image-canvas-wrapper" oncontextmenu="return false" :style="{'width':width,'height':height}" unselectable='on' onselectstart='return false;'
       onmousedown='return false;'>
       <!-- DICOM CANVAS -->
       <div ref="canvas" class="image-canvas" oncontextmenu="return false"></div>
     </div>
-  </div>
-
 </template>
 
 <script>
@@ -45,6 +42,16 @@ cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
 
 export default {
   name: "HelloWorld",
+  props: {
+    width: {
+      type: String,
+      required: true
+    },
+    height: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       isInitLoad: true,
@@ -52,7 +59,8 @@ export default {
       isSimpleAngle:false,//默认是否开启角度工具
       isLengthTool:false,//默认是否开启长度工具
       isTagging:false,
-      stepList:[]
+      stepList:[],
+      remind:false
     };
   },
   methods: {
@@ -341,8 +349,8 @@ export default {
 </script>
 <style scoped>
 .image-canvas-wrapper {
-  width: 100%;
-  height: 92vh;
+  /* width: 100%;
+  height: 92vh; */
   margin: 0 auto;
 }
 .image-canvas {
