@@ -35,7 +35,7 @@
       this.setUserInfo()
     }, methods: {
       setUserInfo() {
-        this.userName = localStorage.getItem('userName')
+        this.userName = localStorage.getItem('userName');
       },
       logout() {
         //account/logout
