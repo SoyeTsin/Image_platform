@@ -83,6 +83,8 @@
             localStorage.setItem('token', response.data.token)   //return this
             localStorage.setItem('userId', response.data.userId)   //return this
             localStorage.setItem('phoneNum', response.data.phoneNum)   //return this
+            localStorage.setItem('userName', response.data.userName)   //return this
+            localStorage.setItem('userType', response.data.userType)   //return this
             localStorage.setItem('routerPath', this.$route.path)   //return this
             this.$router.push({
               path: '/imageList'

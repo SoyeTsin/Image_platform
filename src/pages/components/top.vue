@@ -7,8 +7,8 @@
         <div class="text-left">智能影像体验平台{{roleText}}</div>
       </div>
     </el-col>
-    <el-col :span="12">
-      <div class="text-right padding-right">您好，李医生 | 安全退出</div>
+    <el-col :span="12" v-show="pathType">
+      <div class="text-right padding-right">您好，{{userName}} | <span class="logout" @click="logout">安全退出</span></div>
     </el-col>
   </div>
 </template>
@@ -21,7 +21,36 @@
     data() {
       return {
         logo,
-        roleText: ''
+        userName: '',
+        roleText: '',
+        pathType: true,
+      }
+    }, mounted() {
+      let path = this.$route.path
+      if (path == '/admin' || this.$route.path == '/login') {
+        this.pathType = false
+      } else {
+        this.pathType = true
+      }
+      this.setUserInfo()
+    }, methods: {
+      setUserInfo() {
+        this.userName = localStorage.getItem('userName')
+      },
+      logout() {
+        //account/logout
+        let parameter = {}
+        this.$post('/account/logout', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.msg = response.msg
+              return
+            }
+            let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/login')
+            this.$router.push({
+              path: routerPath
+            })
+          })
       }
     }
   }
@@ -64,5 +93,13 @@
     position: relative;
     z-index: 100;
     min-width: 1574px;
+  }
+
+  .logout {
+    cursor: pointer;
+  }
+
+  .logout:hover {
+    color: #409EFF
   }
 </style>
