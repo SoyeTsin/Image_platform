@@ -196,10 +196,13 @@
         }
         this.$post('/manager/editInstitutionInfo', parameter)
           .then((response) => {
-            this.$message(response.msg);
             if (response.code != '000000') {
+              this.$message(response.msg);
               return
             }
+            this.$message({
+              message: response.msg, type: 'success'
+            });
             this.dialogTableVisible = false
             this.$emit('renewList')
           })

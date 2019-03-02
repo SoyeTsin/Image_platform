@@ -221,6 +221,7 @@
       addUserFun() {
         console.log()
         this.$refs.addUser.changeDialogTableVisible()
+        this.$refs.addUser.addUser()
       },
       editUser(user) {
         this.$refs.addUser.changeDialogTableVisible()
@@ -231,6 +232,7 @@
         let parameter = {
           userId: user.userId
         }
+        debugger
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

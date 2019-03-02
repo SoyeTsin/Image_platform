@@ -136,27 +136,64 @@
         });
       },
       addUserInfo() {
+        let isEnableValue = this.ruleForm.isEnableValue
+        for (let i in this.isEnable.list) {
+          if (this.isEnable.list[i].label == isEnableValue) {
+            this.isEnable.key = this.isEnable.list[i].value
+          }
+        }
+        let institutionValue = this.ruleForm.institutionValue
+
+        for (let i in this.institution.list) {
+          if (this.institution.list[i].name == '-- ' + institutionValue) {
+            this.institution.key = this.parameter.institutionId
+          }
+        }
+        let officeValue = this.ruleForm.officeValue
+        for (let i in this.office.list) {
+          if (this.office.list[i].officeName == officeValue) {
+            this.office.key = this.parameter.officeId
+          }
+        }
         let parameter = {
           userId: this.parameter.userId,
           userName: this.ruleForm.userName,
           phoneNum: this.ruleForm.phoneNum,
-          institutionId: this.ruleForm.institutionValue,
-          officeId: this.ruleForm.officeValue,
-          isEnable: this.ruleForm.isEnableValue
+          institutionId: this.institution.key,
+          officeId: this.office.key,
+          isEnable: this.isEnable.key
         }
+
         this.$post('/account/editUserInfo', parameter)
           .then((response) => {
-            this.$message(response.msg);
             if (response.code != '000000') {
+              this.$message(response.msg);
               return
             }
+            this.$message({
+              message: response.msg, type: 'success'
+            });
             this.dialogTableVisible = false
             this.$emit('renewList')
           })
       },
+      addUser() {
+        this.parameter = {userName: '', phoneNum: '', userId: ''}
+        this.isEnable = {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]}
+        this.ruleForm = {
+          userName: '',
+          phoneNum: '',
+          channelValue: '',
+          institutionValue: '',
+          officeValue: '',
+          isEnableValue: '',
+        }
+      },
       editUser(user) {
         console.log(user)
         this.parameter.userId = user.userId
+        this.parameter.institutionId = user.institution.institutionId
+        this.parameter.officeId = user.office.officeId
         this.ruleForm.userName = user.userName
         this.ruleForm.phoneNum = user.phoneNum
         this.ruleForm.institutionValue = user.institution.institutionName

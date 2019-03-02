@@ -2,31 +2,47 @@
   <el-container>
     <el-aside width="216px" class="menu-aside"
               style="background-color:#131f2c; position: absolute;left: 0;height: 100%;padding-top: 60px;box-sizing: border-box;">
-      <router-link to="/userinfo">
-        <div class="menu-item active">
-          <img src="../assets/login/password.png"/>
-          <div>用户管理</div>
-        </div>
-      </router-link>
-      <router-link to="/mechanism">
-        <div class="menu-item">
-          <img src="../assets/login/password.png"/>
-          <div>机构管理</div>
-        </div>
-      </router-link>
-      <router-link to="/imageList">
-        <div class="menu-item">
-          <img src="../assets/login/password.png"/>
-          <div>影像列表</div>
-        </div>
-      </router-link>
+      <div v-for="item in menu" @click="intoFun(item)">
+        <router-link :to="item.path">
+          <div :class="menuType==item.id?'menu-item active':'menu-item'">
+            <img :src="item.icon"/>
+            <div>{{item.name}}</div>
+          </div>
+        </router-link>
+      </div>
     </el-aside>
   </el-container>
 </template>
 
 <script>
+  import icon_1 from '../assets/login/userInfo.png'
+  import icon_2 from '../assets/login/mechanism.png'
+
   export default {
-    name: "leftMenu"
+    name: "leftMenu",
+    data() {
+      return {
+        menuType: 0,
+        menuClass: 'menu-item active',
+        menu: [
+          {
+            id: 0,
+            icon: icon_1,
+            name: '用户管理',
+            path: '/userinfo'
+          }, {
+            id: 1,
+            icon: icon_2,
+            name: '机构管理',
+            path: '/mechanism'
+          }
+        ]
+      }
+    }, methods: {
+      intoFun(item) {
+        this.menuType = item.id
+      }
+    }
   }
 </script>
 

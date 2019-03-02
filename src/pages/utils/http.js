@@ -3,7 +3,7 @@ import {Message} from 'element-ui';
 import router from '../../router'
 import Vue from 'vue'
 
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 10000;
 axios.defaults.baseURL = 'https://generic-stg1.yingxiang.pingan.com:8080';
 // axios.defaults.baseURL = '';
 
@@ -34,7 +34,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     if (response.data.code == '000100' || response.data.code == '000099' || response.data.code == '001099' || response.data.code == '001100') {
-      let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/admin')
+      let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/login')
       router.push({
         path: routerPath,
         querry: {redirect: router.currentRoute.fullPath}//从哪个页面跳转
