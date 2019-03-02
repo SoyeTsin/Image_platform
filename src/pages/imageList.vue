@@ -77,7 +77,9 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
-              <img src="./assets/image/ck.png" class="table-icon">
+              <router-link :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
+                <img src="./assets/image/ck.png" class="table-icon">
+              </router-link>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
               <img src="./assets/image/bg.png" class="table-icon">
@@ -188,6 +190,7 @@
             this.tableData = response.data.list
             this.pageParameter.total = response.data.total || 0
             this.pageParameter.nowPage = response.data.pageNum || 0
+            console.log(this.tableData)
           })
       },
       queryOrganizationList(dataType = 1, channelId = '') {
@@ -292,7 +295,6 @@
         this.getData()
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
         let newDate = new Date(this.parameter.examDate)
         let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
         this.parameter = {

@@ -4,12 +4,12 @@
       <div class="top">
         <i class="icon-fanhui iconfont" style="cursor: pointer;" @click="asideFun"></i>
         <i style="padding-left: 26.5px;"><img src="../../static/fjj-icon/yx.png" alt=""></i>
-        <p>{{detail.modality}}</p>
+        <p>{{detail?detail.modality:''}}</p>
       </div>
       <div class="info">
         <div class="img">
-          <img src="" alt="">
-          <span>{{detail.imageCount}}张</span>
+          <cornerstone-canvas height="100%" width="100%" ref="cornerstone1"></cornerstone-canvas>
+          <span>{{exampleStudyImageIds.length}}张</span>
         </div>
         <div class="text">
           <p><span>{{detail.patientName}}</span> <span>{{detail.sex==0?'男':'女'}}</span>{{detail.studyAge}}<span>岁</span></p>
@@ -221,10 +221,10 @@
             <p>坐标：{{listDetail.location}}</p>
           </div>
           <div class="popup-btn">
-            <i>
+            <i @click="sliderSwitch(true)">
              <img src="../../static/fjj-icon/jgl.png" alt="">
             </i>
-            <i>
+            <i @click="sliderSwitch(false)">
              <img src="../../static/fjj-icon/jgr.png" alt="">
             </i>
             <el-popover
@@ -288,13 +288,12 @@
         </div>
         <div class="right-bottom" style="right:18px;bottom:18px;">
             50mA &nbsp&nbsp 140KV<br/>
-            2018.02.01<br/>
-             14:21:12<br/>
+            {{detail.examDate}}<br/>
         </div>
         <cornerstone-canvas height="92vh" width="100%" ref="cornerstone"></cornerstone-canvas>
         <div class="right">
             <p>
-            <span>{{slider.value}}</span>
+            <span>{{slider.value+1}}</span>
             /{{exampleStudyImageIds.length}}
             </p>
             <div class="slider">
@@ -307,7 +306,7 @@
                   :width="slider.width" 
                   :reverse="slider.reverse" 
                   :height="slider.height" 
-                  :max="exampleStudyImageIds.length" 
+                  :max="exampleStudyImageIds.length-1" 
                   :min="slider.min" 
                   :tooltip="false"
                   :bg-style="slider.bgStyle" 
@@ -410,8 +409,8 @@ export default {
         },
         processStyle:{"backgroundColor": "#34EDB6"},
         max:10,
-        min:1,
-        value:1,
+        min:0,
+        value:0,
         tooltipStyle: [
           {
             "backgroundColor": "#f05b72",
@@ -429,13 +428,15 @@ export default {
       isCorrect:false,
       isDelete:false,
       isDetail:false,
-      detail:null,
+      detail:{},
       listIndex:0,
       listDetail:null,
       pixel:{
         pageX:0,
         pageY:0
-      }
+      },
+      doctorDesc:'',
+      doctorResult:''
     }
   },
   methods:{
@@ -443,23 +444,29 @@ export default {
       this.listIndex = index
       this.listDetail = data
       this.isDetail = true
+      this.$refs.slider.setIndex(index)
     },
-    sliderCallback(){
+    sliderCallback(){  //拖动回调
       this.cornerstone.loadImage(this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl)
+      this.cornerstone1.loadImage(this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl)
+      this.listIndex = this.$refs.slider.getIndex()
+      this.listDetail = this.exampleStudyImageIds[this.slider.value]
       this.windowFun(400,40,0)
     },
-    sliderSwitch(type){
+    sliderSwitch(type){  //切换
       if(type){
         if(this.$refs.slider.getIndex() != 0){
           this.$refs.slider.setIndex(this.$refs.slider.getIndex()-1)
-          this.cornerstone.loadImage(this.exampleStudyImageIds[this.slider.value-1].imageUrl)
         }
       }else{
         if(this.$refs.slider.getIndex() != this.slider.max){
           this.$refs.slider.setIndex(this.$refs.slider.getIndex()+1)
-          this.cornerstone.loadImage(this.exampleStudyImageIds[this.slider.value-1].imageUrl)
         }
       }
+      this.cornerstone.loadImage(this.exampleStudyImageIds[this.slider.value].imageUrl)
+      this.cornerstone1.loadImage(this.exampleStudyImageIds[this.slider.value].imageUrl)
+      this.listIndex = this.$refs.slider.getIndex()
+      this.listDetail = this.exampleStudyImageIds[this.slider.value]
       this.windowFun(400,40,0)
     },
     handleClose(done) {
@@ -536,40 +543,34 @@ export default {
 
     }
   },
-  mounted(){
-
-    let data = {
-        institutionId:'005050024000004510000000',
-        serialUID: "serialuid15504731130780001",
-        channelId: "0001200000",
-        diseaseType: "0"
-    }
-
-    this.$post('/api/serials',{pageNum:1,institutionId:'005050024000004510000000',pageSize:10}).then(res=>{
-      console.log(res)
-    })
-
-    this.$post('/api/serial',data).then(res=>{
-      console.log(res,3333)
+  created(){
+    this.$post('/api/serial',this.$route.query).then(res=>{
       this.detail = res.data
     })
-    
+  },
+  mounted(){
+    let data = this.$route.query
     this.$post('/api/serialImages',data).then(res=>{
         this.exampleStudyImageIds = res.data
-        this.slider.max = res.data.lenght
-        console.log(this.exampleStudyImageIds[0].imageUrl)
-        this.$refs.cornerstone.init(this.exampleStudyImageIds[0].imageUrl).then((res)=>{
-        this.cornerstone = this.$refs.cornerstone
-        this.cornerstone.$el.addEventListener('mousemove', function(event) {
-          this.pixel = {
-            pageX:event.pageX,
-            pageY:event.pageY
-          }
-          // console.log(event.pageX, event.pageY)
-          // const pixelCoords = res.pageToPixel(this.cornerstone.$el, event.pageX, event.pageY);
-          // document.getElementById('coords').textContent = "pageX=" + event.pageX + ", pageY=" + event.pageY + ", pixelX=" + pixelCoords.x + ", pixelY=" + pixelCoords.y;
-        });
-      })
+        this.slider.max = res.data.lenght-1
+        setTimeout(()=>{
+            this.$refs.cornerstone.init(this.exampleStudyImageIds[0].imageUrl).then((res)=>{ //初始化工具
+            this.cornerstone = this.$refs.cornerstone
+            this.cornerstone.$el.addEventListener('mousemove', function(event) {
+              this.pixel = {
+                pageX:event.pageX,
+                pageY:event.pageY
+              }
+              // console.log(event.pageX, event.pageY)
+              // const pixelCoords = res.pageToPixel(this.cornerstone.$el, event.pageX, event.pageY);
+              // document.getElementById('coords').textContent = "pageX=" + event.pageX + ", pageY=" + event.pageY + ", pixelX=" + pixelCoords.x + ", pixelY=" + pixelCoords.y;
+            });
+          })
+          this.$refs.cornerstone1.init(this.exampleStudyImageIds[0].imageUrl).then((res)=>{ //初始化缩略图
+            this.cornerstone1 = this.$refs.cornerstone1
+          })
+        },100)
+        
     })
     
   },

@@ -72,7 +72,6 @@ export default {
           
           canvas.addEventListener('cornerstoneimagerendered', e=>{
             let viewport = cornerstone.getViewport(e.target);
-            console.log(viewport)
             this.$store.commit('SET_CORNERSTONE',viewport)
           });
           // 在 DOM 中将 canvas 元素注册到 cornerstone
@@ -89,10 +88,12 @@ export default {
                 canvas,
                 image
               );
+              viewport.voi.windowWidth = 400
+              viewport.voi.windowCenter = 40
               // 显示图像
               cornerstone.displayImage(canvas, image, viewport);
               // 激活工具
-              console.log(cornerstoneTools,2222)
+              console.log(dicomParser)
               this.initCanvasTools();
               resolve(cornerstone)
             },(err)=>{
@@ -119,7 +120,7 @@ export default {
           // invert: true,
           minScale: 0.2,
           maxScale: 8.0,
-          preventZoomOutsideImage: true
+          preventZoomOutsideImage: true,
       };
       cornerstoneTools.toolColors.setToolColor('#F5A623');
       cornerstoneTools.toolColors.setActiveColor('#06bd98');
@@ -335,6 +336,8 @@ export default {
               this.element,
               image
             );
+            viewport.voi.windowWidth = 400
+            viewport.voi.windowCenter = 40
             // 显示图像
             cornerstone.displayImage(this.element, image, viewport);
             // 激活工具
