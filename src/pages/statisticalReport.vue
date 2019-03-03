@@ -1,7 +1,10 @@
 <template>
   <el-container>
+    <el-header>
+      <top></top>
+    </el-header>
     <el-main>
-      <div class="report-body">
+      <div class="so-content">
         <div class="so-return">
           <div class="so-button" @click="returnGo">
             <i class="el-icon-arrow-left"></i>
@@ -48,8 +51,12 @@
               </div>
             </div>
             <div class="report-des">
-              <columnG2 :charData="serverData" :id="'c1'" id="c1" class="chart"></columnG2>
-              <pieG2 :charData="pieData" :id="'c1'" id="c2" class="chart"></pieG2>
+              <div class="chart-content">
+                <columnG2 :charData="serverData" :id="'c1'" id="c1"></columnG2>
+              </div>
+              <div class="chart-content">
+                <pieG2 :charData="pieData" :id="'c1'" id="c2"></pieG2>
+              </div>
             </div>
             <div class="button-right">
               <el-button type="success" class="button-center" @click="submitForm('ruleForm')">错误反馈</el-button>
@@ -62,129 +69,148 @@
 </template>
 
 <script>
-import G2 from "@antv/g2";
-import columnG2 from "./components/columnG2";
-import pieG2 from "./components/pieG2";
+  import G2 from "@antv/g2";
+  import columnG2 from "./components/columnG2";
+  import pieG2 from "./components/pieG2";
+  import top from "./components/top";
 
-export default {
-  name: "userInfo",
-  components: { columnG2, pieG2 },
-  data() {
-    return {
-      serverData: [],
-      pieData: [],
-      pickerOptions2: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+  export default {
+    name: "userInfo",
+    components: {columnG2, pieG2, top},
+    data() {
+      return {
+        serverData: [],
+        pieData: [],
+        parameter:{
+          beginDate:'',
+          endDate:'',
+          diseaseType:'',
+          institutionId:'',
+        },
+        pickerOptions2: {
+          shortcuts: [
+            {
+              text: "最近一周",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                picker.$emit("pick", [start, end]);
+              }
+            },
+            {
+              text: "最近一个月",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                picker.$emit("pick", [start, end]);
+              }
+            },
+            {
+              text: "最近三个月",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                picker.$emit("pick", [start, end]);
+              }
             }
+          ]
+        },
+        options: [
+          {
+            value: "0",
+            label: "肺结节"
           },
           {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
+            value: "1",
+            label: "双皮奶"
           }
-        ]
+        ],
+        value: "肺结节",
+        value7: ""
+      };
+    },
+    mounted() {
+      this.imgReportOne();
+      this.imgReportTwo();
+    },
+    methods: {
+      getData() {
+        this.$post('/api/findDiseaseDetailData', this.parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.tableData = response.data.list
+            this.pageParameter.total = response.data.total || 0
+            this.pageParameter.nowPage = response.data.pageNum || 0
+          })
       },
-      options: [
-        {
-          value: "0",
-          label: "肺结节"
-        },
-        {
-          value: "1",
-          label: "双皮奶"
-        }
-      ],
-      value: "肺结节",
-      value7: ""
-    };
-  },
-  mounted() {
-    this.imgReportOne();
-    this.imgReportTwo();
-  },
-  methods: {
-    imgReportOne() {
-      this.serverData = [
-        {
-          company: "Apple",
-          type: "整体",
-          value: 30
-        },
-        {
-          company: "Facebook",
-          type: "整体",
-          value: 35
-        },
-        {
-          company: "Google",
-          type: "整体",
-          value: 28
-        },
-        {
-          company: "Apple",
-          type: "非技术岗",
-          value: 40
-        },
-        {
-          company: "Facebook",
-          type: "非技术岗",
-          value: 65
-        },
-        {
-          company: "Google",
-          type: "非技术岗",
-          value: 47
-        },
-        {
-          company: "Apple",
-          type: "技术岗",
-          value: 23
-        },
-        {
-          company: "Facebook",
-          type: "技术岗",
-          value: 18
-        },
-        {
-          company: "Google",
-          type: "技术岗",
-          value: 20
-        },
-        {
-          company: "Apple",
-          type: "技术岗",
-          value: 35
-        },
-        {
-          company: "Facebook",
-          type: "技术岗",
-          value: 30
-        },
-        {
-          company: "Google",
-          type: "技术岗",
-          value: 25
-        }];
+      imgReportOne() {
+        this.serverData = [
+          {
+            company: "Apple",
+            type: "整体",
+            value: 30
+          },
+          {
+            company: "Facebook",
+            type: "整体",
+            value: 35
+          },
+          {
+            company: "Google",
+            type: "整体",
+            value: 28
+          },
+          {
+            company: "Apple",
+            type: "非技术岗",
+            value: 40
+          },
+          {
+            company: "Facebook",
+            type: "非技术岗",
+            value: 65
+          },
+          {
+            company: "Google",
+            type: "非技术岗",
+            value: 47
+          },
+          {
+            company: "Apple",
+            type: "技术岗",
+            value: 23
+          },
+          {
+            company: "Facebook",
+            type: "技术岗",
+            value: 18
+          },
+          {
+            company: "Google",
+            type: "技术岗",
+            value: 20
+          },
+          {
+            company: "Apple",
+            type: "技术岗",
+            value: 35
+          },
+          {
+            company: "Facebook",
+            type: "技术岗",
+            value: 30
+          },
+          {
+            company: "Google",
+            type: "技术岗",
+            value: 25
+          }];
       },
 
       imgReportTwo() {
@@ -193,41 +219,60 @@ export default {
           count: 40,
           percent: 0.4
         },
-        {
-          item: "事例二",
-          count: 21,
-          percent: 0.21
-        },
-        {
-          item: "事例三",
-          count: 17,
-          percent: 0.17
-        },
-        {
-          item: "事例四",
-          count: 13,
-          percent: 0.13
-        },
-        {
-          item: "事例五",
-          count: 9,
-          percent: 0.09
-        }
-      ];
-    },
-    returnGo() {
-      this.$router.go(-1);
+          {
+            item: "事例二",
+            count: 21,
+            percent: 0.21
+          },
+          {
+            item: "事例三",
+            count: 17,
+            percent: 0.17
+          },
+          {
+            item: "事例四",
+            count: 13,
+            percent: 0.13
+          },
+          {
+            item: "事例五",
+            count: 9,
+            percent: 0.09
+          }
+        ];
+      },
+      returnGo() {
+        this.$router.go(-1);
+      }
     }
-  }
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-@import "sass/common";
+  @import "sass/common";
 
-.report-body {
-  width: 1260px;
-  margin: 20px 40px;
+  .el-main {
+    box-sizing: border-box;
+    padding: 20px;
+    background: rgb(246, 246, 246);
+    height: 100%;
+  }
+
+  .el-header {
+    padding: 0;
+  }
+
+  .so-content {
+    box-sizing: border-box;
+    padding: 40px;
+    background: #ffffff;
+    min-width: 1380px;
+    height: 100%;
+  }
+
+  .report-content {
+    overflow: hidden;
+  }
 
   .button-right {
     margin-top: 24px;
@@ -240,108 +285,98 @@ export default {
       letter-spacing: 1px;
     }
   }
-}
 
-.title-icon {
-  width: 30px;
-  height: 30px;
-  position: relative;
-  top: 6px;
-}
-
-.tishi-icon {
-  width: 16px;
-  height: 16px;
-  position: relative;
-  top: 2px;
-}
-
-.report-nav {
-  height: 26px;
-}
-
-.report-nav-right {
-  text-align: right;
-}
-
-.report-nav-left {
-  display: flex;
-  justify-content: flex-start;
-  padding-top: 10px;
-}
-
-.report-nav-between {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: solid 1px #e7e7e7;
-}
-
-.report-des {
-  display: flex;
-  justify-content: flex-start;
-  box-sizing: border-box;
-
-  .report-label {
-    border-left: solid 4px #2fdac5;
-    box-sizing: border-box;
-    padding-left: 10px;
-    font-family: MicrosoftYaHei-Bold;
-    font-size: 16px;
-    color: #32456d;
-    text-align: left;
-    font-weight: 600;
-    margin-bottom: 14px;
-    margin-top: 40px;
+  .title-icon {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 6px;
   }
 
-  .report-main-left {
-    width: 770px;
+  .tishi-icon {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    top: 2px;
   }
 
-  .report-main-right {
-    width: 340px;
+  .report-nav {
+    height: 26px;
   }
 
-  .report-item {
-    height: 36px;
-    line-height: 36px;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #30333f;
-    letter-spacing: 0;
-    text-align: left;
+  .report-nav-right {
+    text-align: right;
   }
 
-  .ct-button {
+  .report-nav-left {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+
+  .report-nav-between {
     display: flex;
     justify-content: space-between;
+    border-bottom: solid 1px #e7e7e7;
   }
 
-  .ct-button-1 {
-    background-image: linear-gradient(90deg, #00acff 3%, #49d6ff 100%);
-    box-shadow: 0 6px 10px 0 rgba(61, 181, 253, 0.25);
-    border-radius: 1px;
-    border: solid 1px transparent;
-    width: 160px;
+  .report-des {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+
+    .report-label {
+      border-left: solid 4px #2fdac5;
+      box-sizing: border-box;
+      padding-left: 10px;
+      font-family: MicrosoftYaHei-Bold;
+      font-size: 16px;
+      color: #32456d;
+      text-align: left;
+      font-weight: 600;
+      margin-bottom: 14px;
+      margin-top: 40px;
+    }
+
+    .report-item {
+      height: 36px;
+      line-height: 36px;
+      font-family: MicrosoftYaHei;
+      font-size: 14px;
+      color: #30333f;
+      letter-spacing: 0;
+      text-align: left;
+    }
+
+    .ct-button {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .ct-button-1 {
+      background-image: linear-gradient(90deg, #00acff 3%, #49d6ff 100%);
+      box-shadow: 0 6px 10px 0 rgba(61, 181, 253, 0.25);
+      border-radius: 1px;
+      border: solid 1px transparent;
+      width: 160px;
+    }
+
+    .ct-button-2 {
+      background-image: linear-gradient(90deg, #28c3d5 0%, #34edb6 100%);
+      box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
+      border-radius: 1px;
+      border: solid 1px transparent;
+      width: 160px;
+    }
   }
 
-  .ct-button-2 {
-    background-image: linear-gradient(90deg, #28c3d5 0%, #34edb6 100%);
-    box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
-    border-radius: 1px;
-    border: solid 1px transparent;
-    width: 160px;
+  .chart-content {
+    width: 50%;
+    background: #ffffff;
+    margin: 20px 0 0 0;
+    box-sizing: border-box;
+    padding: 10px;
   }
-}
-
-.chart {
-  width: 620px;
-  height: 300px;
-  background: #ffffff;
-  border: 1px solid #e7e7e7;
-  border-radius: 1px;
-  margin: 20px 20px 0 0;
-  box-sizing: border-box;
-  padding: 20px;
-}
 </style>

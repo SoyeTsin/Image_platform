@@ -48,12 +48,17 @@ export default new Router({
       path: '/personalReport',
       name: 'personalReport',
       component: personalReport
-    },  {
+    }, {
+      des: '统计报告',
+      path: '/statisticalReport',
+      name: 'statisticalReport',
+      component: statisticalReport
+    }, {
       des: '主页',
       path: '/',
       name: 'index',
       component: index,
-      
+
       children: [
         {
           des: '机构管理',
@@ -65,11 +70,6 @@ export default new Router({
           path: '/userinfo',
           name: 'userinfo',
           component: userinfo
-        },{
-          des: '统计报告',
-          path: '/statisticalReport',
-          name: 'statisticalReport',
-          component: statisticalReport
         },
 
       ], redirect: '/userinfo'//默认显示此子路由

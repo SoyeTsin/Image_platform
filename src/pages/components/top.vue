@@ -8,7 +8,8 @@
       </div>
     </el-col>
     <el-col :span="12" v-show="pathType">
-      <div class="text-right padding-right">您好，{{userName}} | <span class="logout" @click="logout">安全退出</span></div>
+      <div class="text-right padding-right">您好，{{userName}} &nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;<span
+        class="logout" @click="logout">安全退出</span></div>
     </el-col>
   </div>
 </template>

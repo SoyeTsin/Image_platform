@@ -1,6 +1,8 @@
 <template>
   <!--此处的id用变量，方便同一页面引用多次相同的组件-->
-  <div :id="id"></div>
+  <div class="chart">
+    <div :id="id" ></div>
+  </div>
 </template>
 
 <script>
@@ -48,8 +50,7 @@
         let data = datas;
         this.chart = new G2.Chart({
           id: this.id,
-          width: 580,
-          height:320
+          forceFit:true
         });
         this.chart.source(data, {
           percent: {
@@ -87,5 +88,9 @@
 </script>
 
 <style scoped lang="scss">
-
+  .chart{
+    width: 100%;
+    border: 1px solid #e7e7e7;
+    border-radius: 1px;
+  }
 </style>

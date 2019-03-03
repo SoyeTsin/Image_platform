@@ -5,7 +5,14 @@
     </el-header>
     <el-main>
       <div class="so-content">
-        <el-row class="text-left main-title">影像列表</el-row>
+        <el-row class="text-left main-title image-list-title">影像列表</el-row>
+        <el-row class="text-left image-list-des" v-show="diseaseCount.length>0">
+          最近30天筛查出
+          <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount" >
+            {{item.diseaseSeriesCount}}例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
+          </span>
+          ，点击红色字体立即查看
+        </el-row>
         <el-row class="text-left main-screen">
           <el-col :span="20">
             <el-button plain type="primary" class="add-button" @click="refresh"><i
@@ -53,6 +60,7 @@
             <el-button type="success" class="search-button" @click="search">查询</el-button>
           </el-col>
         </el-row>
+
         <el-table :data="tableData" stripe>
           <el-table-column prop="serialUID" label="影像编号" width="210">
           </el-table-column>
@@ -81,12 +89,14 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
-                <router-link :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
+                <router-link
+                  :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
                   <img src="./assets/image/ck.png" class="table-icon">
                 </router-link>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
-                <router-link :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
+                <router-link
+                  :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
                   <img src="./assets/image/bg.png" class="table-icon">
                 </router-link>
               </el-tooltip>
@@ -114,6 +124,7 @@
     components: {top},
     data() {
       return {
+        diseaseCount: [],
         channel: {value: '', key: null, list: []},
         institution: {value: '', key: null, list: []},
         disease: {value: '', key: null, list: []},
@@ -173,6 +184,7 @@
         }
         this.institution.key = institutionId
         this.findAllDiseaseTypeCountList(institutionId)
+        this.getData()
       },
       diseaseValue(val) {
         console.log(val)
@@ -202,6 +214,7 @@
             this.pageParameter.total = response.data.total || 0
             this.pageParameter.nowPage = response.data.pageNum || 0
             console.log(this.tableData)
+            this.findAllDiseaseTypeCountList()
           })
       },
       queryOrganizationList(dataType = 1, channelId = '') {
@@ -318,8 +331,24 @@
         }
         this.getData()
       },
+      findAllDiseaseTypeCountList() {
+        let parameter = {
+          institutionId: this.parameter.institutionId,
+        }
+        this.$post('/api/findAllDiseaseTypeCountList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.diseaseCount = response.data
+          })
+      },
       refresh() {
         this.getData('刷新成功')
+      },
+      intoReport() {
+        this.$router.push({path: '/statisticalReport'})
       }
     },
   }
@@ -344,4 +373,23 @@
     padding: 20px;
     background: #ffffff;
   }
+
+  .image-list-title {
+    margin-bottom: 13px;
+  }
+
+  .image-list-des {
+    margin-bottom: 28px;
+    font-family: MicrosoftYaHei;
+    font-size: 14px;
+    color: #333333;
+    letter-spacing: 0;
+    line-height: 16px;
+
+    .text-color-red {
+      color: red;
+      cursor: pointer;
+    }
+  }
+
 </style>
