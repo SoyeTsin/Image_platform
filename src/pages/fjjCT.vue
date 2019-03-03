@@ -12,7 +12,7 @@
           <span>{{exampleStudyImageIds.length}}张</span>
         </div>
         <div class="text">
-          <p><span>{{detail.patientName}}</span> <span>{{detail.sex==0?'男':'女'}}</span>{{detail.studyAge}}<span>岁</span></p>
+          <p><span>{{detail.patientName}}</span> <span>{{detail.sex|genderFilter}}</span>{{detail.studyAge}}<span>岁</span></p>
           <p><span>{{detail.examDate}}</span></p>
         </div>
       </div>
@@ -39,17 +39,17 @@
                   <span slot="reference">{{x.diseaseDesc}}</span>
                 </el-popover>
                  <span>{{x.imageNo}}</span>
-                 <span>{{x.probability}}%</span>
+                 <span>{{x.probability|toFixedTwo}}%</span>
                </li>
              </ul>
           </div>
       </div>
       <div class="btn">
-        <div class="item" @click="dialogVisible = true">
+        <div class="item" @click="getResult();">
           编辑诊断结果
         </div>
         <div class="item1">
-          <router-link :to="{name:'report'}">查看诊断结果</router-link>
+          <router-link :to="{name:'report',query:$route.query}">查看诊断结果</router-link>
         </div>
       </div>
     </el-aside>
@@ -150,8 +150,8 @@
               <div class="tips">
                 <p style="text-align: center;padding-top: 18px;">是否出现漏诊？</p>
                 <div class="btn">
-                  <span @click="isRemind = false">否</span>
-                  <span>是</span>
+                  <span @click="serialImage({missedDiagnosisFlag:0,imageNo:listDetail.imageNo,imageId:listDetail.imageId},3)">否</span>
+                  <span @click="serialImage({missedDiagnosisFlag:1,imageNo:listDetail.imageNo,imageId:listDetail.imageId},3)">是</span>
                 </div>
               </div>
               <i slot="reference">
@@ -163,7 +163,7 @@
             </el-popover>
         </el-col>
         <el-col>
-          <p>
+          <p @click="$router.go(-1)">
             <img src="../../static/fjj-icon/lztx.png">
             <span>退出</span>
           </p>
@@ -176,7 +176,7 @@
           <p>{{scale}}%</p>
         </div>
         <el-dialog
-          title="诊断结果"
+          :title="queryDiagnosis&&queryDiagnosis.doctorDesc&&queryDiagnosis.doctorResult?'编辑诊断结果':'诊断结果'"
           :visible.sync="dialogVisible"
           width="660"
           center
@@ -200,11 +200,10 @@
             </el-col>
           </el-row>
           <span slot="footer" class="dialog-footer">
-            <button class="submit" v-if="result.length >0&&describe.length >0" @click="dialogVisible = false">提交</button>
-            <button class="submit" v-else style="opacity: 0.6;">提交</button>
+            <button class="submit" v-if="result.length >0&&describe.length >0" @click="editResult()">{{queryDiagnosis&&queryDiagnosis.doctorDesc&&queryDiagnosis.doctorResult?'保存':'提交'}}</button>
+            <button class="submit" v-else style="opacity: 0.6;">{{queryDiagnosis&&queryDiagnosis.doctorDesc&&queryDiagnosis.doctorResult?'保存':'提交'}}</button>
           </span>
         </el-dialog>
-
         <div class="popup" v-if="isDetail">
           <div class="title">
               <i></i>
@@ -234,14 +233,14 @@
               trigger="click">
               <div class="tips" style="height: 159px;padding: 8px;">
                 <p style="padding-bottom: 20px;">信息修正</p>
-                <p style="padding-bottom: 15px;">AI提示：疑似心脏肥大</p>
+                <p style="padding-bottom: 15px;">AI提示：{{listDetail.diseaseDesc}}</p>
                 <p style="display: flex;padding-bottom: 15px;">
                   <span>实际情况：</span>
-                  <span><input type="text" placeholder="请输入"></span>
+                  <span><input type="text" v-model="correct" placeholder="请输入"></span>
                 </p>
                 <div class="btn">
                   <span @click="isCorrect = false">取消</span>
-                  <span>确定</span>
+                  <span @click="serialImage({diseaseTypeDesc:correct,imageNo:listDetail.imageNo,imageId:listDetail.imageId},1)">确定</span>
                 </div>
               </div>
               <i slot="reference">
@@ -253,11 +252,11 @@
               width="216"
               v-model="isDelete"
               trigger="click">
-              <div class="tips">
+              <div class="tips">deleteFlag
                 <p style="text-align: center;padding-top: 18px;">是否确定删除AI提示？</p>
                 <div class="btn">
                   <span @click="isDelete = false">取消</span>
-                  <span>删除</span>
+                  <span @click="serialImage({deleteFlag:1,imageNo:listDetail.imageNo,imageId:listDetail.imageId},2)">删除</span>
                 </div>
               </div>
               <i slot="reference">
@@ -436,10 +435,59 @@ export default {
         pageY:0
       },
       doctorDesc:'',
-      doctorResult:''
+      doctorResult:'',
+      correct:'',
+      queryDiagnosis:null,
     }
   },
   methods:{
+    getResult(){ //获取诊断结果
+      this.$post('/api/queryDiagnosis',this.$route.query).then(res=>{
+        if(res.code == "000000"){
+          this.queryDiagnosis = res.data
+          this.describe = res.data.doctorDesc
+          this.result = res.data.doctorResult
+        }
+      })
+      this.dialogVisible = true
+    },
+    editResult(){  //提交诊断结果
+      this.$post('/api/diagnosis',Object.assign(this.$route.query,{doctorDesc:this.describe,doctorResult:this.result})).then(res=>{
+        console.log(res)
+      })
+      this.dialogVisible = false
+    },
+    serialImage(obj,type){//保存方法  type:1 编辑  2删除  3漏诊提醒
+      let data = Object.assign(this.$route.query,obj)
+      this.$post('/api/serialImage',data).then(res=>{
+        if(res.code == '000000'){
+          if(type == 1){
+            this.$message({
+              message: '修正成功',
+              type: 'success'
+            });
+            this.isCorrect = false
+            this.correct = ''
+          }else if(type == 2){
+            if(data.deleteFlag == 1){
+              this.$message({
+                message: 'AI提示删除成功',
+                type: 'success'
+              });
+            }
+            this.isDelete = false
+          }else if(type == 3){
+            if(data.missedDiagnosisFlag == 1){
+                this.$message({
+                  message: '已提交漏诊提醒，我们将会近一步核对详情',
+                  type: 'success'
+                });
+            }
+            this.isRemind = false
+          }
+        }
+      })
+    },
     listClick(index,data){//点击列表
       this.listIndex = index
       this.listDetail = data
@@ -469,18 +517,35 @@ export default {
       this.listDetail = this.exampleStudyImageIds[this.slider.value]
       this.windowFun(400,40,0)
     },
-    handleClose(done) {
-        this.$confirm('内容未提交，是否直接关闭？')
-        .then(_ => {
+    handleClose(done) {//弹窗关闭回调
+      if(this.queryDiagnosis&&this.queryDiagnosis.doctorResult&&this.queryDiagnosis.doctorDesc){//编辑结果
+        if(this.describe != this.queryDiagnosis.doctorDesc||this.result != this.queryDiagnosis.doctorResult){
+          this.$confirm('内容未提交，是否直接关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+        }else{
           done();
-        })
-        .catch(_ => {});
+        }
+      }else{//提交结果
+        if(this.describe.length>1&&this.result.length>1){
+          this.$confirm('内容未提交，是否直接关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+        }else{
+          done();
+        }
+      }
+      
     },
-    windowFun(ww,wl,index){
+    windowFun(ww,wl,index){//调整窗口窗位
       this.windowIndex = index
       this.cornerstone.windowWidth(ww,wl)
     },
-    asideFun(){
+    asideFun(){//是否全屏
       this.isAside = !this.isAside
       if(this.isAside){
         this.asideWidth = '280px'
@@ -491,8 +556,7 @@ export default {
         this.cornerstone.resize()
       })
     },
-    activeFun(data){
-      
+    activeFun(data){//工具方法
       this.active = data
       this.cornerstone.zoom().deactivate();
       this.cornerstone.pan().deactivate();
@@ -544,12 +608,10 @@ export default {
     }
   },
   created(){
-    this.$post('/api/serial',this.$route.query).then(res=>{
+    let data = this.$route.query
+    this.$post('/api/serial',data).then(res=>{
       this.detail = res.data
     })
-  },
-  mounted(){
-    let data = this.$route.query
     this.$post('/api/serialImages',data).then(res=>{
         this.exampleStudyImageIds = res.data
         this.slider.max = res.data.lenght-1
@@ -570,9 +632,7 @@ export default {
             this.cornerstone1 = this.$refs.cornerstone1
           })
         },100)
-        
     })
-    
   },
   computed:{
     windowWidth(){
@@ -585,7 +645,21 @@ export default {
       return this.$store.state.cornerstone.scale?Math.round(this.$store.state.cornerstone.scale*100):''
     }
     
-  }
+  },
+  filters: {
+      genderFilter(value) {
+        if (value == 'm') {
+          return '男'
+        } else if (value == 'f') {
+          return '女'
+        } else {
+          return '未知'
+        }
+      },
+      toFixedTwo(value){
+        return Number(value).toFixed(2)
+      }
+    },
 }
 </script>
 

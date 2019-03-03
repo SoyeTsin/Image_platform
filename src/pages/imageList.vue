@@ -86,7 +86,9 @@
                 </router-link>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
-                <img src="./assets/image/bg.png" class="table-icon">
+                <router-link :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
+                  <img src="./assets/image/bg.png" class="table-icon">
+                </router-link>
               </el-tooltip>
             </template>
           </el-table-column>

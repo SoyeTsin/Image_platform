@@ -37,11 +37,23 @@ export default new Router({
       path: '/imageList',
       name: 'imageList',
       component: imageList
+    },
+    {
+      des: '诊断结果',
+      path: '/report',
+      name: 'report',
+      component: report
     }, {
+      des: '个人报告',
+      path: '/personalReport',
+      name: 'personalReport',
+      component: personalReport
+    },  {
       des: '主页',
       path: '/',
       name: 'index',
       component: index,
+      
       children: [
         {
           des: '机构管理',
@@ -53,22 +65,11 @@ export default new Router({
           path: '/userinfo',
           name: 'userinfo',
           component: userinfo
-        }, {
-          des: '个人报告',
-          path: '/personalReport',
-          name: 'personalReport',
-          component: personalReport
-        }, {
+        },{
           des: '统计报告',
           path: '/statisticalReport',
           name: 'statisticalReport',
           component: statisticalReport
-        },
-        {
-          des: '诊断结果',
-          path: '/report',
-          name: 'report',
-          component: report
         },
 
       ], redirect: '/userinfo'//默认显示此子路由
