@@ -184,13 +184,12 @@ export default {
           company: "Google",
           type: "技术岗",
           value: 25
-        }
-      ];
-    },
-    imgReportTwo() {
-      this.pieData = [
-        {
-          item: "事例一",
+        }];
+      },
+
+      imgReportTwo() {
+        this.pieData = [{
+          item: '事例一',
           count: 40,
           percent: 0.4
         },
