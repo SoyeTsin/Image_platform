@@ -166,6 +166,7 @@
           value: 25
         }];
       },
+
       imgReportTwo() {
         this.pieData = [{
           item: '事例一',
