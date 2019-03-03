@@ -56,7 +56,7 @@
         <el-table :data="tableData" stripe>
           <el-table-column prop="serialUID" label="影像编号" width="210">
           </el-table-column>
-          <el-table-column prop="examDate" label="检查时间" width="150">
+          <el-table-column prop="examDate" label="检查时间" sortable width="150">
           </el-table-column>
           <el-table-column prop="patientName" label="姓名">
           </el-table-column>
