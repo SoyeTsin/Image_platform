@@ -44,7 +44,7 @@
   .so-content {
     height: 100%;
     width: 100%;
-    min-width: 1574px;
+    min-width: 1380px;
     box-sizing: border-box;
     padding: 80px 20px 20px 236px;
     position: absolute;

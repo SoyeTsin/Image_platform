@@ -38,10 +38,19 @@
           }
         ]
       }
-    }, methods: {
+    },
+    mounted() {
+      let path = this.$route.path
+      for (let i in this.menu) {
+        if (path == this.menu[i].path) {
+          this.menuType = this.menu[i].id
+        }
+      }
+    },
+    methods: {
       intoFun(item) {
         this.menuType = item.id
-      }
+      },
     }
   }
 </script>

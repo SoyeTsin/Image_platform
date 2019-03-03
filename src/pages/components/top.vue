@@ -92,7 +92,7 @@
     letter-spacing: 0.16px;
     position: relative;
     z-index: 100;
-    min-width: 1574px;
+    min-width: 1380px;
   }
 
   .logout {

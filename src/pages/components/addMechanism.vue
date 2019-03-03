@@ -250,14 +250,14 @@
               let m = newData[i]
               let n = {
                 disabled: true,
-                name: '- ' + m.channelName,
+                name: '-- ' + m.channelName,
                 flowId: m.channelId,
               }
               let y = {}
               list.push(n)
               for (let j in m.institutions) {
                 y = {
-                  name: '-- ' + m.institutions[j].institutionName,
+                  name:  m.institutions[j].institutionName,
                   flowId: m.institutions[j].institutionId,
                   type: 1
                 }

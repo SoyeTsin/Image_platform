@@ -3,11 +3,28 @@
     <el-main>
       <el-row class="text-left main-title">用户列表</el-row>
       <el-row class="text-left main-screen">
-        <el-col :span="20">
+        <el-col :span="21">
           <el-button plain type="primary" class="add-button" @click="addUserFun"><i
             class="el-icon-plus"></i>创建账号
           </el-button>
           <el-input v-model="parameter.userName" placeholder="姓名" class="main-input"></el-input>
+          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
+            <el-option
+              v-for="item in office.list"
+              :key="item.officeId"
+              :label="item.officeName"
+              :value="item.officeId">
+            </el-option>
+          </el-select>
+          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input">
+            <el-option
+              v-for="item in upRelate.list"
+              :key="item.flowId"
+              :label="item.name"
+              :value="item.flowId"
+              :disabled="item.disabled">
+            </el-option>
+          </el-select>
           <el-select v-model="provinces.value" placeholder="省份或直辖市" class="main-input">
             <el-option
               v-for="item in provinces.list"
@@ -24,32 +41,9 @@
               :value="item.cityCode">
             </el-option>
           </el-select>
-          <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
-            <el-option
-              v-for="item in channel.list"
-              :key="item.channelId"
-              :label="item.channelName"
-              :value="item.channelId">
-            </el-option>
-          </el-select>
-          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input">
-            <el-option
-              v-for="item in institution.list"
-              :key="item.institutionId"
-              :label="item.institutionName"
-              :value="item.institutionId">
-            </el-option>
-          </el-select>
-          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
-            <el-option
-              v-for="item in office.list"
-              :key="item.officeId"
-              :label="item.officeName"
-              :value="item.officeId">
-            </el-option>
-          </el-select>
+
         </el-col>
-        <el-col :span="4" class="display-right">
+        <el-col :span="3" class="display-right">
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
@@ -108,6 +102,7 @@
         icon_delete, icon_report, icon_edit,
         dialogTableVisible: false,
         pageParameter: common.pageParameter,
+        upRelate: {value: '', key: null, list: []},
         parameter: {
           userName: "",
           channelId: "",
@@ -131,6 +126,7 @@
       this.getData()
       this.queryOfficeList()
       this.queryRegionInfo()
+      this.queryOrganizationList()
     },
     computed: {
       provincesValue() {
@@ -139,9 +135,6 @@
       cityValue() {
         return this.city.value
       },
-      channelValue() {
-        return this.channel.value
-      }
     },
     watch: {
       provincesValue(val) {
@@ -149,13 +142,8 @@
         this.city = {value: '', list: []}
       },
       cityValue(val) {
-        this.queryOrganizationList()
         this.channel = {value: '', list: []}
       },
-      channelValue(val) {
-        this.queryOrganizationList(2, val)
-        this.institution = {value: '', list: []}
-      }
     },
     methods: {
       getData() {
@@ -187,12 +175,9 @@
             }
           })
       },
-      queryOrganizationList(dataType = 1, channelId = '') {
+      queryOrganizationList() {
         let parameter = {
-          provinceCode: this.provinces.value,
-          cityCode: this.city.value,
-          channelId,
-          dataType
+          dataType: 0
         }
         this.$post('/manager/queryOrganizationList', parameter)
           .then((response) => {
@@ -200,11 +185,27 @@
               this.$message(response.msg);
               return
             }
-            if (dataType == 1) {
-              this.channel.list = response.data.channelList
-            } else {
-              this.institution.list = response.data.institutionList
+            let newData = response.data.group
+            let list = []
+            for (let i in newData) {
+              let m = newData[i]
+              let n = {
+                disabled: true,
+                name: '-- ' + m.channelName,
+                flowId: m.channelId,
+              }
+              let y = {}
+              list.push(n)
+              for (let j in m.institutions) {
+                y = {
+                  name:  m.institutions[j].institutionName,
+                  flowId: m.institutions[j].institutionId,
+                  type: 1
+                }
+                list.push(y)
+              }
             }
+            this.upRelate.list = list
           })
       },
       queryOfficeList() {
