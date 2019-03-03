@@ -86,6 +86,9 @@
             localStorage.setItem('userName', response.data.userName)   //return this
             localStorage.setItem('userType', response.data.userType)   //return this
             localStorage.setItem('routerPath', this.$route.path)   //return this
+            console.log(JSON.stringify(response.data.institution),222222222)
+            let institution = JSON.stringify(response.data.institution)
+            localStorage.setItem('institution', institution)   //return this
             this.$router.push({
               path: '/imageList'
             })

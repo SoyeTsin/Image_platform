@@ -87,6 +87,7 @@
             localStorage.setItem('userId', response.data.userId)   //return this
             localStorage.setItem('phoneNum', response.data.phoneNum)   //return this
             localStorage.setItem('routerPath', this.$route.path)   //return this
+            
             this.$router.push({
               path: '/userinfo'
             })
