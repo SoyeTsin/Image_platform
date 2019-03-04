@@ -11,16 +11,16 @@
             返回
           </div>
           <div class="screen">
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="disease.value" placeholder="请选择">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
+                v-for="item in disease.list"
+                :key="item.id"
+                :label="item.val"
+                :value="item.id">
+              </el-option>
             </el-select>
             <el-date-picker
-              v-model="value7"
+              v-model="timeArr"
               type="daterange"
               align="right"
               unlink-panels
@@ -78,14 +78,18 @@
     name: "userInfo",
     components: {columnG2, pieG2, top},
     data() {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
       return {
+        timeArr: [start, end],
         serverData: [],
         pieData: [],
-        parameter:{
-          beginDate:'',
-          endDate:'',
-          diseaseType:'',
-          institutionId:'',
+        parameter: {
+          beginDate: '',
+          endDate: '',
+          diseaseType: '',
+          institutionId: '',
         },
         pickerOptions2: {
           shortcuts: [
@@ -118,101 +122,91 @@
             }
           ]
         },
-        options: [
-          {
-            value: "0",
-            label: "肺结节"
-          },
-          {
-            value: "1",
-            label: "双皮奶"
-          }
-        ],
-        value: "肺结节",
-        value7: ""
+        disease: {value: '', key: null, list: []},
       };
     },
+    computed: {
+      diseaseValue() {
+        return this.disease.value
+      },
+    },
+    watch: {
+      diseaseValue(val) {
+        console.log(val)
+        this.disease.key = val
+        let diseaseType = val
+        if (val == this.disease.list[0].val) {
+          diseaseType = this.disease.list[0].val
+        }
+        this.parameter.diseaseType = diseaseType
+        this.getData()
+      },
+      timeArr() {
+        this.getData()
+      }
+    },
     mounted() {
-      this.imgReportOne();
+      this.parameter.institutionId = this.$route.params.institutionId||'005050024000004510000000'
+      this.diseaseType()
       this.imgReportTwo();
+      this.serverData = []
     },
     methods: {
       getData() {
+        const that = this
+        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         this.$post('/api/findDiseaseDetailData', this.parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              that.$message(response.msg);
+              return
+            }
+            console.log(response.data)
+            // this.myData=response.data
+            let myArr = []
+            let lineArr = []
+            let aiSeriesCountMap = response.data.aiSeriesCountMap
+            let seriesCountMap = response.data.seriesCountMap
+            for (let i in aiSeriesCountMap) {
+              myArr.push({
+                name: "AI检出序列",
+                time: i.substring(5, 7) + '.' + i.substring(8, 10),
+                value: aiSeriesCountMap[i] + Math.ceil(Math.random() * 10),
+                rate: ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
+
+              })
+              myArr.push({
+                name: "上传序列",
+                time: i.substring(5, 7) + '.' + i.substring(8, 10),
+                value: seriesCountMap[i] + Math.ceil(Math.random() * 10),
+                rate: ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
+              })
+            }
+            that.serverData = myArr
+          })
+      },
+      diseaseType() {
+        let parameter = {}
+        this.$fetch('/api/diseaseType', parameter)
           .then((response) => {
             if (response.code != '000000') {
               this.$message(response.msg);
               return
             }
-            this.tableData = response.data.list
-            this.pageParameter.total = response.data.total || 0
-            this.pageParameter.nowPage = response.data.pageNum || 0
+            let list = [];
+            for (let i in  response.data) {
+              list.push({
+                id: i,
+                val: response.data[i]
+              })
+            }
+            this.disease.list = list
+            this.disease.value = list[0].val
+            this.disease.key = list[0].id
+            this.parameter.diseaseType = list[0].id
           })
       },
-      imgReportOne() {
-        this.serverData = [
-          {
-            company: "Apple",
-            type: "整体",
-            value: 30
-          },
-          {
-            company: "Facebook",
-            type: "整体",
-            value: 35
-          },
-          {
-            company: "Google",
-            type: "整体",
-            value: 28
-          },
-          {
-            company: "Apple",
-            type: "非技术岗",
-            value: 40
-          },
-          {
-            company: "Facebook",
-            type: "非技术岗",
-            value: 65
-          },
-          {
-            company: "Google",
-            type: "非技术岗",
-            value: 47
-          },
-          {
-            company: "Apple",
-            type: "技术岗",
-            value: 23
-          },
-          {
-            company: "Facebook",
-            type: "技术岗",
-            value: 18
-          },
-          {
-            company: "Google",
-            type: "技术岗",
-            value: 20
-          },
-          {
-            company: "Apple",
-            type: "技术岗",
-            value: 35
-          },
-          {
-            company: "Facebook",
-            type: "技术岗",
-            value: 30
-          },
-          {
-            company: "Google",
-            type: "技术岗",
-            value: 25
-          }];
-      },
-
       imgReportTwo() {
         this.pieData = [{
           item: '事例一',

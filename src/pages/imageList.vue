@@ -8,7 +8,7 @@
         <el-row class="text-left main-title image-list-title">影像列表</el-row>
         <el-row class="text-left image-list-des" v-show="diseaseCount.length>0">
           最近30天筛查出
-          <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount" >
+          <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount">
             {{item.diseaseSeriesCount}}例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
           </span>
           ，点击红色字体立即查看
@@ -123,6 +123,7 @@
     name: "mechanism",
     components: {top},
     data() {
+
       return {
         diseaseCount: [],
         channel: {value: '', key: null, list: []},
@@ -130,7 +131,7 @@
         disease: {value: '', key: null, list: []},
         aiResult: {value: '', key: null, list: []},
         options: '',
-        value: '',
+        timeArr: [],
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
@@ -213,7 +214,6 @@
             this.tableData = response.data.list
             this.pageParameter.total = response.data.total || 0
             this.pageParameter.nowPage = response.data.pageNum || 0
-            console.log(this.tableData)
             this.findAllDiseaseTypeCountList()
           })
       },
@@ -348,7 +348,10 @@
         this.getData('刷新成功')
       },
       intoReport() {
-        this.$router.push({path: '/statisticalReport'})
+        this.$router.push({
+          name: 'statisticalReport',
+          params: {institutionId: this.parameter.institutionId}
+        })
       }
     },
   }
@@ -356,12 +359,12 @@
 
 <style lang="scss" scoped>
   @import "sass/common";
-
   .el-header {
     padding: 0;
   }
 
   .el-main {
+    min-width: 1380px;
     box-sizing: border-box;
     padding: 20px;
     background: rgb(246, 246, 246);

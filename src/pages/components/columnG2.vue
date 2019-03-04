@@ -1,7 +1,7 @@
 <template>
   <!--此处的id用变量，方便同一页面引用多次相同的组件-->
   <div class="chart">
-    <div :id="id" ></div>
+    <div :id="id"></div>
   </div>
 </template>
 
@@ -19,12 +19,7 @@
         type: Array,
         default() {
           return {
-            data: [{'mzkId': 112, 'strftime': "2017-01-11", 'value': 9275501},  // 测试数据，根据自己需求自己设置数据
-              {'mzkId': 112, 'strftime': "2017-01-12", 'value': 9281904},
-              {'mzkId': 112, 'strftime': "2017-01-13", 'value': 9290777},
-              {'mzkId': 112, 'strftime': "2017-01-14", 'value': 9297913},
-              {'mzkId': 112, 'strftime': "2017-01-15", 'value': 9306918},
-              {'mzkId': 112, 'strftime': "2017-01-16", 'value': 9315641}]
+            data: []
           };
         }
       },
@@ -50,27 +45,17 @@
         let data = datas;
         this.chart = new G2.Chart({
           id: this.id,
-          forceFit:true
+          forceFit: true
         });
         this.chart.source(data);
-        this.chart.scale('value', {
-          alias: '占比（%）',
-          max: 75,
-          min: 0,
-          tickCount: 4
-        });
-        this.chart.axis('type', {
-          label: {
-            textStyle: {
-              fill: '#aaaaaa'
-            }
+        this.chart.scale({
+          rate: {
+            alias: 'AI占比(%)'
           },
-          tickLine: {
-            alignWithLabel: false,
-            length: 0
+          value:{
+            alias: '次数'
           }
         });
-
         this.chart.axis('value', {
           label: {
             textStyle: {
@@ -81,13 +66,16 @@
             offset: 50
           }
         });
-        this.chart.legend({
-          position: 'top-center'
+        this.chart.tooltip({
+          crosshairs: {
+            type: 'line'
+          }
         });
-        this.chart.interval().position('type*value').color('company').opacity(1).adjust([{
+        this.chart.interval().position('time*value').color('name').adjust([{
           type: 'dodge',
           marginRatio: 1 / 32
         }]);
+        this.chart.line().position('time*rate').size(2).color('#FFB74F');
         this.chart.render();
       }
     }
@@ -95,9 +83,9 @@
 </script>
 
 <style scoped lang="scss">
-.chart{
-  width: 100%;
-  border: 1px solid #e7e7e7;
-  border-radius: 1px;
-}
+  .chart {
+    width: 100%;
+    border: 1px solid #e7e7e7;
+    border-radius: 1px;
+  }
 </style>
