@@ -1,6 +1,7 @@
 <template>
   <!--此处的id用变量，方便同一页面引用多次相同的组件-->
   <div class="chart">
+    <div class="title">2017 年西安居民人均消费支出</div>
     <div :id="id"></div>
   </div>
 </template>
@@ -87,5 +88,13 @@
     width: 100%;
     border: 1px solid #e7e7e7;
     border-radius: 1px;
+    .title{
+      font-family: MicrosoftYaHei-Bold;
+      font-size: 16px;
+      color: #32456D;
+      text-align: left;
+      box-sizing: border-box;
+      padding: 20px;
+    }
   }
 </style>

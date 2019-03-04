@@ -146,7 +146,7 @@
       }
     },
     mounted() {
-      this.parameter.institutionId = this.$route.params.institutionId||'005050024000004510000000'
+      this.parameter.institutionId = this.$route.params.institutionId || '005050024000004510000000'
       this.diseaseType()
       this.imgReportTwo();
       this.serverData = []
@@ -183,7 +183,39 @@
                 rate: ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
               })
             }
+            let probabilityArr = []
+            let probabilityMap = response.data.probabilityMap
+            for (let i in probabilityMap) {
+              switch (i) {
+                case 'probability2040Count':
+                  probabilityArr.push({
+                    type: '较低数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                  })
+                  break;
+                case 'probability4060Count':
+                  probabilityArr.push({
+                    type: '一般数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                  })
+                  break;
+                case 'probability6080Count':
+                  probabilityArr.push({
+                    type: '较高数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                  })
+                  break;
+                case 'probabilityLe80Count':
+                  probabilityArr.push({
+                    type: '极高数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                  })
+                  break;
+                case 'probabilityLt20Count':
+                  probabilityArr.push({
+                    type: '极低数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                  })
+                  break;
+              }
+            }
             that.serverData = myArr
+            that.pieData = probabilityArr
           })
       },
       diseaseType() {

@@ -18,7 +18,7 @@
               <div>验证码</div>
             </div>
             <div class="validate">
-              <input placeholder="验证码" class="so-input" v-model="userParameter.smsCode"></input>
+              <input placeholder="验证码" class="so-input" v-model="userParameter.smsCode" @keyup.enter="login"></input>
               <div class="button-validate" @click="getSmsCode">获取验证码</div>
             </div>
             <div class="validate-msg" v-if="msg">
