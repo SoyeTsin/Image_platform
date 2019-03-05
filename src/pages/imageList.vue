@@ -57,7 +57,6 @@
             <el-button type="success" class="search-button" @click="search">查询</el-button>
           </el-col>
         </el-row>
-
         <el-table :data="tableData" stripe>
           <el-table-column prop="serialUID" label="影像编号" width="210">
           </el-table-column>
@@ -130,7 +129,7 @@
         disease: {value: '', key: null, list: []},
         aiResult: {value: '', key: null, list: []},
         options: '',
-        timeArr: [start, end],
+        timeArr: ['',''],
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
@@ -188,7 +187,6 @@
       }
     },
     computed: {
-
       institutionIdValue() {
         return this.institution.value
       },
@@ -221,13 +219,14 @@
     mounted() {
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
 
-
       this.queryOrganizationList()
     },
     methods: {
       getData(msg = '') {
-        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if(this.timeArr[0]&&this.timeArr[1]){
+            this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+            this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        }
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -291,7 +290,7 @@
               })
             }
             this.aiResult.list = list
-            this.aiResult.value = list.length > 0 ? list[0].id : ''
+            // this.aiResult.value = list.length > 0 ? list[0].id : ''
             this.diseaseType()
 
           })
@@ -312,7 +311,7 @@
               })
             }
             this.disease.list = list
-            this.disease.value = list.length > 0 ? list[0].id : ''
+            // this.disease.value = list.length > 0 ? list[0].id : ''
             this.getData()
           })
       },
