@@ -26,10 +26,10 @@
               {{parameter.provinceName}}{{parameter.cityName}}
             </el-form-item>
             <el-form-item label="联系方式" prop="channelContact" class="">
-              <el-input v-model.number="ruleForm.channelContact"></el-input>
+              <el-input v-model="ruleForm.channelContact"></el-input>
             </el-form-item>
             <el-form-item label="联系方式" prop="institutionContact" class="">
-              <el-input v-model.number="ruleForm.institutionContact"></el-input>
+              <el-input v-model="ruleForm.institutionContact"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -191,6 +191,11 @@
       },
       downRelateArr(val) {
       },
+      dialogTableVisible(val) {
+        !val && setTimeout(() => {
+          this.$refs['ruleForm'].resetFields();
+        }, 0);
+      }
     },
     mounted() {
       this.queryOrganizationList()
@@ -202,7 +207,7 @@
           if (valid) {
             this.addMechanism()
           } else {
-            this.$message('请正确填写表单内容！');
+            // this.$message('请正确填写表单内容！');
             return false;
           }
         });
@@ -232,12 +237,16 @@
       },
       editMechanism(obj) {
         console.log(obj)
-        this.parameter = JSON.parse(JSON.stringify(obj))
-        this.ruleForm.channelUser = this.parameter.channelUser
-        this.ruleForm.channelContact = this.parameter.channelContact
-        this.ruleForm.institutionUser = this.parameter.institutionUser
-        this.ruleForm.institutionContact = this.parameter.institutionContact
+        this.parameter = obj
+        this.ruleForm = {}
+        this.ruleForm.channelUser = this.parameter.channelUser || ''
+        this.ruleForm.channelContact = this.parameter.channelContact || ''
+        this.ruleForm.institutionUser = this.parameter.institutionUser || ''
+        this.ruleForm.institutionContact = this.parameter.institutionContact || ''
         this.queryRelateInstitutionList(this.parameter.institutionId)
+        setTimeout(() => {
+          this.$refs['ruleForm'].resetFields();
+        }, 0);
       },
       queryRelateInstitutionList(institutionId) {
         let parameter = {institutionId, relateType: 0}

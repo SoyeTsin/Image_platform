@@ -38,25 +38,28 @@
           </el-select>
         </el-col>
         <el-col :span="4" class="display-right">
+          <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0"><i
+            class="el-icon-refresh"></i>
+          </el-button>
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
-        <el-table-column prop="institutionName" label="机构名称">
+        <el-table-column prop="institutionName" label="机构名称"  show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="channelName" label="渠道">
+        <el-table-column prop="channelName" label="渠道" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="name" label="所在地区">
+        <el-table-column prop="name" label="所在地区"  show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.provinceName }}{{ scope.row.cityName}}
           </template>
         </el-table-column>
-        <el-table-column label="机构接口人">
+        <el-table-column label="机构接口人" show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.institutionUser }}<br>{{ scope.row.institutionContact}}
           </template>
         </el-table-column>
-        <el-table-column label="渠道接口人">
+        <el-table-column label="渠道接口人" show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.channelUser }}<br>{{ scope.row.channelContact}}
           </template>
@@ -70,7 +73,7 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
                      :page-size="pageParameter.pageSize"
-                     layout="sizes, prev, pager, next" :total="pageParameter.total">
+                     layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
       </el-pagination>
       <addMechanism ref="addMechanism" @renewList="getData"></addMechanism>
     </el-main>
@@ -127,8 +130,10 @@
       provincesValue(val) {
         this.queryRegionInfo(val)
         this.city = {value: '', list: []}
+        this.queryOrganizationList()
       },
       cityValue(val) {
+        this.queryOrganizationList()
       },
       channelValue(val) {
         let channelId = val
@@ -136,14 +141,12 @@
           channelId = this.channel.list[0].channelId
         }
         this.channel.key = channelId
-        this.queryOrganizationList(2, channelId)
+        if (channelId) {
+          this.queryOrganizationList(2, channelId)
+        }
       },
       institutionIdValue(val) {
-        let institutionId = val
-        if (val == this.institution.list[0].institutionName) {
-          institutionId = this.institution.list[0].institutionId
-        }
-        this.institution.key = institutionId
+
       },
     },
     methods: {
@@ -176,10 +179,18 @@
             }
           })
       },
+      refreshFun() {
+        this.provinces.value = ''
+        this.city.value = ''
+        this.channel.value = ''
+        this.institution.value = ''
+        this.institution.list = []
+        this.search()
+      },
       search() {
         this.parameter = {
-          channelId: this.channel.key,
-          institutionId: this.institution.key,
+          channelId: this.channel.value,
+          institutionId: this.institution.value,
           provinceCode: this.provinces.value,
           cityCode: this.city.value,
           pageNum: 1,
@@ -206,8 +217,8 @@
       },
       queryOrganizationList(dataType = 1, channelId = '') {
         let parameter = {
-          // provinceCode: this.provinces.value,
-          // cityCode: this.city.value,
+          provinceCode: this.provinces.value,
+          cityCode: this.city.value,
           channelId,
           dataType
         }
