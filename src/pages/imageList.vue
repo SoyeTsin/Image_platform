@@ -137,7 +137,8 @@
           institutionId: '',
           diseaseType: '',
           aiMsg: '',
-          examDate: '',
+          beginDate: '',
+          endDate: '',
           pageNum: 1,
           pageSize: common.pageParameter.pageSize
         },
@@ -220,12 +221,13 @@
     mounted() {
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
 
-      this.diseaseType()
-      this.getAiResult()
+
       this.queryOrganizationList()
     },
     methods: {
       getData(msg = '') {
+        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -255,6 +257,7 @@
             }
             this.institution.list = response.data.downRelate
             this.institution.value = response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
+            this.getAiResult()
           })
       },
       findAllDiseaseTypeCountList(institutionId) {
@@ -289,6 +292,8 @@
             }
             this.aiResult.list = list
             this.aiResult.value = list.length > 0 ? list[0].id : ''
+            this.diseaseType()
+
           })
       },
       diseaseType() {
@@ -308,7 +313,7 @@
             }
             this.disease.list = list
             this.disease.value = list.length > 0 ? list[0].id : ''
-
+            this.getData()
           })
       },
       search() {
