@@ -172,15 +172,15 @@
               myArr.push({
                 name: "AI检出序列",
                 time: i.substring(5, 7) + '.' + i.substring(8, 10),
-                value: aiSeriesCountMap[i] + Math.ceil(Math.random() * 10),
-                rate: ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
+                value: aiSeriesCountMap[i], //+ Math.ceil(Math.random() * 10),
+                rate: aiSeriesCountMap[i]//((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
 
               })
               myArr.push({
                 name: "上传序列",
                 time: i.substring(5, 7) + '.' + i.substring(8, 10),
-                value: seriesCountMap[i] + Math.ceil(Math.random() * 10),
-                rate: ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
+                value: seriesCountMap[i],// + Math.ceil(Math.random() * 10),
+                rate:aiSeriesCountMap[i]// ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
               })
             }
             let probabilityArr = []
@@ -189,27 +189,27 @@
               switch (i) {
                 case 'probability2040Count':
                   probabilityArr.push({
-                    type: '较低数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                    type: '较低数量', value: probabilityMap[i]
                   })
                   break;
                 case 'probability4060Count':
                   probabilityArr.push({
-                    type: '一般数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                    type: '一般数量', value: probabilityMap[i]
                   })
                   break;
                 case 'probability6080Count':
                   probabilityArr.push({
-                    type: '较高数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                    type: '较高数量', value: probabilityMap[i]
                   })
                   break;
                 case 'probabilityLe80Count':
                   probabilityArr.push({
-                    type: '极高数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                    type: '极高数量', value: probabilityMap[i]
                   })
                   break;
                 case 'probabilityLt20Count':
                   probabilityArr.push({
-                    type: '极低数量', value: probabilityMap[i] + Math.ceil(Math.random() * 10)
+                    type: '极低数量', value: probabilityMap[i]
                   })
                   break;
               }

@@ -72,7 +72,7 @@ export default new Router({
           component: userinfo
         },
 
-      ], redirect: '/userinfo'//默认显示此子路由
+      ], redirect: '/login'//默认显示此子路由
     },
   ]
 })

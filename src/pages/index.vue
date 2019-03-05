@@ -19,7 +19,6 @@
       '$router': {
         handler() {
           const that = this
-          debugger
           if (route.name === '') {
             that.onShow()
           }
