@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-aside :width="asideWidth" v-if="isAside" style="background-color:#131f2c;">
+    <el-aside :width="asideWidth" style="background-color:#131f2c;">
       <div class="top">
         <i class="icon-fanhui iconfont" style="cursor: pointer;" @click="asideFun"></i>
         <i style="padding-left: 26.5px;">
@@ -685,15 +685,7 @@ export default {
           .then(res => {
             //初始化工具
             this.cornerstone = this.$refs.cornerstone;
-            this.cornerstone.$el.addEventListener("mousemove", function(event) {
-              this.pixel = {
-                pageX: event.pageX,
-                pageY: event.pageY
-              };
-              // console.log(event.pageX, event.pageY)
-              // const pixelCoords = res.pageToPixel(this.cornerstone.$el, event.pageX, event.pageY);
-              // document.getElementById('coords').textContent = "pageX=" + event.pageX + ", pageY=" + event.pageY + ", pixelX=" + pixelCoords.x + ", pixelY=" + pixelCoords.y;
-            });
+            
           });
         this.$refs.cornerstone1
           .init(this.exampleStudyImageIds[0].imageUrl)

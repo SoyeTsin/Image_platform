@@ -68,16 +68,40 @@ export default {
       return new Promise((resolve, reject)=>{
           // 找到要渲染的元素
           let canvas  =  this.element =  this.$refs.canvas;
-          let then = 
           
           canvas.addEventListener('cornerstoneimagerendered', e=>{
             let viewport = cornerstone.getViewport(e.target);
             this.$store.commit('SET_CORNERSTONE',viewport)
+            canvas.addEventListener("mousemove", e=> {
+              const { rows, columns, data, getPixelData, slope, intercept } = cornerstone.getImage(canvas);
+              const pixelData = getPixelData();
+              let x = e.pageX
+              let y = e.pageY
+              let xx = Math.max(Math.round(x), 0);
+              let yy = Math.max(Math.round(y), 0);
+              xx = Math.min(xx, columns);
+              yy = Math.min(yy, columns);
+              const index = yy * columns + xx;
+              // const slope = data.string('x00281053');
+              // const intercept = data.string('x00281052');
+              const pixel = pixelData[index];
+              const val = pixel * slope + (intercept - 0);
+              // console.log(slope)
+              // console.log(intercept)
+              const point = {
+                x: xx,
+                y: yy,
+                val,
+              }
+              this.$store.commit('SET_POINT',point)
+              // console.log(point)
+            });
           });
+
+          
+
           // 在 DOM 中将 canvas 元素注册到 cornerstone
           cornerstone.enable(canvas);
-
-
           let imageId = "wadouri:" + imageUrl;
 
           //  Load & Display
@@ -93,7 +117,10 @@ export default {
               // 显示图像
               cornerstone.displayImage(canvas, image, viewport);
               // 激活工具
-              console.log(dicomParser)
+              // console.log(dicomParser,1111111)
+              console.log(cornerstone,2222222)
+              console.log(cornerstone.currentPoints)
+              
               this.initCanvasTools();
               resolve(cornerstone)
             },(err)=>{
@@ -329,6 +356,8 @@ export default {
     },
     loadImage(imageUrl){//切换图片
         let imageId = "wadouri:" + imageUrl;
+        console.log(cornerstoneTools)
+        // console.log(cornerstoneTools.appState.save(this.element))
         cornerstone.loadImage(imageId).then(
           (image)=>{
             // 设置元素视口
