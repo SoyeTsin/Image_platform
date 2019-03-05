@@ -18,14 +18,6 @@
             <el-button plain type="primary" class="add-button" @click="refresh"><i
               class="el-icon-refresh"></i>刷新数据
             </el-button>
-            <el-select v-model="channel.value" filterable placeholder="渠道" class="main-input">
-              <el-option
-                v-for="item in channel.list"
-                :key="item.channelId"
-                :label="item.channelName"
-                :value="item.channelId">
-              </el-option>
-            </el-select>
             <el-select v-model="institution.value" filterable placeholder="机构" class="main-input main-right">
               <el-option
                 v-for="item in institution.list"
@@ -51,10 +43,15 @@
               </el-option>
             </el-select>
             <el-date-picker
-              type="date"
-              v-model="parameter.examDate"
-              placeholder="检测日期">
-            </el-date-picker>
+              v-model="timeArr"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions2"
+            ></el-date-picker>
           </el-col>
           <el-col :span="4" class="display-right">
             <el-button type="success" class="search-button" @click="search">查询</el-button>
@@ -123,7 +120,9 @@
     name: "mechanism",
     components: {top},
     data() {
-
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
       return {
         diseaseCount: [],
         channel: {value: '', key: null, list: []},
@@ -131,17 +130,50 @@
         disease: {value: '', key: null, list: []},
         aiResult: {value: '', key: null, list: []},
         options: '',
-        timeArr: [],
+        timeArr: [start, end],
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
           institutionId: '',
           diseaseType: '',
           aiMsg: '',
-          examDate: '',
+          beginDate: '',
+          endDate: '',
           pageNum: 1,
           pageSize: common.pageParameter.pageSize
-        }
+        },
+        userInstitution: {},
+        pickerOptions2: {
+          shortcuts: [
+            {
+              text: "最近一周",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                picker.$emit("pick", [start, end]);
+              }
+            },
+            {
+              text: "最近一个月",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                picker.$emit("pick", [start, end]);
+              }
+            },
+            {
+              text: "最近三个月",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                picker.$emit("pick", [start, end]);
+              }
+            }
+          ]
+        },
       }
     },
     filters: {
@@ -156,9 +188,7 @@
       }
     },
     computed: {
-      channelValue() {
-        return this.channel.value
-      },
+
       institutionIdValue() {
         return this.institution.value
       },
@@ -171,21 +201,14 @@
 
     },
     watch: {
-      channelValue(val) {
-        let channelId = val
-        if (val == this.channel.list[0].channelName) {
-          channelId = this.channel.list[0].channelId
-        }
-        this.queryOrganizationList(2, channelId)
-      },
       institutionIdValue(val) {
         let institutionId = val
         if (val == this.institution.list[0].institutionName) {
           institutionId = this.institution.list[0].institutionId
         }
         this.institution.key = institutionId
+        this.parameter.institutionId = institutionId
         this.findAllDiseaseTypeCountList(institutionId)
-        this.getData()
       },
       diseaseValue(val) {
         console.log(val)
@@ -196,12 +219,15 @@
       }
     },
     mounted() {
-      this.diseaseType()
-      this.getAiResult()
+      this.userInstitution = JSON.parse(localStorage.getItem('institution'))
+
+
       this.queryOrganizationList()
     },
     methods: {
       getData(msg = '') {
+        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -218,30 +244,24 @@
           })
       },
       queryOrganizationList(dataType = 1, channelId = '') {
+        // 查询上下级机构
         let parameter = {
-          // provinceCode: this.provinces.value,
-          // cityCode: this.city.value,
-          channelId,
-          dataType
+          relateType: 0,
+          institutionId: this.userInstitution.institutionId,
         }
-        this.$post('/manager/queryOrganizationList', parameter)
+        this.$post('manager/queryRelateInstitutionList', parameter)
           .then((response) => {
             if (response.code != '000000') {
               this.$message(response.msg);
               return
             }
-            if (dataType == 1) {
-              this.channel.list = response.data.channelList
-              this.channel.value = response.data.channelList[0].channelName
-              this.queryOrganizationList(2, response.data.channelList[0].channelId)
-            } else {
-              this.institution.list = response.data.institutionList
-              this.institution.value = response.data.institutionList[0].institutionName
-              this.parameter.institutionId = response.data.institutionList[0].institutionId
-            }
+            this.institution.list = response.data.downRelate
+            this.institution.value = response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
+            this.getAiResult()
           })
       },
       findAllDiseaseTypeCountList(institutionId) {
+        //副标题统计异常
         let parameter = {
           institutionId
         }
@@ -252,7 +272,7 @@
               return
             }
             // this.parameter.aiMsg = response.msg
-            this.getData()
+            // this.getData()
           })
       },
       getAiResult() {
@@ -271,6 +291,9 @@
               })
             }
             this.aiResult.list = list
+            this.aiResult.value = list.length > 0 ? list[0].id : ''
+            this.diseaseType()
+
           })
       },
       diseaseType() {
@@ -289,6 +312,8 @@
               })
             }
             this.disease.list = list
+            this.disease.value = list.length > 0 ? list[0].id : ''
+            this.getData()
           })
       },
       search() {
@@ -342,6 +367,7 @@
               return
             }
             this.diseaseCount = response.data
+
           })
       },
       refresh() {
@@ -354,11 +380,13 @@
         })
       }
     },
+
   }
 </script>
 
 <style lang="scss" scoped>
   @import "sass/common";
+
   .el-header {
     padding: 0;
   }

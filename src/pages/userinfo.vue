@@ -8,12 +8,20 @@
             class="el-icon-plus"></i>创建账号
           </el-button>
           <el-input v-model="parameter.userName" placeholder="姓名" class="main-input"></el-input>
-          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
+          <el-select v-model="provinces.value" filterable placeholder="省份或直辖市" class="main-input">
             <el-option
-              v-for="item in office.list"
-              :key="item.officeId"
-              :label="item.officeName"
-              :value="item.officeId">
+              v-for="item in provinces.list"
+              :key="item.provinceCode"
+              :label="item.provinceName"
+              :value="item.provinceCode">
+            </el-option>
+          </el-select>
+          <el-select v-model="city.value" filterable placeholder="城市" class="main-input">
+            <el-option
+              v-for="item in city.list"
+              :key="item.cityCode"
+              :label="item.cityName"
+              :value="item.cityCode">
             </el-option>
           </el-select>
           <el-select v-model="institution.value" filterable placeholder="机构" class="main-input">
@@ -25,23 +33,14 @@
               :disabled="item.disabled">
             </el-option>
           </el-select>
-          <el-select v-model="provinces.value" placeholder="省份或直辖市" class="main-input">
+          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
             <el-option
-              v-for="item in provinces.list"
-              :key="item.provinceCode"
-              :label="item.provinceName"
-              :value="item.provinceCode">
+              v-for="item in office.list"
+              :key="item.officeId"
+              :label="item.officeName"
+              :value="item.officeId">
             </el-option>
           </el-select>
-          <el-select v-model="city.value" placeholder="城市" class="main-input">
-            <el-option
-              v-for="item in city.list"
-              :key="item.cityCode"
-              :label="item.cityName"
-              :value="item.cityCode">
-            </el-option>
-          </el-select>
-
         </el-col>
         <el-col :span="3" class="display-right">
           <el-button type="success" class="search-button" @click="search">查询</el-button>
@@ -70,10 +69,10 @@
         </el-table-column>
         <el-table-column prop="phoneNum" label="联系方式">
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="80">
           <template slot-scope="scope">
             <img :src="icon_edit" class="table-icon" @click="editUser(scope.row)">
-            <img :src="icon_delete" class="table-icon" @click="deleteUser(scope.row)">
+            <!--<img :src="icon_delete" class="table-icon" @click="deleteUser(scope.row)">-->
           </template>
         </el-table-column>
       </el-table>
@@ -135,6 +134,9 @@
       cityValue() {
         return this.city.value
       },
+      officeValue() {
+        return this.office.value
+      },
     },
     watch: {
       provincesValue(val) {
@@ -142,8 +144,11 @@
         this.city = {value: '', list: []}
       },
       cityValue(val) {
-        this.channel = {value: '', list: []}
+        // this.channel = {value: '', list: []}
       },
+      officeValue(val) {
+        this.office.key = val
+      }
     },
     methods: {
       getData() {
@@ -191,14 +196,14 @@
               let m = newData[i]
               let n = {
                 disabled: true,
-                name: '-- ' + m.channelName,
+                name: m.channelName,
                 flowId: m.channelId,
               }
               let y = {}
-              list.push(n)
+              // list.push(n)
               for (let j in m.institutions) {
                 y = {
-                  name:  m.institutions[j].institutionName,
+                  name: m.institutions[j].institutionName,
                   flowId: m.institutions[j].institutionId,
                   type: 1
                 }
@@ -233,7 +238,6 @@
         let parameter = {
           userId: user.userId
         }
-        debugger
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -265,7 +269,7 @@
           institutionId: this.institution.value,
           provinceCode: this.provinces.value,
           cityCode: this.city.value,
-          officeId: "",
+          officeId: this.office.key,
           pageNum: 1,
           pageSize: common.pageParameter.pageSize
         }

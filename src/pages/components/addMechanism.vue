@@ -39,7 +39,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="上级机构" prop="upRelate" class="dialog-item">
-              <el-select v-model="ruleForm.upRelate" filterable placeholder="机构" class="main-input">
+              <el-select multiple v-model="upRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in upRelate.list"
                   :key="item.flowId"
@@ -52,13 +52,14 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="下级机构" prop="downRelate" class="dialog-item">
-              <el-select v-model="ruleForm.downRelate" filterable placeholder="机构" class="main-input">
+              <el-select multiple v-model="downRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in downRelate.list"
                   :key="item.flowId"
                   :label="item.name"
                   :value="item.flowId"
-                  :disabled="item.disabled">
+                  :disabled="item.disabled"
+                  selected>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -102,15 +103,33 @@
         }
       };
       return {
+        options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        upRelateArr: [],
+        downRelateArr: [],
         dialogTableVisible: false,
-        upRelate: {value: '', key: null, list: []},
-        downRelate: {value: '', key: null, list: []},
+        upRelate: {value: [], key: null, list: []},
+        downRelate: {value: [], key: null, list: []},
         office: {value: '', key: null, list: []},
         parameter: {userName: '', phoneNum: '', userId: ''},
         isEnable: {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]},
         ruleForm: {
-          upRelate: '',
-          downRelate: '',
+          upRelate: [],
+          downRelate: [],
           channelUser: '',
           institutionUser: '',
           channelContact: '',
@@ -167,7 +186,11 @@
       isEnableValue(val) {
         console.log(val)
         this.isEnable.key = val
-      }
+      },
+      upRelateArr(val) {
+      },
+      downRelateArr(val) {
+      },
     },
     mounted() {
       this.queryOrganizationList()
@@ -191,8 +214,8 @@
           "channelContact": this.ruleForm.channelContact,
           "institutionUser": this.ruleForm.institutionUser,
           "institutionContact": this.ruleForm.institutionContact,
-          "father_institutions": this.ruleForm.upRelate,
-          "child_institutions": this.ruleForm.downRelate
+          "father_institutions": this.upRelateArr.join(','),
+          "child_institutions": this.downRelateArr.join(',')
         }
         this.$post('/manager/editInstitutionInfo', parameter)
           .then((response) => {
@@ -214,7 +237,6 @@
         this.ruleForm.channelContact = this.parameter.channelContact
         this.ruleForm.institutionUser = this.parameter.institutionUser
         this.ruleForm.institutionContact = this.parameter.institutionContact
-
         this.queryRelateInstitutionList(this.parameter.institutionId)
       },
       queryRelateInstitutionList(institutionId) {
@@ -225,10 +247,20 @@
               this.$message(response.msg);
               return
             }
+            let arr = []
             let upRelate = response.data.upRelate
-            this.ruleForm.upRelate = upRelate.length > 0 ? upRelate[0].institutionName : ''
+            //---------------------------
+            this.upRelateArr = []
+            for (let i in upRelate) {
+              this.upRelateArr.push(upRelate[i].institutionId)
+            }
+            // this.upRelateArr = upRelate
             let downRelate = response.data.downRelate
-            this.ruleForm.downRelate = downRelate.length > 0 ? downRelate[0].institutionName : ''
+            this.downRelateArr = []
+            for (let i in downRelate) {
+              this.downRelateArr.push(downRelate[i].institutionId)
+            }
+            // this.downRelateArr = downRelate
           })
       },
       changeDialogTableVisible() {
@@ -250,14 +282,14 @@
               let m = newData[i]
               let n = {
                 disabled: true,
-                name: '-- ' + m.channelName,
+                name: m.channelName,
                 flowId: m.channelId,
               }
               let y = {}
-              list.push(n)
+              // list.push(n)
               for (let j in m.institutions) {
                 y = {
-                  name:  m.institutions[j].institutionName,
+                  name: m.institutions[j].institutionName,
                   flowId: m.institutions[j].institutionId,
                   type: 1
                 }

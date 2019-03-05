@@ -1,9 +1,15 @@
 <template>
   <el-container>
 
-    <el-dialog title="账号编辑" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
+    <el-dialog :title="editType?'添加账户':'编辑账户'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="用户姓名" prop="userName" class="dialog-item">
+        <el-form-item label="用户姓名" prop="userName" class="dialog-item" v-show="!editType">
+          {{ruleForm.userName}}
+        </el-form-item>
+        <el-form-item label="用户    ID" prop="userName" class="dialog-item" v-show="!editType">
+          {{parameter.userId}}
+        </el-form-item>
+        <el-form-item label="用户姓名" prop="userName" class="dialog-item" v-show="editType">
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
         <el-form-item label="所处机构" prop="institutionValue" class="dialog-item">
@@ -31,7 +37,7 @@
           <el-input v-model="ruleForm.phoneNum"></el-input>
         </el-form-item>
         <el-form-item label="权限" prop="isEnableValue" class="dialog-item">
-          <el-select v-model="ruleForm.isEnableValue" placeholder="请选择" class="main-input">
+          <el-select v-model="ruleForm.isEnableValue" filterable placeholder="请选择" class="main-input">
             <el-option
               v-for="item in isEnable.list"
               :key="item.value"
@@ -53,6 +59,7 @@
     name: "addUser",
     data() {
       return {
+        editType: true,
         dialogTableVisible: false,
         channel: {value: '', key: null, list: []},
         institution: {value: '', key: null, list: []},
@@ -121,8 +128,7 @@
       }
     },
     mounted() {
-      this.queryOfficeList()
-      this.queryOrganizationList()
+
     },
     methods: {
       submitForm(formName) {
@@ -186,19 +192,25 @@
           channelValue: '',
           institutionValue: '',
           officeValue: '',
-          isEnableValue: '',
+          isEnableValue: 0,
         }
+        this.editType = true
+        this.queryOfficeList()
+        this.queryOrganizationList()
       },
       editUser(user) {
         console.log(user)
+        this.user = user
         this.parameter.userId = user.userId
         this.parameter.institutionId = user.institution.institutionId
         this.parameter.officeId = user.office.officeId
+        this.parameter.isEnable = user.authority
         this.ruleForm.userName = user.userName
         this.ruleForm.phoneNum = user.phoneNum
-        this.ruleForm.institutionValue = user.institution.institutionName
-        this.ruleForm.officeValue = user.office.officeName
-        this.ruleForm.isEnableValue = '启用'
+        this.ruleForm.isEnableValue = user.authority
+        this.editType = false
+        this.queryOfficeList()
+        this.queryOrganizationList()
       },
       changeDialogTableVisible() {
         this.dialogTableVisible = !this.dialogTableVisible
@@ -212,6 +224,10 @@
               return
             }
             this.office.list = response.data
+            if (this.user) {
+              this.ruleForm.officeValue = this.user.office.officeId
+
+            }
           })
       },
       queryOrganizationList() {
@@ -234,10 +250,10 @@
                 flowId: m.channelId,
               }
               let y = {}
-              list.push(n)
+              // list.push(n)
               for (let j in m.institutions) {
                 y = {
-                  name: '-- ' + m.institutions[j].institutionName,
+                  name: m.institutions[j].institutionName,
                   flowId: m.institutions[j].institutionId,
                   type: 1
                 }
@@ -245,6 +261,9 @@
               }
             }
             this.institution.list = list
+            if (this.user) {
+              this.ruleForm.institutionValue = this.user.institution.institutionId
+            }
           })
       },
       resetForm(formName) {
