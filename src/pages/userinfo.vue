@@ -136,11 +136,11 @@
       provincesValue(val) {
         this.queryRegionInfo(val)
         this.city = {value: '', list: []}
-        this.queryOrganizationList()
+        this.queryOrganizationList(true)
       },
       cityValue(val) {
         // this.channel = {value: '', list: []}
-        this.queryOrganizationList()
+        this.queryOrganizationList(true)
       },
       officeValue(val) {
         this.office.key = val
@@ -171,12 +171,13 @@
             }
             if (parameter.provinceCode) {
               this.city.list = response.data
+              this.city.value = this.city.list.length > 0 ? this.city.list[0].cityCode : ''
             } else {
               this.provinces.list = response.data
             }
           })
       },
-      queryOrganizationList() {
+      queryOrganizationList(modle) {
         let parameter = {
           provinceCode: this.provinces.value,
           cityCode: this.city.value,
