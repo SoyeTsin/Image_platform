@@ -51,15 +51,16 @@
                 <span slot="reference">{{x.diseaseDesc}}</span>
               </el-popover>
               <span>{{x.imageNo}}</span>
-              <span>{{x.probability|toFixedTwo}}%</span>
+              <span>{{x.probability}}</span>
             </li>
           </ul>
         </div>
       </div>
       <div class="btn">
-        <div class="item" @click="getResult();">编辑诊断结果</div>
-        <div class="item1">
-          <router-link :to="{name:'report',query:$route.query}">查看诊断结果</router-link>
+        <div class="item" @click="getResult(1);">编辑诊断结果</div>
+        <div class="item1" @click="getResult(2);">
+          查看诊断结果
+          <!-- <router-link :to="{name:'report',query:$route.query}"></router-link> -->
         </div>
       </div>
     </el-aside>
@@ -218,7 +219,7 @@
           <span slot="footer" class="dialog-footer">
             <button
               class="submit"
-              v-if="result.length >0&&describe.length >0"
+              v-if="result.length >0"
               @click="editResult()"
             >{{queryDiagnosis&&queryDiagnosis.doctorDesc&&queryDiagnosis.doctorResult?'保存':'提交'}}</button>
             <button
@@ -272,7 +273,7 @@
               </i>
             </el-popover>
             <el-popover placement="top" width="216" v-model="isDelete" trigger="click">
-              <div class="tips">deleteFlag
+              <div class="tips">
                 <p style="text-align: center;padding-top: 18px;">是否确定删除AI提示？</p>
                 <div class="btn">
                   <span @click="isDelete = false">取消</span>
@@ -473,16 +474,23 @@ export default {
     };
   },
   methods: {
-    getResult() {
+    getResult(type) {
       //获取诊断结果
       this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
         if (res.code == "000000") {
-          this.queryDiagnosis = res.data;
-          this.describe = res.data.doctorDesc;
-          this.result = res.data.doctorResult;
+          if(type==1){
+            this.queryDiagnosis = res.data;
+            this.describe = res.data.doctor_desc;
+            this.result = res.data.doctor_result;
+            this.dialogVisible = true;
+          }else if(type==2){
+            if(res.data&&res.data.doctor_result){
+              this.$router.push({name:'report',query:this.$route.query})
+            }
+          }
+          
         }
       });
-      this.dialogVisible = true;
     },
     editResult() {
       //提交诊断结果
@@ -535,14 +543,20 @@ export default {
       this.listDetail = data;
       this.isDetail = true;
       this.$refs.slider.setIndex(index);
+      this.cornerstone.loadImage(
+        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
+        this.exampleStudyImageIds[this.$refs.slider.getIndex()]
+      );
     },
     sliderCallback() {
       //拖动回调
       this.cornerstone.loadImage(
-        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl
+        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
+        this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
       this.cornerstone1.loadImage(
-        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl
+        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
+        this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
       this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
@@ -560,7 +574,8 @@ export default {
         }
       }
       this.cornerstone.loadImage(
-        this.exampleStudyImageIds[this.slider.value].imageUrl
+        this.exampleStudyImageIds[this.slider.value].imageUrl,
+        this.exampleStudyImageIds[this.slider.value]
       );
       this.cornerstone1.loadImage(
         this.exampleStudyImageIds[this.slider.value].imageUrl
@@ -681,7 +696,7 @@ export default {
       this.slider.max = res.data.lenght - 1;
       setTimeout(() => {
         this.$refs.cornerstone
-          .init(this.exampleStudyImageIds[0].imageUrl)
+          .init(this.exampleStudyImageIds[0].imageUrl,this.exampleStudyImageIds[0])
           .then(res => {
             //初始化工具
             this.cornerstone = this.$refs.cornerstone;

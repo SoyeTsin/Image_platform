@@ -30,7 +30,7 @@
                   <img src="./assets/jbxx.png" class="tishi-icon">患者基本信息
                 </div>
                 <el-row class="report-item">
-                  <el-col :span="8">患者姓名：{{serial.examDate}}</el-col>
+                  <el-col :span="8">患者姓名：{{serial.patientName}}</el-col>
                   <el-col :span="8">患者年龄：{{serial.studyAge}}</el-col>
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
@@ -44,11 +44,11 @@
                 </div>
                 <el-row class="report-item">
                   <!-- <el-col :span="24" class="label">中线位置：居中</el-col> -->
-                  <el-col :span="24" v-if="queryDiagnosis">{{queryDiagnosis.doctorDesc||''}}</el-col>
+                  <el-col :span="24" v-if="queryDiagnosis">{{queryDiagnosis.doctor_desc||''}}</el-col>
                 </el-row>
                 <el-row class="report-item">
                   <el-col :span="24" class="label">诊断结论</el-col>
-                  <el-col :span="24" v-if="queryDiagnosis">{{queryDiagnosis.doctorResult||''}}</el-col>
+                  <el-col :span="24" v-if="queryDiagnosis">{{queryDiagnosis.doctor_result||''}}</el-col>
                 </el-row>
               </div>
               <div class="report-main-right">
@@ -82,7 +82,8 @@ export default {
       serial: {},
       serialImages: {},
       queryDiagnosis: {},
-      institution: ""
+      institution: "",
+      FormatDate:''
     };
   },
   methods: {
@@ -95,6 +96,24 @@ export default {
     top
   },
   created() {
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " + date.getHours() + seperator2 + date.getMinutes()
+                + seperator2 + date.getSeconds();
+        return currentdate;
+    } 
+    this.FormatDate = getNowFormatDate()
     this.$fetch("/api/diseaseType").then(res => {
       if (res.code == "000000") {
         this.diseaseType = res.data[this.$route.query.diseaseType];
