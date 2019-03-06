@@ -8,7 +8,7 @@
             class="el-icon-plus"></i>创建账号
           </el-button>
           <el-input v-model="parameter.userName" placeholder="姓名" class="main-input"></el-input>
-          <el-select v-model="provinces.value" filterable placeholder="省份或直辖市" class="main-input">
+          <el-select clearable v-model="provinces.value" filterable placeholder="省份或直辖市" class="main-input">
             <el-option
               v-for="item in provinces.list"
               :key="item.provinceCode"
@@ -16,7 +16,7 @@
               :value="item.provinceCode">
             </el-option>
           </el-select>
-          <el-select v-model="city.value" filterable placeholder="城市" class="main-input">
+          <el-select clearable v-model="city.value" filterable placeholder="城市" class="main-input">
             <el-option
               v-for="item in city.list"
               :key="item.cityCode"
@@ -24,7 +24,7 @@
               :value="item.cityCode">
             </el-option>
           </el-select>
-          <el-select v-model="institution.value" filterable placeholder="机构" class="main-input">
+          <el-select clearable v-model="institution.value" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in upRelate.list"
               :key="item.flowId"
@@ -33,7 +33,7 @@
               :disabled="item.disabled">
             </el-option>
           </el-select>
-          <el-select v-model="office.value" filterable placeholder="科室" class="main-input">
+          <el-select clearable v-model="office.value" filterable placeholder="科室" class="main-input">
             <el-option
               v-for="item in office.list"
               :key="item.officeId"
@@ -43,8 +43,8 @@
           </el-select>
         </el-col>
         <el-col :span="3" class="display-right">
-          <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0"><i
-            class="el-icon-refresh"></i>
+          <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0">
+            <img src="./assets/chongzhi.png" class="so-icon"/>
           </el-button>
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>

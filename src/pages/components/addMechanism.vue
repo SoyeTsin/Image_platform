@@ -39,7 +39,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="上级机构" prop="upRelate" class="dialog-item">
-              <el-select multiple v-model="upRelateArr" filterable placeholder="机构" class="main-input">
+              <el-select clearable multiple v-model="upRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in upRelate.list"
                   :key="item.flowId"
@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="下级机构" prop="downRelate" class="dialog-item">
-              <el-select multiple v-model="downRelateArr" filterable placeholder="机构" class="main-input">
+              <el-select clearable multiple v-model="downRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in downRelate.list"
                   :key="item.flowId"

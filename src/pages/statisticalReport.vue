@@ -11,7 +11,7 @@
             返回
           </div>
           <div class="screen">
-            <el-select v-model="disease.value" placeholder="请选择">
+            <el-select  clearable v-model="disease.value" placeholder="请选择">
               <el-option
                 v-for="item in disease.list"
                 :key="item.id"

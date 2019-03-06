@@ -19,6 +19,7 @@
     "cornerstone-tools": "^2.3.6",
     "cornerstone-web-image-loader": "1.0.0",
     "dicom-parser": "^1.8.1",
+    "echarts": "^4.1.0",
     "element-ui": "^2.5.2",
     "hammerjs": "^2.0.8",
     "jquery": "^3.3.1",

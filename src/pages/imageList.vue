@@ -9,7 +9,7 @@
         <el-row class="text-left image-list-des">
           <div v-show="diseaseCount.length>0">
             最近30天筛查出
-            <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount">
+            <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount" v-if="index==0">
             &nbsp;{{item.diseaseSeriesCount}}&nbsp;例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
           </span>
             ，点击红色字体立即查看
@@ -29,15 +29,7 @@
                 :value="item.institutionId">
               </el-option>
             </el-select>
-            <el-select v-model="aiResult.value" placeholder="全部AI病种" class="main-input">
-              <el-option
-                v-for="item in aiResult.list"
-                :key="item.id"
-                :label="item.val"
-                :value="item.id">
-              </el-option>
-            </el-select>
-            <el-select v-model="disease.value" placeholder="全部检查情况" class="main-input">
+            <el-select v-model="disease.value" placeholder="全部AI病种" class="main-input">
               <el-option
                 v-for="item in disease.list"
                 :key="item.id"
@@ -45,20 +37,37 @@
                 :value="item.id">
               </el-option>
             </el-select>
+            <el-select clearable v-model="aiResult.value" placeholder="全部检查情况" class="main-input">
+              <el-option
+                v-for="item in aiResult.list"
+                :key="item.id"
+                :label="item.val"
+                :value="item.id">
+              </el-option>
+            </el-select>
+            <!--<el-date-picker-->
+              <!--v-model="timeArr"-->
+              <!--type="daterange"-->
+              <!--align="right"-->
+              <!--unlink-panels-->
+              <!--range-separator="至"-->
+              <!--start-placeholder="开始日期"-->
+              <!--end-placeholder="结束日期"-->
+              <!--:picker-options="pickerOptions2"-->
+            <!--&gt;</el-date-picker>-->
             <el-date-picker
               v-model="timeArr"
-              type="daterange"
-              align="right"
-              unlink-panels
+              type="datetimerange"
+              :picker-options="pickerOptions2"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              :picker-options="pickerOptions2"
-            ></el-date-picker>
+              align="right">
+            </el-date-picker>
           </el-col>
           <el-col :span="4" class="display-right">
-            <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0"><i
-              class="el-icon-refresh"></i>
+            <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0">
+              <img src="./assets/chongzhi.png" class="so-icon"/>
             </el-button>
             <el-button type="success" class="search-button" @click="search">查询</el-button>
           </el-col>
@@ -84,24 +93,26 @@
           <el-table-column label="AI检测情况">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="light" :content="scope.row.aiMsg" placement="bottom">
-                <span>{{scope.row.aiMsg}}</span>
+                <span :style="scope.row.aiCode|msgColorFilter">{{scope.row.aiMsg}}</span>
               </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
-                <router-link
-                  :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
-                  <img src="./assets/image/ck.png" class="table-icon">
-                </router-link>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
-                <router-link
-                  :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
-                  <img src="./assets/image/bg.png" class="table-icon">
-                </router-link>
-              </el-tooltip>
+              <div v-show='scope.row.aiCode=="000000"'>
+                <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
+                  <router-link
+                    :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
+                    <img src="./assets/image/ck.png" class="table-icon">
+                  </router-link>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
+                  <router-link
+                    :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
+                    <img src="./assets/image/bg.png" class="table-icon">
+                  </router-link>
+                </el-tooltip>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -111,9 +122,7 @@
                        layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
         </el-pagination>
       </div>
-
     </el-main>
-
   </el-container>
 </template>
 
@@ -199,6 +208,20 @@
         } else {
           return '未知'
         }
+      },
+      msgColorFilter(value) {
+        const msgColor = ['#008DFF', '#FF2929', '#999999', '#00CB9E',]
+        let coler = ''
+        if (value == '000000') {
+          coler = msgColor[3]
+        } else if (value == '000001') {
+          coler = msgColor[2]
+        } else if (value == '003101') {
+          coler = msgColor[1]
+        } else {
+          coler = msgColor[0]
+        }
+        return 'color:' + coler + ';'
       }
     },
     computed: {
@@ -216,11 +239,9 @@
     watch: {
       institutionIdValue(val) {
         let institutionId = val
-        if (val == this.institution.list[0].institutionName) {
-          institutionId = this.institution.list[0].institutionId
-        }
         this.institution.key = institutionId
         this.parameter.institutionId = institutionId
+        console.log(institutionId)
         this.findAllDiseaseTypeCountList(institutionId)
       },
       diseaseValue(val) {
@@ -241,7 +262,6 @@
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
-        this.parameter.institutionId = this.userInstitution.institutionId
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -329,18 +349,18 @@
               })
             }
             this.disease.list = list
-            // this.disease.value = list.length > 0 ? list[0].id : ''
+            this.disease.value = list.length > 0 ? list[0].id : ''
             this.getData()
           })
       },
       refreshFun() {
         this.institution.value = this.institution.list[0].institutionId
-        this.aiResult.value = this.aiResult.list[0].id
+        this.aiResult.value = ''
         this.disease.value = this.disease.list[0].id
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        this.timeArr = [start, end]
+        this.timeArr = []
         this.search()
       },
       search() {
@@ -359,8 +379,10 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
-        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if (this.timeArr[0] && this.timeArr[1]) {
+          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        }
         this.parameter = {
           institutionId: this.institution.value,
           diseaseType: this.disease.value * 1,
@@ -371,8 +393,10 @@
         this.getData()
       },
       handleCurrentChange(val) {
-        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if (this.timeArr[0] && this.timeArr[1]) {
+          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        }
         this.parameter = {
           institutionId: this.institution.value,
           diseaseType: this.disease.value * 1,

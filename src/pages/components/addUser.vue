@@ -13,7 +13,7 @@
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
         <el-form-item label="所处机构" prop="institutionValue" class="dialog-item">
-          <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
+          <el-select clearable v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in institution.list"
               :key="item.flowId"
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="所处科室" prop="officeValue" class="dialog-item">
-          <el-select v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
+          <el-select clearable v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
             <el-option
               v-for="item in office.list"
               :key="item.officeId"
@@ -37,7 +37,7 @@
           <el-input v-model="ruleForm.phoneNum"></el-input>
         </el-form-item>
         <el-form-item label="权限" prop="isEnableValue" class="dialog-item">
-          <el-select v-model="ruleForm.isEnableValue" filterable placeholder="请选择" class="main-input">
+          <el-select clearable v-model="ruleForm.isEnableValue" filterable placeholder="请选择" class="main-input">
             <el-option
               v-for="item in isEnable.list"
               :key="item.value"
