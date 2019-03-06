@@ -260,11 +260,16 @@ export default {
       if(viewport.scale>8){
         viewport.scale = 8
       }
+      
       cornerstone.setViewport(this.element, viewport);
       
     },
     reset(){//复原
+      cornerstoneTools.clearToolState(this.element, "simpleAngle");
+      cornerstoneTools.clearToolState(this.element, "length");
       cornerstone.reset(this.element);
+      cornerstone.updateImage(this.element);
+
     },
     simpleAngle(){ //角度工具
       return {
@@ -367,6 +372,9 @@ export default {
             );
             viewport.voi.windowWidth = 400
             viewport.voi.windowCenter = 40
+            cornerstoneTools.clearToolState(this.element, "simpleAngle");
+            cornerstoneTools.clearToolState(this.element, "length");
+            cornerstone.updateImage(this.element);
             // 显示图像
             cornerstone.displayImage(this.element, image, viewport);
             // 激活工具

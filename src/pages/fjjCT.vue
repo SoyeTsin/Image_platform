@@ -685,7 +685,6 @@ export default {
           .then(res => {
             //初始化工具
             this.cornerstone = this.$refs.cornerstone;
-            
           });
         this.$refs.cornerstone1
           .init(this.exampleStudyImageIds[0].imageUrl)
