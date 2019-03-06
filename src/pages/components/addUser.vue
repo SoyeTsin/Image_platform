@@ -125,6 +125,11 @@
       isEnableValue(val) {
         console.log(val)
         this.isEnable.key = val
+      },
+      dialogTableVisible(val) {
+        !val && setTimeout(() => {
+          this.$refs['ruleForm'].resetFields();
+        }, 0);
       }
     },
     mounted() {
@@ -136,7 +141,7 @@
           if (valid) {
             this.addUserInfo()
           } else {
-            this.$message('请正确填写表单内容！');
+            // this.$message('请正确填写表单内容！');
             return false;
           }
         });
@@ -211,6 +216,9 @@
         this.editType = false
         this.queryOfficeList()
         this.queryOrganizationList()
+        setTimeout(() => {
+          this.$refs['ruleForm'].resetFields();
+        }, 0);
       },
       changeDialogTableVisible() {
         this.dialogTableVisible = !this.dialogTableVisible

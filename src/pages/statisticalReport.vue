@@ -59,11 +59,12 @@
               </div>
             </div>
             <div class="button-right">
-              <el-button type="success" class="button-center" @click="submitForm('ruleForm')">错误反馈</el-button>
+              <el-button type="success" class="button-center" @click="addFeedbackFun">错误反馈</el-button>
             </div>
           </div>
         </div>
       </div>
+      <feedback ref="addFeedback" @renewList="getData"></feedback>
     </el-main>
   </el-container>
 </template>
@@ -73,14 +74,16 @@
   import columnG2 from "./components/columnG2";
   import pieG2 from "./components/pieG2";
   import top from "./components/top";
+  import feedback from './components/feedback'
 
   export default {
     name: "userInfo",
-    components: {columnG2, pieG2, top},
+    components: {columnG2, pieG2, top, feedback},
     data() {
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
       return {
         timeArr: [start, end],
         serverData: [],
@@ -98,7 +101,8 @@
               onClick(picker) {
                 const end = new Date();
                 const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 8);
                 picker.$emit("pick", [start, end]);
               }
             },
@@ -107,7 +111,8 @@
               onClick(picker) {
                 const end = new Date();
                 const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 31);
                 picker.$emit("pick", [start, end]);
               }
             },
@@ -116,11 +121,24 @@
               onClick(picker) {
                 const end = new Date();
                 const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 91);
+                picker.$emit("pick", [start, end]);
+              }
+            }, {
+              text: "最近半年",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 183);
                 picker.$emit("pick", [start, end]);
               }
             }
-          ]
+          ],
+          disabledDate(time) {
+            return time.getTime() > Date.now() - 8.64e7;
+          }
         },
         disease: {value: '', key: null, list: []},
       };
@@ -133,13 +151,7 @@
     watch: {
       diseaseValue(val) {
         console.log(val)
-        this.disease.key = val
-        let diseaseType = val
-        if (val == this.disease.list[0].val) {
-          diseaseType = this.disease.list[0].val
-        }
-        this.parameter.diseaseType = diseaseType
-        this.getData()
+        this.parameter.diseaseType = val
       },
       timeArr() {
         this.getData()
@@ -148,7 +160,6 @@
     mounted() {
       this.parameter.institutionId = this.$route.params.institutionId || '005050024000004510000000'
       this.diseaseType()
-      this.imgReportTwo();
       this.serverData = []
     },
     methods: {
@@ -180,7 +191,7 @@
                 name: "上传序列",
                 time: i.substring(5, 7) + '.' + i.substring(8, 10),
                 value: seriesCountMap[i],// + Math.ceil(Math.random() * 10),
-                rate:aiSeriesCountMap[i]// ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
+                rate: aiSeriesCountMap[i]// ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
               })
             }
             let probabilityArr = []
@@ -189,27 +200,27 @@
               switch (i) {
                 case 'probability2040Count':
                   probabilityArr.push({
-                    type: '较低数量', value: probabilityMap[i]
+                    type: '较低数量', value: probabilityMap[i] || 0
                   })
                   break;
                 case 'probability4060Count':
                   probabilityArr.push({
-                    type: '一般数量', value: probabilityMap[i]
+                    type: '一般数量', value: probabilityMap[i] || 0
                   })
                   break;
                 case 'probability6080Count':
                   probabilityArr.push({
-                    type: '较高数量', value: probabilityMap[i]
+                    type: '较高数量', value: probabilityMap[i] || 0
                   })
                   break;
                 case 'probabilityLe80Count':
                   probabilityArr.push({
-                    type: '极高数量', value: probabilityMap[i]
+                    type: '极高数量', value: probabilityMap[i] || 0
                   })
                   break;
                 case 'probabilityLt20Count':
                   probabilityArr.push({
-                    type: '极低数量', value: probabilityMap[i]
+                    type: '极低数量', value: probabilityMap[i] || 0
                   })
                   break;
               }
@@ -234,41 +245,18 @@
               })
             }
             this.disease.list = list
-            this.disease.value = list[0].val
+            this.disease.value = list[0].id
             this.disease.key = list[0].id
             this.parameter.diseaseType = list[0].id
+            this.getData()
           })
-      },
-      imgReportTwo() {
-        this.pieData = [{
-          item: '事例一',
-          count: 40,
-          percent: 0.4
-        },
-          {
-            item: "事例二",
-            count: 21,
-            percent: 0.21
-          },
-          {
-            item: "事例三",
-            count: 17,
-            percent: 0.17
-          },
-          {
-            item: "事例四",
-            count: 13,
-            percent: 0.13
-          },
-          {
-            item: "事例五",
-            count: 9,
-            percent: 0.09
-          }
-        ];
       },
       returnGo() {
         this.$router.go(-1);
+      },
+      addFeedbackFun() {
+        this.$refs.addFeedback.changeDialogTableVisible()
+        this.$refs.addFeedback.initParameter(this.parameter)
       }
     }
   };

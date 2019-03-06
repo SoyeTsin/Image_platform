@@ -61,9 +61,9 @@
         login_bg_2,
         login_kuang,
         userParameter: {
-          smsCode: '647601',
+          smsCode: '',
           userType: 1,
-          phoneNum: '13088869730',
+          phoneNum: '',
         }
       }
     },

@@ -43,26 +43,20 @@
           </el-select>
         </el-col>
         <el-col :span="3" class="display-right">
+          <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0"><i
+            class="el-icon-refresh"></i>
+          </el-button>
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
-        <el-table-column prop="userName" label="姓名" width="120">
+        <el-table-column prop="userName" label="姓名" width="120" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="office.officeName" label="所在科室">
+        <el-table-column prop="office.officeName" label="所在科室" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="所在医院">
-          <template slot-scope="scope" :title="scope.row.institution.channelName">
-            <el-popover
-              ref="popover"
-              width="200"
-              trigger="hover"
-              :content="scope.row.institution.channelName+'      '+scope.row.institution.institutionName">
-            </el-popover>
-            <el-col v-popover:popover>{{ scope.row.institution.institutionName }}</el-col>
-          </template>
+        <el-table-column label="所在医院" prop="institution.institutionName" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="所在地区">
+        <el-table-column label="所在地区" show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.institution.provinceName }}{{ scope.row.institution.cityName }}
           </template>
@@ -79,7 +73,7 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
                      :page-size="pageParameter.pageSize"
-                     layout="sizes, prev, pager, next" :total="pageParameter.total">
+                     layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
       </el-pagination>
       <addUser ref="addUser" @renewList="getData"></addUser>
     </el-main>
@@ -142,9 +136,11 @@
       provincesValue(val) {
         this.queryRegionInfo(val)
         this.city = {value: '', list: []}
+        this.queryOrganizationList()
       },
       cityValue(val) {
         // this.channel = {value: '', list: []}
+        this.queryOrganizationList()
       },
       officeValue(val) {
         this.office.key = val
@@ -182,6 +178,8 @@
       },
       queryOrganizationList() {
         let parameter = {
+          provinceCode: this.provinces.value,
+          cityCode: this.city.value,
           dataType: 0
         }
         this.$post('/manager/queryOrganizationList', parameter)
@@ -262,6 +260,14 @@
           });
         });
       },
+      refreshFun() {
+        this.parameter.userName = ''
+        this.provinces.value = ''
+        this.city.value = ''
+        this.institution.value = ''
+        this.office.value = ''
+        this.search()
+      },
       search() {
         this.parameter = {
           userName: this.parameter.userName,
@@ -269,7 +275,7 @@
           institutionId: this.institution.value,
           provinceCode: this.provinces.value,
           cityCode: this.city.value,
-          officeId: this.office.key,
+          officeId: this.office.value,
           pageNum: 1,
           pageSize: common.pageParameter.pageSize
         }

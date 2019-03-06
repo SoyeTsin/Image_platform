@@ -6,12 +6,15 @@
     <el-main>
       <div class="so-content">
         <el-row class="text-left main-title image-list-title">影像列表</el-row>
-        <el-row class="text-left image-list-des" v-show="diseaseCount.length>0">
-          最近30天筛查出
-          <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount">
-            {{item.diseaseSeriesCount}}例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
+        <el-row class="text-left image-list-des">
+          <div v-show="diseaseCount.length>0">
+            最近30天筛查出
+            <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount">
+            &nbsp;{{item.diseaseSeriesCount}}&nbsp;例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
           </span>
-          ，点击红色字体立即查看
+            ，点击红色字体立即查看
+          </div>
+          &nbsp;
         </el-row>
         <el-row class="text-left main-screen">
           <el-col :span="20">
@@ -54,6 +57,9 @@
             ></el-date-picker>
           </el-col>
           <el-col :span="4" class="display-right">
+            <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0"><i
+              class="el-icon-refresh"></i>
+            </el-button>
             <el-button type="success" class="search-button" @click="search">查询</el-button>
           </el-col>
         </el-row>
@@ -102,7 +108,7 @@
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                        :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
                        :page-size="pageParameter.pageSize"
-                       layout="sizes, prev, pager, next" :total="pageParameter.total">
+                       layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
         </el-pagination>
       </div>
 
@@ -122,6 +128,7 @@
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+
       return {
         diseaseCount: [],
         channel: {value: '', key: null, list: []},
@@ -129,7 +136,7 @@
         disease: {value: '', key: null, list: []},
         aiResult: {value: '', key: null, list: []},
         options: '',
-        timeArr: ['',''],
+        timeArr: ['', ''],
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
@@ -168,6 +175,14 @@
                 const end = new Date();
                 const start = new Date();
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                picker.$emit("pick", [start, end]);
+              }
+            }, {
+              text: "最近半年",
+              onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 182);
                 picker.$emit("pick", [start, end]);
               }
             }
@@ -218,15 +233,15 @@
     },
     mounted() {
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
-
       this.queryOrganizationList()
     },
     methods: {
       getData(msg = '') {
-        if(this.timeArr[0]&&this.timeArr[1]){
-            this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-            this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if (this.timeArr[0] && this.timeArr[1]) {
+          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
+        this.parameter.institutionId = this.userInstitution.institutionId
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -254,8 +269,11 @@
               this.$message(response.msg);
               return
             }
-            this.institution.list = response.data.downRelate
-            this.institution.value = response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
+            this.institution.list.push(this.userInstitution)
+            for (let i in  response.data.downRelate) {
+              this.institution.list.push(response.data.downRelate[i])
+            }
+            this.institution.value = this.userInstitution.institutionId //response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
             this.getAiResult()
           })
       },
@@ -315,14 +333,25 @@
             this.getData()
           })
       },
+      refreshFun() {
+        this.institution.value = this.institution.list[0].institutionId
+        this.aiResult.value = this.aiResult.list[0].id
+        this.disease.value = this.disease.list[0].id
+        const end = new Date();
+        const start = new Date();
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+        this.timeArr = [start, end]
+        this.search()
+      },
       search() {
-        let newDate = new Date(this.parameter.examDate)
-        let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
+        if (this.timeArr[0] && this.timeArr[1]) {
+          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        }
         this.parameter = {
-          institutionId: this.institution.key,
-          diseaseType: this.disease.key * 1,
-          aiMsg: this.aiResult.key,
-          examDate: this.parameter.examDate ? time : '',
+          institutionId: this.institution.value,
+          diseaseType: this.disease.value * 1,
+          aiMsg: this.aiResult.value,
           pageNum: 1,
           pageSize: common.pageParameter.pageSize
         }
@@ -330,26 +359,24 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
-        let newDate = new Date(this.parameter.examDate)
-        let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
+        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         this.parameter = {
-          institutionId: this.institution.key,
-          diseaseType: this.disease.key * 1,
-          aiMsg: this.aiResult.key,
-          examDate: this.parameter.examDate ? time : '',
+          institutionId: this.institution.value,
+          diseaseType: this.disease.value * 1,
+          aiMsg: this.aiResult.value,
           pageNum: 1,
           pageSize: val
         }
         this.getData()
       },
       handleCurrentChange(val) {
-        let newDate = new Date(this.parameter.examDate)
-        let time = newDate.getFullYear() + '-' + ((newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1)) + '-' + (newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate())
+        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         this.parameter = {
-          institutionId: this.institution.key,
-          diseaseType: this.disease.key * 1,
-          aiMsg: this.aiResult.key,
-          examDate: this.parameter.examDate ? time : '',
+          institutionId: this.institution.value,
+          diseaseType: this.disease.value * 1,
+          aiMsg: this.aiResult.value,
           pageNum: val,
           pageSize: common.pageParameter.pageSize
         }
@@ -366,7 +393,6 @@
               return
             }
             this.diseaseCount = response.data
-
           })
       },
       refresh() {
@@ -409,7 +435,8 @@
   }
 
   .image-list-des {
-    margin-bottom: 28px;
+    margin-bottom: 8px;
+    height: 26px;
     font-family: MicrosoftYaHei;
     font-size: 14px;
     color: #333333;

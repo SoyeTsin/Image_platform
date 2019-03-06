@@ -65,8 +65,8 @@
         msg: '',
         userParameter: {
           userType: 0,
-          password: '123456',
-          userName: 'test1',
+          password: '',
+          userName: '',
         }
       }
     },

@@ -1,7 +1,7 @@
 <template>
   <!--此处的id用变量，方便同一页面引用多次相同的组件-->
   <div class="chart">
-    <div class="title">2017 年西安居民人均消费支出</div>
+    <div class="title">数据趋势</div>
     <div :id="id"></div>
   </div>
 </template>
