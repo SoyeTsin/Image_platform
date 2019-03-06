@@ -10,7 +10,7 @@
           <div v-show="diseaseCount.length>0">
             最近30天筛查出
             <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount">
-            {{item.diseaseSeriesCount}}例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
+            &nbsp;{{item.diseaseSeriesCount}}&nbsp;例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
           </span>
             ，点击红色字体立即查看
           </div>
@@ -128,6 +128,7 @@
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+
       return {
         diseaseCount: [],
         channel: {value: '', key: null, list: []},
@@ -135,7 +136,7 @@
         disease: {value: '', key: null, list: []},
         aiResult: {value: '', key: null, list: []},
         options: '',
-        timeArr: ['',''],
+        timeArr: ['', ''],
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
@@ -176,7 +177,7 @@
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
                 picker.$emit("pick", [start, end]);
               }
-            },{
+            }, {
               text: "最近半年",
               onClick(picker) {
                 const end = new Date();
@@ -232,15 +233,15 @@
     },
     mounted() {
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
-
       this.queryOrganizationList()
     },
     methods: {
       getData(msg = '') {
-        if(this.timeArr[0]&&this.timeArr[1]){
-            this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-            this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if (this.timeArr[0] && this.timeArr[1]) {
+          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
+        this.parameter.institutionId = this.userInstitution.institutionId
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -268,8 +269,11 @@
               this.$message(response.msg);
               return
             }
-            this.institution.list = response.data.downRelate
-            this.institution.value = response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
+            this.institution.list.push(this.userInstitution)
+            for (let i in  response.data.downRelate) {
+              this.institution.list.push(response.data.downRelate[i])
+            }
+            this.institution.value = this.userInstitution.institutionId //response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
             this.getAiResult()
           })
       },
@@ -340,8 +344,10 @@
         this.search()
       },
       search() {
-        this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-        this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if (this.timeArr[0] && this.timeArr[1]) {
+          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
+          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        }
         this.parameter = {
           institutionId: this.institution.value,
           diseaseType: this.disease.value * 1,
