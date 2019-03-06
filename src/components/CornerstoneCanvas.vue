@@ -1,9 +1,15 @@
 <template>
-    <div class="image-canvas-wrapper" oncontextmenu="return false" :style="{'width':width,'height':height}" unselectable='on' onselectstart='return false;'
-      onmousedown='return false;'>
-      <!-- DICOM CANVAS -->
-      <div ref="canvas" class="image-canvas" oncontextmenu="return false"></div>
-    </div>
+  <div
+    class="image-canvas-wrapper"
+    oncontextmenu="return false"
+    :style="{'width':width,'height':height}"
+    unselectable="on"
+    onselectstart="return false;"
+    onmousedown="return false;"
+  >
+    <!-- DICOM CANVAS -->
+    <div ref="canvas" class="image-canvas" oncontextmenu="return false"></div>
+  </div>
 </template>
 
 <script>
@@ -55,86 +61,91 @@ export default {
   data() {
     return {
       isInitLoad: true,
-      element:null,
-      isSimpleAngle:false,//默认是否开启角度工具
-      isLengthTool:false,//默认是否开启长度工具
-      isTagging:false,
-      stepList:[],
-      remind:false
+      element: null,
+      isSimpleAngle: false, //默认是否开启角度工具
+      isLengthTool: false, //默认是否开启长度工具
+      isTagging: false,
+      stepList: [],
+      remind: false
     };
   },
   methods: {
-    init(imageUrl) { //初始化
-      return new Promise((resolve, reject)=>{
-          // 找到要渲染的元素
-          let canvas  =  this.element =  this.$refs.canvas;
-          
-          canvas.addEventListener('cornerstoneimagerendered', e=>{
-            let viewport = cornerstone.getViewport(e.target);
-            this.$store.commit('SET_CORNERSTONE',viewport)
-            canvas.addEventListener("mousemove", e=> {
-              const { rows, columns, data, getPixelData, slope, intercept } = cornerstone.getImage(canvas);
-              const pixelData = getPixelData();
-              let x = e.pageX
-              let y = e.pageY
-              let xx = Math.max(Math.round(x), 0);
-              let yy = Math.max(Math.round(y), 0);
-              xx = Math.min(xx, columns);
-              yy = Math.min(yy, columns);
-              const index = yy * columns + xx;
-              // const slope = data.string('x00281053');
-              // const intercept = data.string('x00281052');
-              const pixel = pixelData[index];
-              const val = pixel * slope + (intercept - 0);
-              // console.log(slope)
-              // console.log(intercept)
-              const point = {
-                x: xx,
-                y: yy,
-                val,
-              }
-              this.$store.commit('SET_POINT',point)
-              // console.log(point)
-            });
+    init(imageUrl,data) {
+      //初始化
+      return new Promise((resolve, reject) => {
+        // 找到要渲染的元素
+        let canvas = (this.element = this.$refs.canvas);
+        canvas.addEventListener("cornerstoneimagerendered", e => {
+          let viewport = cornerstone.getViewport(e.target);
+          this.$store.commit("SET_CORNERSTONE", viewport);
+          canvas.addEventListener("mousemove", e => {
+            const {
+              rows,
+              columns,
+              data,
+              getPixelData,
+              slope,
+              intercept
+            } = cornerstone.getImage(canvas);
+            const pixelData = getPixelData();
+            let x = e.pageX;
+            let y = e.pageY;
+            let xx = Math.max(Math.round(x), 0);
+            let yy = Math.max(Math.round(y), 0);
+            xx = Math.min(xx, columns);
+            yy = Math.min(yy, columns);
+            const index = yy * columns + xx;
+            // const slope = data.string('x00281053');
+            // const intercept = data.string('x00281052');
+            const pixel = pixelData[index];
+            const val = pixel * slope + (intercept - 0);
+            // console.log(slope)
+            // console.log(intercept)
+            const point = {
+              x: xx,
+              y: yy,
+              val
+            };
+            this.$store.commit("SET_POINT", point);
+            // console.log(point)
           });
+        });
 
-          
+        // 在 DOM 中将 canvas 元素注册到 cornerstone
+        cornerstone.enable(canvas);
+        let imageId = "wadouri:" + imageUrl;
 
-          // 在 DOM 中将 canvas 元素注册到 cornerstone
-          cornerstone.enable(canvas);
-          let imageId = "wadouri:" + imageUrl;
-
-          //  Load & Display
-          cornerstone.loadAndCacheImage(imageId).then(
-            (image)=>{
-              // 设置元素视口
-              let viewport = cornerstone.getDefaultViewportForImage(
-                canvas,
-                image
-              );
-              viewport.voi.windowWidth = 400
-              viewport.voi.windowCenter = 40
-              // 显示图像
-              cornerstone.displayImage(canvas, image, viewport);
-              // 激活工具
-              // console.log(dicomParser,1111111)
-              console.log(cornerstone,2222222)
-              console.log(cornerstone.currentPoints)
-              
-              this.initCanvasTools();
-              resolve(cornerstone)
-            },(err)=>{
-              reject()
-              alert(err);
+        //  Load & Display
+        cornerstone.loadAndCacheImage(imageId).then(
+          image => {
+            // 设置元素视口
+            let viewport = cornerstone.getDefaultViewportForImage(
+              canvas,
+              image
+            );
+            viewport.voi.windowWidth = 400;
+            viewport.voi.windowCenter = 40;
+            // 显示图像
+            cornerstone.displayImage(canvas, image, viewport);
+            if(data&&data.location){//恢复病灶
+                this.setEllipticalRoi(data)
             }
-          );
-      })
+            // 激活工具
+            this.initCanvasTools();
+            resolve(cornerstone);
+          },
+          err => {
+            reject();
+            alert(err);
+          }
+        );
+      });
     },
     initCanvasTools() {
       let _self = this;
       let canvas = this.$refs.canvas;
       this.isInitLoad = false;
-      
+
       // 为 canvasStack 找到 imageIds
       // let allImageIds = [];
       // this.exampleStudyImageIds.forEach(function(imageId) {
@@ -142,17 +153,16 @@ export default {
       //   allImageIds.push(imageUrl);
       // });
 
-      
       let config = {
-          // invert: true,
-          minScale: 0.2,
-          maxScale: 8.0,
-          preventZoomOutsideImage: true,
+        // invert: true,
+        minScale: 0.2,
+        maxScale: 8.0,
+        preventZoomOutsideImage: true
       };
-      cornerstoneTools.toolColors.setToolColor('#F5A623');
-      cornerstoneTools.toolColors.setActiveColor('#06bd98');
-      cornerstoneTools.toolStyle.setActiveWidth('2')
-      cornerstoneTools.toolStyle.setToolWidth('2')
+      cornerstoneTools.toolColors.setToolColor("#F5A623");
+      cornerstoneTools.toolColors.setActiveColor("#06bd98");
+      cornerstoneTools.toolStyle.setActiveWidth("2");
+      cornerstoneTools.toolStyle.setToolWidth("2");
       cornerstoneTools.zoom.setConfiguration(config);
       // Create canvasStack
       let canvasStack = {
@@ -163,6 +173,7 @@ export default {
       // Enable Inputs
       cornerstoneTools.mouseInput.enable(canvas);
       cornerstoneTools.mouseWheelInput.enable(canvas);
+      cornerstoneTools.ellipticalRoi.enable(canvas);
       // cornerstoneTools.touchInput.enable(canvas);
       // Set the stack as tool state
       cornerstoneTools.addStackStateManager(canvas, ["stack"]);
@@ -172,16 +183,15 @@ export default {
       // Mouse
       // cornerstoneTools.wwwc.activate(canvas, 1); // left click
       cornerstoneTools.pan.activate(canvas, 2); // middle click
-      
       // // Touch / Gesture
       // cornerstoneTools.wwwcTouchDrag.activate(canvas); // - Drag
       // cornerstoneTools.zoomTouchPinch.activate(canvas); // - Pinch
       // cornerstoneTools.panMultiTouch.activate(canvas); // - Multi (x2)
     },
     /*
-       * Window Resize
-       *
-       */
+     * Window Resize
+     *
+     */
     listenForWindowResize() {
       this.$nextTick(function() {
         window.addEventListener(
@@ -194,9 +204,9 @@ export default {
       cornerstone.resize(this.$refs.canvas, true);
     },
     /*
-    * Utility Methods
-    *
-    */
+     * Utility Methods
+     *
+     */
     debounce(func, wait, immediate) {
       var timeout;
       return function() {
@@ -212,177 +222,240 @@ export default {
         if (callNow) func.apply(context, args);
       };
     },
-    disableAllTools(){
-        cornerstoneTools.wwwc.disable(this.element);
-        cornerstoneTools.pan.activate(this.element, 2); // 2 is middle mouse button
-        // cornerstoneTools.zoom.activate(this.element, 4); // 4 is right mouse button
-        cornerstoneTools.probe.deactivate(this.element, 1);
-        // cornerstoneTools.length.deactivate(this.element, 1);
-        cornerstoneTools.ellipticalRoi.deactivate(this.element, 1);
-        cornerstoneTools.rectangleRoi.deactivate(this.element, 1);
-        // cornerstoneTools.angle.deactivate(this.element, 1);
-        cornerstoneTools.highlight.deactivate(this.element, 1);
-        cornerstoneTools.freehand.deactivate(this.element, 1);
-        // cornerstoneTools.eraser.deactivate(this.element, 1);
+    disableAllTools() {
+      cornerstoneTools.wwwc.disable(this.element);
+      cornerstoneTools.pan.activate(this.element, 2); // 2 is middle mouse button
+      // cornerstoneTools.zoom.activate(this.element, 4); // 4 is right mouse button
+      cornerstoneTools.probe.deactivate(this.element, 1);
+      // cornerstoneTools.length.deactivate(this.element, 1);
+      cornerstoneTools.ellipticalRoi.deactivate(this.element, 1);
+      cornerstoneTools.rectangleRoi.deactivate(this.element, 1);
+      // cornerstoneTools.angle.deactivate(this.element, 1);
+      cornerstoneTools.highlight.deactivate(this.element, 1);
+      cornerstoneTools.freehand.deactivate(this.element, 1);
+      // cornerstoneTools.eraser.deactivate(this.element, 1);
     },
-    
-    rotate(rotation){  //旋转
+    setEllipticalRoi(data){//绘制病灶
+        cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
+        let xx = Number(data.location.split(',')[0])
+        let yy = Number(data.location.split(',')[1])
+        let diameter =  Number(data.diameter / 2)
+        let ellipticalRoi = {
+          active: false,
+          // area: 6151.977806452801,
+          color:'#FF1515',
+          handles: {
+            start: {
+              active: false,
+              highlight: true,
+              x: xx - diameter,
+              y: yy - diameter
+            },
+            end: {
+              active: false,
+              highlight: true,
+              x: xx + diameter,
+              y: yy + diameter
+            },
+            textBox: {
+              active: false,
+              drawnIndependently: true,
+              hasBoundingBox: true,
+              hasMoved: false
+            }
+          },
+          invalidated: false,
+          visible: true
+        };
+        cornerstoneTools.addToolState(
+          this.element,
+          "ellipticalRoi",
+          ellipticalRoi
+        );
+    },
+    rotate(rotation) {
+      //旋转
       const viewport = cornerstone.getViewport(this.element);
       viewport.rotation += rotation;
       cornerstone.setViewport(this.element, viewport);
     },
-    hFlip(){//上下翻转
-        const viewport = cornerstone.getViewport(this.element);
-        viewport.hflip = !viewport.hflip;
-        cornerstone.setViewport(this.element, viewport);
+    hFlip() {
+      //上下翻转
+      const viewport = cornerstone.getViewport(this.element);
+      viewport.hflip = !viewport.hflip;
+      cornerstone.setViewport(this.element, viewport);
     },
-    vFlip(){//左右翻转
-        const viewport = cornerstone.getViewport(this.element);
-        viewport.vflip = !viewport.vflip;
-        cornerstone.setViewport(this.element, viewport);
+    vFlip() {
+      //左右翻转
+      const viewport = cornerstone.getViewport(this.element);
+      viewport.vflip = !viewport.vflip;
+      cornerstone.setViewport(this.element, viewport);
     },
-    zoom(){//放大工具
-      return{
-        activate:()=>{
+    zoom() {
+      //放大工具
+      return {
+        activate: () => {
           this.disableAllTools(this.element);
           cornerstoneTools.zoom.activate(this.element, 5);
           cornerstoneTools.zoomWheel.activate(this.element);
         },
-        deactivate:()=>{
+        deactivate: () => {
           cornerstoneTools.zoom.deactivate(this.element);
           cornerstoneTools.zoomWheel.deactivate(this.element);
         }
-      }
+      };
     },
-    zoomFun(scale){
+    zoomFun(scale) {
       const viewport = cornerstone.getViewport(this.element);
       viewport.scale += scale;
-      if(viewport.scale>8){
-        viewport.scale = 8
+      if (viewport.scale > 8) {
+        viewport.scale = 8;
       }
-      
       cornerstone.setViewport(this.element, viewport);
-      
     },
-    reset(){//复原
+    reset() {
+      //复原
       cornerstoneTools.clearToolState(this.element, "simpleAngle");
       cornerstoneTools.clearToolState(this.element, "length");
       cornerstone.reset(this.element);
       cornerstone.updateImage(this.element);
-
     },
-    simpleAngle(){ //角度工具
+    simpleAngle() {
+      //角度工具
       return {
-        disable:()=>{//禁用
+        disable: () => {
+          //禁用
           cornerstoneTools.simpleAngle.disable(this.element);
         },
-        enable:()=>{ //启用
+        enable: () => {
+          //启用
           cornerstoneTools.simpleAngle.enable(this.element);
         },
-        activate:()=>{ //激活
+        activate: () => {
+          //激活
           cornerstoneTools.simpleAngle.activate(this.element, 1);
-          this.lengthTool().deactivate()
+          this.lengthTool().deactivate();
         },
-        deactivate:()=>{  //取消激活
+        deactivate: () => {
+          //取消激活
           cornerstoneTools.simpleAngle.deactivate(this.element, 1);
-        },
-      }
+        }
+      };
     },
-    lengthTool(){ //测量工具
+    lengthTool() {
+      //测量工具
       return {
-        disable:()=>{//禁用
+        disable: () => {
+          //禁用
           cornerstoneTools.length.disable(this.element);
         },
-        enable:()=>{ //启用
+        enable: () => {
+          //启用
           cornerstoneTools.length.enable(this.element);
         },
-        activate:()=>{ //激活
+        activate: () => {
+          //激活
           cornerstoneTools.length.activate(this.element, 1);
-          this.simpleAngle().deactivate()
+          this.simpleAngle().deactivate();
         },
-        deactivate:()=>{  //取消激活
+        deactivate: () => {
+          //取消激活
           cornerstoneTools.length.deactivate(this.element, 1);
-        },
-      }
-    },
-    lengthToolFun(){//激活或关闭测量工具
-      this.isLengthTool = !this.isLengthTool
-      cornerstoneTools.length.deactivate(this.element, 1)
-      let lengthTool = this.lengthTool()
-      if(this.isLengthTool){
-        lengthTool.activate()
-        this.isSimpleAngle = false
-      }else{
-        lengthTool.deactivate()
-      }
-    },
-    simpleAngleFun(){//激活或关闭角度工具
-      this.isSimpleAngle = !this.isSimpleAngle
-      cornerstoneTools.angle.deactivate(this.element, 1);
-      let simpleAngle = this.simpleAngle()
-      if(this.isSimpleAngle){
-        simpleAngle.activate()
-        this.lengthTool().deactivate()
-        this.isLengthTool = false
-      }else{
-        simpleAngle.deactivate()
-      }
-    },
-    pan(){//移动工具
-        return {
-          activate:()=>{//激活
-            this.disableAllTools();
-            cornerstoneTools.pan.activate(this.element, 3); 
-          },
-          deactivate:()=>{//冻结
-            cornerstoneTools.pan.deactivate(this.element); 
-            // cornerstoneTools.wwwc.activate(this.element,1);
-          }
         }
+      };
     },
-    tagging(){//显示或隐藏标注
-      this.isTagging = !this.isTagging
-      if(this.isTagging){
-          this.lengthTool().disable()
-          this.simpleAngle().disable()
-      }else{
-          this.lengthTool().enable()
-          this.simpleAngle().enable()
+    lengthToolFun() {
+      //激活或关闭测量工具
+      this.isLengthTool = !this.isLengthTool;
+      cornerstoneTools.length.deactivate(this.element, 1);
+      let lengthTool = this.lengthTool();
+      if (this.isLengthTool) {
+        lengthTool.activate();
+        this.isSimpleAngle = false;
+      } else {
+        lengthTool.deactivate();
       }
     },
-    resize(){//重置窗口大小
-      cornerstone.resize(this.element)
+    simpleAngleFun() {
+      //激活或关闭角度工具
+      this.isSimpleAngle = !this.isSimpleAngle;
+      cornerstoneTools.angle.deactivate(this.element, 1);
+      let simpleAngle = this.simpleAngle();
+      if (this.isSimpleAngle) {
+        simpleAngle.activate();
+        this.lengthTool().deactivate();
+        this.isLengthTool = false;
+      } else {
+        simpleAngle.deactivate();
+      }
     },
-    windowWidth(ww,wl){ //设置窗宽窗位
+    pan() {
+      //移动工具
+      return {
+        activate: () => {
+          //激活
+          this.disableAllTools();
+          cornerstoneTools.pan.activate(this.element, 3);
+        },
+        deactivate: () => {
+          //冻结
+          cornerstoneTools.pan.deactivate(this.element);
+          // cornerstoneTools.wwwc.activate(this.element,1);
+        }
+      };
+    },
+    tagging() {
+      //显示或隐藏标注
+      this.isTagging = !this.isTagging;
+      if (this.isTagging) {
+        this.lengthTool().disable();
+        this.simpleAngle().disable();
+      } else {
+        this.lengthTool().enable();
+        this.simpleAngle().enable();
+      }
+    },
+    resize() {
+      //重置窗口大小
+      cornerstone.resize(this.element);
+    },
+    windowWidth(ww, wl) {
+      //设置窗宽窗位
       let viewport = cornerstone.getViewport(this.element);
       viewport.voi.windowWidth = ww;
       viewport.voi.windowCenter = wl;
       cornerstone.setViewport(this.element, viewport);
     },
-    loadImage(imageUrl){//切换图片
-        let imageId = "wadouri:" + imageUrl;
-        console.log(cornerstoneTools)
-        // console.log(cornerstoneTools.appState.save(this.element))
-        cornerstone.loadImage(imageId).then(
-          (image)=>{
-            // 设置元素视口
-            let viewport = cornerstone.getDefaultViewportForImage(
-              this.element,
-              image
-            );
-            viewport.voi.windowWidth = 400
-            viewport.voi.windowCenter = 40
-            cornerstoneTools.clearToolState(this.element, "simpleAngle");
-            cornerstoneTools.clearToolState(this.element, "length");
-            cornerstone.updateImage(this.element);
-            // 显示图像
-            cornerstone.displayImage(this.element, image, viewport);
-            // 激活工具
-            this.initCanvasTools();
-          },(err)=>{
-            alert(err);
+    loadImage(imageUrl,data) {
+      //切换图片
+      let imageId = "wadouri:" + imageUrl;
+      console.log(cornerstoneTools);
+      // console.log(cornerstoneTools.appState.save(this.element))
+      cornerstone.loadImage(imageId).then(
+        image => {
+          // 设置元素视口
+          let viewport = cornerstone.getDefaultViewportForImage(
+            this.element,
+            image
+          );
+          if(data&&data.location){//恢复病灶
+              this.setEllipticalRoi(data)
           }
-        ) 
+          viewport.voi.windowWidth = 400;
+          viewport.voi.windowCenter = 40;
+          cornerstoneTools.clearToolState(this.element, "simpleAngle");
+          cornerstoneTools.clearToolState(this.element, "length");
+          cornerstone.updateImage(this.element);
+          // 显示图像
+          
+          cornerstone.displayImage(this.element, image, viewport);
+          // 激活工具
+          this.initCanvasTools();
+        },
+        err => {
+          alert(err);
+        }
+      );
     }
   }
 };
