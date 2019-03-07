@@ -38,11 +38,11 @@
           </div>
           <div class="report-content">
             <div class="report-nav report-nav-right">
-              <div>上海仁济医院</div>
+              <div>{{institutionName}}</div>
             </div>
             <div class="report-nav report-nav-between">
-              <div>项目名称：肺结节筛查</div>
-              <div>报告日期：2018-10-28</div>
+              <div>项目名称：{{diseaseName}}</div>
+              <div>报告日期：{{nowDate}}</div>
             </div>
             <div class="report-nav report-nav-left">
               <div>
@@ -51,10 +51,10 @@
               </div>
             </div>
             <div class="report-des">
-              <div class="chart-content">
+              <div class="chart-content chart-content-1">
                 <columnG2 :charData="serverData" :id="'c1'" id="c1"></columnG2>
               </div>
-              <div class="chart-content">
+              <div class="chart-content chart-content-2">
                 <pieG2 :charData="pieData" :id="'c1'" id="c2"></pieG2>
               </div>
             </div>
@@ -88,6 +88,9 @@
         timeArr: [start, end],
         serverData: [],
         pieData: [],
+        institutionName: '',
+        nowDate: '',
+        diseaseName: '',
         parameter: {
           beginDate: '',
           endDate: '',
@@ -158,7 +161,11 @@
       }
     },
     mounted() {
-      this.parameter.institutionId = this.$route.query.institutionId || '005050024000004510000000'
+      this.parameter.institutionId = this.$route.query.institutionId || ''
+      this.institutionName = this.$route.query.institutionName || ''
+      this.diseaseName = this.$route.query.diseaseName || ''
+      let nowDate = new Date()
+      this.nowDate = nowDate.getFullYear() + '-' + ((nowDate.getMonth() + 1) < 10 ? '0' + (nowDate.getMonth() + 1) : (nowDate.getMonth() + 1)) + '-' + (nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate())
       this.diseaseType()
       this.serverData = []
     },
@@ -391,7 +398,14 @@
     background: #ffffff;
     margin: 20px 0 0 0;
     box-sizing: border-box;
-    padding: 10px;
+  }
+
+  .chart-content-1 {
+    padding-right: 10px;
+  }
+
+  .chart-content-2 {
+    padding: 0 2px 0 10px;
   }
 
   .button-center {

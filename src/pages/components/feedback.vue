@@ -4,8 +4,10 @@
     <el-dialog title="错误反馈" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
         <el-form-item label="请填写错误详情说明" prop="descValue">
-          <el-input type="textarea" v-model="parameter.content"></el-input>
+          <el-input type="textarea" v-model="parameter.content" :rows="8" maxlength="500"></el-input>
         </el-form-item>
+        <div :class="parameter.content|classFilter">{{parameter.content|numberFilter}}/500
+        </div>
         <el-form-item label="">
           <el-checkbox-group v-model="canCall">
             <el-checkbox label="是否愿意接受电话回访" name="canCall"></el-checkbox>
@@ -41,7 +43,7 @@
         rules: {
           descValue: [
             {required: true, message: '请输入反馈信息', trigger: 'blur'},
-            {min: 2, max: 255, message: '长度在 2 到 255 个字符', trigger: 'blur'}
+            {min: 2, max: 500, message: '长度在 2 到 500 个字符', trigger: 'blur'}
           ],
         }
       }
@@ -54,6 +56,16 @@
     watch: {
       descValue(val) {
         this.ruleForm.descValue = val
+      }
+    },
+    filters: {
+      numberFilter(val) {
+        let num = val || ''
+        return num.length
+      },
+      classFilter(val) {
+        let num = val || ''
+        return num.length > 500?'zhishu red':'zhishu'
       }
     },
     mounted() {
@@ -116,5 +128,16 @@
       width: 100%;
       margin: 0 !important;
     }
+  }
+
+  .zhishu {
+    float: right;
+    position: relative;
+    right: 0px;
+    top: -20px;
+  }
+
+  .red {
+    color: red;
   }
 </style>

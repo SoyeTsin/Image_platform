@@ -1,7 +1,7 @@
 <template>
   <el-container>
 
-    <el-dialog title="机构编辑" :visible.sync="dialogTableVisible" :append-to-body='true' width="660px">
+    <el-dialog title="编辑机构" :visible.sync="dialogTableVisible" :append-to-body='true' width="660px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
         <el-row>
           <el-col :span="12">

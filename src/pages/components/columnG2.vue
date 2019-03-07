@@ -46,14 +46,15 @@
         let data = datas;
         this.chart = new G2.Chart({
           id: this.id,
-          forceFit: true
+          forceFit: true,
+          padding: [ 20, 60, 130, 80]
         });
         this.chart.source(data);
         this.chart.scale({
           rate: {
             alias: 'AI占比(%)'
           },
-          value:{
+          value: {
             alias: '次数'
           }
         });
@@ -72,7 +73,7 @@
             type: 'line'
           }
         });
-        this.chart.interval().position('time*value').color('name').adjust([{
+        this.chart.interval().position('time*value').color('name', ['#7567FF', '#167EFF']).adjust([{
           type: 'dodge',
           marginRatio: 1 / 32
         }]);
@@ -84,16 +85,15 @@
             value: 'AI检出序列',
             marker: {
               symbol: 'square',
-              fill: '#2756bd',
+              fill: '#7567FF',
               radius: 5
             }
           }, {
             value: '上传序列',
             marker: {
-              symbol: 'hyphen',
-              stroke: '#00fd17',
+              symbol: 'square',
+              fill: '#167EFF',
               radius: 5,
-              lineWidth: 3
             }
           }, {
             value: 'AI检出占比',
@@ -103,22 +103,7 @@
               radius: 5,
               lineWidth: 3
             }
-          }],onClick: function onClick(ev) {
-            var item = ev.item;
-            var value = item.value;
-            var checked = item.checked;
-            var geoms = chart.getAllGeoms();
-            for (var i = 0; i < geoms.length; i++) {
-              var geom = geoms[i];
-              if (geom.getYScale().field === value) {
-                if (checked) {
-                  geom.show();
-                }
-              } else {
-                geom.hide();
-              }
-            }
-          }
+          }]
         });
         this.chart.render();
       }
@@ -131,7 +116,8 @@
     width: 100%;
     border: 1px solid #e7e7e7;
     border-radius: 1px;
-    .title{
+
+    .title {
       font-family: MicrosoftYaHei-Bold;
       font-size: 16px;
       color: #32456D;

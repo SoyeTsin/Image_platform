@@ -7,7 +7,17 @@
           <el-button plain type="primary" class="add-button" @click="addUserFun"><i
             class="el-icon-plus"></i>创建账号
           </el-button>
-          <el-input v-model="parameter.userName" placeholder="姓名" class="main-input"></el-input>
+          <!--<el-input v-model="parameter.userName" placeholder="姓名" class="main-input"></el-input>-->
+          <el-autocomplete
+            clearable
+            class="inline-input"
+            v-model="parameter.userName"
+            :fetch-suggestions="querySearch"
+            value-key="userName"
+            placeholder="请输入内容"
+            :trigger-on-focus="false"
+            @select="handleSelect"
+          ></el-autocomplete>
           <el-select clearable v-model="provinces.value" filterable placeholder="省份或直辖市" class="main-input">
             <el-option
               v-for="item in provinces.list"
@@ -49,7 +59,7 @@
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
-      <el-table :data="tableData" stripe>
+      <el-table :data="tableData" stripe :header-cell-style="{background:'#F3F6FC '}">
         <el-table-column prop="userName" label="姓名" width="120" show-overflow-tooltip>
         </el-table-column>
         <el-table-column prop="office.officeName" label="所在科室" show-overflow-tooltip>
@@ -65,7 +75,9 @@
         </el-table-column>
         <el-table-column label="操作" width="80">
           <template slot-scope="scope">
-            <img :src="icon_edit" class="table-icon" @click="editUser(scope.row)">
+            <el-tooltip class="item" effect="dark" content="点击编辑" placement="bottom">
+              <img :src="icon_edit" class="table-icon" @click="editUser(scope.row)">
+            </el-tooltip>
             <!--<img :src="icon_delete" class="table-icon" @click="deleteUser(scope.row)">-->
           </template>
         </el-table-column>
@@ -177,6 +189,31 @@
             this.pageParameter.nowPage = response.data.pageNum || 0
           })
       },
+      querySearch(queryString, cb) {
+        let parameter = {
+          userName: this.parameter.userName,
+          pageNum: 1,
+          pageSize: 100
+        }
+        this.$post('/account/queryUserList', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            let restaurants = response.data.list
+            let results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+            // 调用 callback 返回建议列表的数据
+            cb(results);
+          })
+
+
+      },
+      createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant.userName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
       queryRegionInfo(provinceCode = '') {
         let parameter = {
           provinceCode
@@ -189,7 +226,7 @@
             }
             if (parameter.provinceCode) {
               this.city.list = response.data
-              this.city.value = this.city.list.length > 0 ? this.city.list[0].cityCode : ''
+              // this.city.value = this.city.list.length > 0 ? this.city.list[0].cityCode : ''
             } else {
               this.provinces.list = response.data
             }
@@ -331,6 +368,9 @@
       openReport() {
         this.$router.push({path: '/personalReport'})
       },
+      handleSelect(item) {
+        console.log(item);
+      },
     },
   }
 </script>
@@ -338,4 +378,7 @@
 <style lang="scss" scoped>
   @import "sass/common";
 
+  .inline-input {
+    width: 150px
+  }
 </style>

@@ -46,7 +46,8 @@
         let data = datas;
         this.chart = new G2.Chart({
           id: this.id,
-          forceFit: true
+          forceFit: true,
+          padding: [ 20, 80, 80, 80]
         });
         let chart = this.chart
         chart.source(data, {
