@@ -10,7 +10,7 @@
               <img src="./assets/login/username.png">
               <div>手机号</div>
             </div>
-            <input placeholder="11位手机号" class="so-input" v-model="userParameter.phoneNum"></input>
+            <input placeholder="11位手机号" class="so-input" v-model.trim="userParameter.phoneNum"></input>
           </div>
           <div class="input-box">
             <div class="icon">
@@ -18,7 +18,8 @@
               <div>验证码</div>
             </div>
             <div class="validate">
-              <input placeholder="验证码" class="so-input" v-model="userParameter.smsCode" @keyup.enter="login"></input>
+              <input placeholder="验证码" class="so-input" v-model.trim="userParameter.smsCode"
+                     @keyup.enter="login"></input>
               <div class="button-validate" @click="getSmsCode">获取验证码</div>
             </div>
             <div class="validate-msg" v-if="msg">
@@ -28,7 +29,7 @@
               </div>
             </div>
           </div>
-          <div class="login-button"  @click="login">登&nbsp;&nbsp;录</div>
+          <div class="login-button" @click="login">登&nbsp;&nbsp;录</div>
           <div class="login-des">暂不支持注册</div>
         </div>
       </div>
@@ -74,6 +75,14 @@
     methods: {
       login() {
         let parameter = this.userParameter
+        if (!this.userParameter.phoneNum || !this.userParameter.smsCode) {
+          this.msg = '手机号和验证码均不能为空'
+          return
+        }
+        if (this.userParameter.phoneNum.length != 11 || this.userParameter.smsCode.length != 6) {
+          this.msg = '手机号或验证码输入错误'
+          return
+        }
         this.$post('/account/login', parameter)
           .then((response) => {
             if (response.code != '000000') {

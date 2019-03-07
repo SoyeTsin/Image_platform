@@ -1,7 +1,7 @@
 <template>
   <el-container>
 
-    <el-dialog :title="editType?'添加账户':'编辑账户'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
+    <el-dialog :title="editType?'添加账户':'编辑账号'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
         <el-form-item label="用户姓名" prop="userName" class="dialog-item" v-show="!editType">
           {{ruleForm.userName}}

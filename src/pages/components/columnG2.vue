@@ -77,6 +77,49 @@
           marginRatio: 1 / 32
         }]);
         this.chart.line().position('time*rate').size(2).color('#FFB74F');
+        this.chart.legend({
+          custom: true,
+          allowAllCanceled: true,
+          items: [{
+            value: 'AI检出序列',
+            marker: {
+              symbol: 'square',
+              fill: '#2756bd',
+              radius: 5
+            }
+          }, {
+            value: '上传序列',
+            marker: {
+              symbol: 'hyphen',
+              stroke: '#00fd17',
+              radius: 5,
+              lineWidth: 3
+            }
+          }, {
+            value: 'AI检出占比',
+            marker: {
+              symbol: 'hyphen',
+              stroke: '#FFB74F',
+              radius: 5,
+              lineWidth: 3
+            }
+          }],onClick: function onClick(ev) {
+            var item = ev.item;
+            var value = item.value;
+            var checked = item.checked;
+            var geoms = chart.getAllGeoms();
+            for (var i = 0; i < geoms.length; i++) {
+              var geom = geoms[i];
+              if (geom.getYScale().field === value) {
+                if (checked) {
+                  geom.show();
+                }
+              } else {
+                geom.hide();
+              }
+            }
+          }
+        });
         this.chart.render();
       }
     }
