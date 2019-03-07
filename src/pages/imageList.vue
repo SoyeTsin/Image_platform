@@ -46,14 +46,14 @@
               </el-option>
             </el-select>
             <!--<el-date-picker-->
-              <!--v-model="timeArr"-->
-              <!--type="daterange"-->
-              <!--align="right"-->
-              <!--unlink-panels-->
-              <!--range-separator="至"-->
-              <!--start-placeholder="开始日期"-->
-              <!--end-placeholder="结束日期"-->
-              <!--:picker-options="pickerOptions2"-->
+            <!--v-model="timeArr"-->
+            <!--type="daterange"-->
+            <!--align="right"-->
+            <!--unlink-panels-->
+            <!--range-separator="至"-->
+            <!--start-placeholder="开始日期"-->
+            <!--end-placeholder="结束日期"-->
+            <!--:picker-options="pickerOptions2"-->
             <!--&gt;</el-date-picker>-->
             <el-date-picker
               v-model="timeArr"
@@ -116,11 +116,20 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                       :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
-                       :page-size="pageParameter.pageSize"
-                       layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
-        </el-pagination>
+        <el-row>
+          <el-col :span="12">
+            <div class="page-content">
+              共{{pageParameter.total}}条记录，第{{pageParameter.currentPage}}/{{pageParameter.total|totalPageFilter(pageParameter.pageSize)}}页
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                           :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
+                           :page-size="pageParameter.pageSize"
+                           layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
+            </el-pagination>
+          </el-col>
+        </el-row>
       </div>
     </el-main>
   </el-container>
@@ -200,6 +209,13 @@
       }
     },
     filters: {
+      totalPageFilter(val, pageSize) {
+        let c = val % pageSize
+        let a = val - c
+        let b = a / pageSize
+        let d = b + (c > 0 ? 1 : 0)
+        return d
+      },
       genderFilter(value) {
         if (value == 'm') {
           return '男'
@@ -425,7 +441,7 @@
       intoReport() {
         this.$router.push({
           name: 'statisticalReport',
-          params: {institutionId: this.parameter.institutionId}
+          query: {institutionId: this.parameter.institutionId}
         })
       }
     },

@@ -12,7 +12,7 @@
               :value="item.provinceCode">
             </el-option>
           </el-select>
-          <el-select  clearable v-model="city.value" filterable placeholder="城市" class="main-input">
+          <el-select clearable v-model="city.value" filterable placeholder="城市" class="main-input">
             <el-option
               v-for="item in city.list"
               :key="item.cityCode"
@@ -45,11 +45,11 @@
         </el-col>
       </el-row>
       <el-table :data="tableData" stripe>
-        <el-table-column prop="institutionName" label="机构名称"  show-overflow-tooltip>
+        <el-table-column prop="institutionName" label="机构名称" show-overflow-tooltip>
         </el-table-column>
         <el-table-column prop="channelName" label="渠道" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="name" label="所在地区"  show-overflow-tooltip>
+        <el-table-column prop="name" label="所在地区" show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.provinceName }}{{ scope.row.cityName}}
           </template>
@@ -70,11 +70,20 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
-                     :page-size="pageParameter.pageSize"
-                     layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
-      </el-pagination>
+      <el-row>
+        <el-col :span="12">
+          <div class="page-content">
+            共{{pageParameter.total}}条记录，第{{pageParameter.currentPage}}/{{pageParameter.total|totalPageFilter(pageParameter.pageSize)}}页
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                         :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
+                         :page-size="pageParameter.pageSize"
+                         layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
+          </el-pagination>
+        </el-col>
+      </el-row>
       <addMechanism ref="addMechanism" @renewList="getData"></addMechanism>
     </el-main>
   </el-container>
@@ -107,6 +116,15 @@
         city: {value: '', list: []},
       }
     },
+    filters: {
+      totalPageFilter(val, pageSize) {
+        let c = val % pageSize
+        let a = val - c
+        let b = a / pageSize
+        let d = b + (c > 0 ? 1 : 0)
+        return d
+      }
+    },
     mounted() {
       this.getData()
       this.queryRegionInfo()
@@ -130,10 +148,10 @@
       provincesValue(val) {
         this.queryRegionInfo(val)
         this.city = {value: '', list: []}
-        this.queryOrganizationList()
+        // this.queryOrganizationList()
       },
       cityValue(val) {
-        this.queryOrganizationList()
+        // this.queryOrganizationList()
       },
       channelValue(val) {
         let channelId = val
@@ -174,6 +192,7 @@
             }
             if (parameter.provinceCode) {
               this.city.list = response.data
+              this.city.value = this.city.list.length > 0 ? this.city.list[0].cityCode : ''
             } else {
               this.provinces.list = response.data
             }
@@ -217,8 +236,8 @@
       },
       queryOrganizationList(dataType = 1, channelId = '') {
         let parameter = {
-          provinceCode: this.provinces.value,
-          cityCode: this.city.value,
+          // provinceCode: this.provinces.value,
+          // cityCode: this.city.value,
           channelId,
           dataType
         }
@@ -234,7 +253,9 @@
               // this.queryOrganizationList(2, response.data.channelList[0].channelId)
             } else {
               this.institution.list = response.data.institutionList
-              // this.institution.value = response.data.institutionList[0].institutionName
+              if (channelId) {
+                this.institution.value = this.institution.list.length > 0 ? this.institution.list[0].institutionId : ''
+              }
               // this.parameter.institutionId = response.data.institutionList[0].institutionId
             }
           })

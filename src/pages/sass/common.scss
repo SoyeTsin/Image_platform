@@ -189,3 +189,39 @@
   height: 247px;
   padding: 30px 0 65px 0;
 }
+
+.page-content {
+  text-align: left;
+  height: 52px;
+  line-height: 78px;
+}
+
+.el-pagination /deep/ {
+  .el-pager .number {
+    border: solid 1px #EAEAEA;
+    margin-left: 5px;
+  }
+
+  .el-pager .number.active {
+    background: #2FDAC5;
+    border: solid 1px #2FDAC5;
+    color: #ffffff;
+  }
+
+  button {
+    border: solid 1px #EAEAEA;
+    margin-left: 5px;
+    text-align: center;
+    padding: 0 6px;
+
+    .el-icon {
+      text-align: center;
+      margin: auto;
+    }
+  }
+
+  .el-input__inner {
+    border-radius: 1px !important;
+  }
+}
+

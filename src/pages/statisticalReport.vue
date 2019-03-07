@@ -11,7 +11,7 @@
             返回
           </div>
           <div class="screen">
-            <el-select  clearable v-model="disease.value" placeholder="请选择">
+            <el-select clearable v-model="disease.value" placeholder="请选择">
               <el-option
                 v-for="item in disease.list"
                 :key="item.id"
@@ -34,7 +34,7 @@
         <div class="report-main">
           <div class="report-title">
             <img src="./assets/statisticalReport.png" class="title-icon">
-            统计报告
+            AI辅助筛查统计报告
           </div>
           <div class="report-content">
             <div class="report-nav report-nav-right">
@@ -158,7 +158,7 @@
       }
     },
     mounted() {
-      this.parameter.institutionId = this.$route.params.institutionId || '005050024000004510000000'
+      this.parameter.institutionId = this.$route.query.institutionId || '005050024000004510000000'
       this.diseaseType()
       this.serverData = []
     },
@@ -392,5 +392,9 @@
     margin: 20px 0 0 0;
     box-sizing: border-box;
     padding: 10px;
+  }
+
+  .button-center {
+    background-image: linear-gradient(90deg, #34EDB6 0%, #28C3D5 100%);
   }
 </style>

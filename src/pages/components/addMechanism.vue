@@ -103,22 +103,6 @@
         }
       };
       return {
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
         upRelateArr: [],
         downRelateArr: [],
         dialogTableVisible: false,
@@ -136,12 +120,6 @@
           institutionContact: '',
         },
         rules: {
-          upRelate: [
-            {required: false, message: '请选择所属上级机构', trigger: 'change'}
-          ],
-          downRelate: [
-            {required: false, message: '请选择所属下级机构', trigger: 'change'}
-          ],
           channelUser: [
             {required: false, message: '请输入渠道联系人', trigger: 'blur'},
             {min: 2, max: 25, message: '长度为2 到 25 个字符', trigger: 'blur'}
@@ -192,9 +170,9 @@
       downRelateArr(val) {
       },
       dialogTableVisible(val) {
-        !val && setTimeout(() => {
-          this.$refs['ruleForm'].resetFields();
-        }, 0);
+        // !val && setTimeout(() => {
+        //   this.$refs['ruleForm'].resetFields();
+        // }, 0);
       }
     },
     mounted() {
@@ -238,15 +216,13 @@
       editMechanism(obj) {
         console.log(obj)
         this.parameter = obj
-        this.ruleForm = {}
-        this.ruleForm.channelUser = this.parameter.channelUser || ''
-        this.ruleForm.channelContact = this.parameter.channelContact || ''
-        this.ruleForm.institutionUser = this.parameter.institutionUser || ''
-        this.ruleForm.institutionContact = this.parameter.institutionContact || ''
-        this.queryRelateInstitutionList(this.parameter.institutionId)
-        setTimeout(() => {
-          this.$refs['ruleForm'].resetFields();
-        }, 0);
+        // this.ruleForm = {}
+        this.ruleForm.channelUser = obj.channelUser || ''
+        this.ruleForm.channelContact = obj.channelContact || ''
+        this.ruleForm.institutionUser = obj.institutionUser || ''
+        this.ruleForm.institutionContact = obj.institutionContact || ''
+        this.queryRelateInstitutionList(obj.institutionId)
+
       },
       queryRelateInstitutionList(institutionId) {
         let parameter = {institutionId, relateType: 0}
@@ -269,7 +245,9 @@
             for (let i in downRelate) {
               this.downRelateArr.push(downRelate[i].institutionId)
             }
-            // this.downRelateArr = downRelate
+            // setTimeout(() => {
+            //   this.$refs['ruleForm'].resetFields();
+            // }, 0);
           })
       },
       changeDialogTableVisible() {

@@ -13,7 +13,7 @@
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
         <el-form-item label="所处机构" prop="institutionValue" class="dialog-item">
-          <el-select clearable v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
+          <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in institution.list"
               :key="item.flowId"
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="所处科室" prop="officeValue" class="dialog-item">
-          <el-select clearable v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
+          <el-select v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
             <el-option
               v-for="item in office.list"
               :key="item.officeId"
@@ -37,7 +37,7 @@
           <el-input v-model="ruleForm.phoneNum"></el-input>
         </el-form-item>
         <el-form-item label="权限" prop="isEnableValue" class="dialog-item">
-          <el-select clearable v-model="ruleForm.isEnableValue" filterable placeholder="请选择" class="main-input">
+          <el-select v-model="ruleForm.isEnableValue" filterable placeholder="请选择" class="main-input">
             <el-option
               v-for="item in isEnable.list"
               :key="item.value"
@@ -58,6 +58,20 @@
   export default {
     name: "addUser",
     data() {
+      var checkPhone = (rule, value, callback) => {
+        if (!value) {
+          // return callback(new Error('手机号不能为空'));
+          callback();
+        } else {
+          const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+          console.log(reg.test(value));
+          if (reg.test(value)) {
+            callback();
+          } else {
+            return callback(new Error('请输入正确的手机号'));
+          }
+        }
+      };
       return {
         editType: true,
         dialogTableVisible: false,
@@ -80,8 +94,7 @@
             {min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur'}
           ],
           phoneNum: [
-            {required: true, message: '请输入手机号码', trigger: 'blur'},
-            {min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur'}
+            {validator: checkPhone, trigger: 'blur'}
           ],
           channelValue: [
             {required: true, message: '请选择所属渠道', trigger: 'change'}
@@ -141,7 +154,7 @@
           if (valid) {
             this.addUserInfo()
           } else {
-            // this.$message('请正确填写表单内容！');
+            this.$message('请正确填写表单内容！');
             return false;
           }
         });
@@ -216,9 +229,6 @@
         this.editType = false
         this.queryOfficeList()
         this.queryOrganizationList()
-        setTimeout(() => {
-          this.$refs['ruleForm'].resetFields();
-        }, 0);
       },
       changeDialogTableVisible() {
         this.dialogTableVisible = !this.dialogTableVisible
