@@ -22,7 +22,7 @@
             </div>
             <div class="report-nav report-nav-between">
               <div>项目名称：{{diseaseType}}</div>
-              <div>报告日期：{{serial.examDate}}</div>
+              <div>报告日期：{{serial.FormatDate}}</div>
             </div>
             <div class="report-des">
               <div class="report-main-left">

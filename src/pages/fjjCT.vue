@@ -28,7 +28,7 @@
       <div class="info-list">
         <div class="title">
           <h4>AI检测信息（{{exampleStudyImageIds.length}}）</h4>
-          <span @click="isDetail = !isDetail">
+          <span @click="isResult">
             <img src="../../static/fjj-icon/yc.png" alt>
           </span>
         </div>
@@ -39,7 +39,7 @@
             <span>层面</span>
             <span>概率</span>
           </div>
-          <ul>
+          <ul style="max-height: 400px;overflow-y: scroll;">
             <li
               v-for="(x,index) in exampleStudyImageIds"
               :class="[index == listIndex?'active':'']"
@@ -47,8 +47,8 @@
               @click="listClick(index,x)"
             >
               <span>{{index+1}}</span>
-              <el-popover placement="bottom" width="200" trigger="hover" :content="x.diseaseDesc">
-                <span slot="reference">{{x.diseaseDesc}}</span>
+              <el-popover placement="bottom" width="200" trigger="hover" content="肺结节">
+                <span slot="reference">肺结节</span>
               </el-popover>
               <span>{{x.imageNo}}</span>
               <span>{{x.probability}}</span>
@@ -219,7 +219,7 @@
           <span slot="footer" class="dialog-footer">
             <button
               class="submit"
-              v-if="result.length >0"
+              v-if="result.length >0&&describe.length>0"
               @click="editResult()"
             >{{queryDiagnosis&&queryDiagnosis.doctorDesc&&queryDiagnosis.doctorResult?'保存':'提交'}}</button>
             <button
@@ -238,7 +238,7 @@
             </i>
           </div>
           <div class="text">
-            <p>病灶描述：{{listDetail.diseaseDesc}}</p>
+            <p>病灶描述：肺结节</p>
             <p>直径：{{listDetail.diameter}}</p>
             <p>密度：{{listDetail.density}}</p>
             <p>可能概率：{{listDetail.probability}}</p>
@@ -474,6 +474,13 @@ export default {
     };
   },
   methods: {
+    isResult(){
+      if(this.listDetail.location){
+        this.isDetail = !this.isDetail
+      }else{
+        this.isDetail = false
+      }
+    },
     getResult(type) {
       //获取诊断结果
       this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
@@ -484,8 +491,13 @@ export default {
             this.result = res.data.doctor_result;
             this.dialogVisible = true;
           }else if(type==2){
-            if(res.data&&res.data.doctor_result){
+            if(res.data&&res.data.doctor_result&&res.data.doctor_desc){
               this.$router.push({name:'report',query:this.$route.query})
+            }else{
+              this.$message({
+                message: '没有提交诊断结果',
+                type: 'warning'
+              });
             }
           }
           
@@ -519,10 +531,37 @@ export default {
             this.correct = "";
           } else if (type == 2) {
             if (data.deleteFlag == 1) {
+              this.exampleStudyImageIds.map((v,k)=>{
+                if(v.imageNo == obj.imageNo){
+                  let delData = {
+                      deletedFalg: null,
+                      density: null,
+                      diameter: null,
+                      diseaseTypeDesc: null,
+                      imageId: null,
+                      imageNo: v.imageNo,
+                      imageUrl: v.imageUrl,
+                      location: null,
+                      missedDiagnosisFlag: null,
+                      probability: null,
+                  }
+                  this.listDetail = delData
+                  this.isDetail = false
+                  this.exampleStudyImageIds[k]=delData
+                  this.cornerstone.loadImage(
+                    this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
+                    this.exampleStudyImageIds[this.$refs.slider.getIndex()]
+                  );
+                  this.cornerstone1.loadImage(
+                    this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
+                    this.exampleStudyImageIds[this.$refs.slider.getIndex()]
+                  );
+                }
+              })
               this.$message({
-                message: "AI提示删除成功",
+                message: "删除成功",
                 type: "success"
-              });
+              }); 
             }
             this.isDelete = false;
           } else if (type == 3) {
@@ -537,16 +576,22 @@ export default {
         }
       });
     },
+    
     listClick(index, data) {
       //点击列表
       this.listIndex = index;
       this.listDetail = data;
-      this.isDetail = true;
+      if(data.location){
+        this.isDetail = true;
+      }else{
+        this.isDetail = false
+      }
       this.$refs.slider.setIndex(index);
       this.cornerstone.loadImage(
         this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
         this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
+      console.log(this.listDetail)
     },
     sliderCallback() {
       //拖动回调
@@ -560,6 +605,11 @@ export default {
       );
       this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
+      if(this.listDetail.location){
+        this.isDetail = true
+      }else{
+        this.isDetail = false
+      }
       this.windowFun(400, 40, 0);
     },
     sliderSwitch(type) {
@@ -578,23 +628,29 @@ export default {
         this.exampleStudyImageIds[this.slider.value]
       );
       this.cornerstone1.loadImage(
-        this.exampleStudyImageIds[this.slider.value].imageUrl
+        this.exampleStudyImageIds[this.slider.value].imageUrl,
+        this.exampleStudyImageIds[this.slider.value]
       );
       this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
+      if(this.listDetail.location){
+        this.isDetail = true
+      }else{
+        this.isDetail = false
+      }
       this.windowFun(400, 40, 0);
     },
     handleClose(done) {
       //弹窗关闭回调
       if (
         this.queryDiagnosis &&
-        this.queryDiagnosis.doctorResult &&
-        this.queryDiagnosis.doctorDesc
+        this.queryDiagnosis.doctor_result &&
+        this.queryDiagnosis.doctor_desc
       ) {
         //编辑结果
         if (
-          this.describe != this.queryDiagnosis.doctorDesc ||
-          this.result != this.queryDiagnosis.doctorResult
+          this.describe != this.queryDiagnosis.doctor_desc ||
+          this.result != this.queryDiagnosis.doctor_result
         ) {
           this.$confirm("内容未提交，是否直接关闭？")
             .then(_ => {
@@ -694,6 +750,7 @@ export default {
     this.$post("/api/serialImages", data).then(res => {
       this.exampleStudyImageIds = res.data;
       this.slider.max = res.data.lenght - 1;
+      this.listDetail = this.exampleStudyImageIds[0]
       setTimeout(() => {
         this.$refs.cornerstone
           .init(this.exampleStudyImageIds[0].imageUrl,this.exampleStudyImageIds[0])

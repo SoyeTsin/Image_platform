@@ -237,41 +237,43 @@ export default {
     },
     setEllipticalRoi(data){//绘制病灶
         cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
-        let xx = Number(data.location.split(',')[0])
-        let yy = Number(data.location.split(',')[1])
-        let diameter =  Number(data.diameter / 2)
-        let ellipticalRoi = {
-          active: false,
-          // area: 6151.977806452801,
-          color:'#FF1515',
-          handles: {
-            start: {
+        if(data&&data.location){
+            let xx = Number(data.location.split(',')[0])
+            let yy = Number(data.location.split(',')[1])
+            let diameter =  Number(data.diameter / 2)
+            let ellipticalRoi = {
               active: false,
-              highlight: true,
-              x: xx - diameter,
-              y: yy - diameter
-            },
-            end: {
-              active: false,
-              highlight: true,
-              x: xx + diameter,
-              y: yy + diameter
-            },
-            textBox: {
-              active: false,
-              drawnIndependently: true,
-              hasBoundingBox: true,
-              hasMoved: false
-            }
-          },
-          invalidated: false,
-          visible: true
-        };
-        cornerstoneTools.addToolState(
-          this.element,
-          "ellipticalRoi",
-          ellipticalRoi
-        );
+              // area: 6151.977806452801,
+              color:'#FF1515',
+              handles: {
+                start: {
+                  active: false,
+                  highlight: true,
+                  x: xx - diameter,
+                  y: yy - diameter
+                },
+                end: {
+                  active: false,
+                  highlight: true,
+                  x: xx + diameter,
+                  y: yy + diameter
+                },
+                textBox: {
+                  active: false,
+                  drawnIndependently: true,
+                  hasBoundingBox: true,
+                  hasMoved: false
+                }
+              },
+              invalidated: false,
+              visible: true
+            };
+            cornerstoneTools.addToolState(
+              this.element,
+              "ellipticalRoi",
+              ellipticalRoi
+            );
+        }
     },
     rotate(rotation) {
       //旋转
@@ -342,6 +344,14 @@ export default {
         }
       };
     },
+    ellipticalRoi(){ //椭圆工具
+      return {
+        clear:()=>{//清除工具
+          console.log('11111')
+          cornerstoneTools.clearToolState(this.element, "ellipticalRoi");
+        }
+      }
+    },
     lengthTool() {
       //测量工具
       return {
@@ -410,9 +420,11 @@ export default {
       if (this.isTagging) {
         this.lengthTool().disable();
         this.simpleAngle().disable();
+        cornerstoneTools.ellipticalRoi.disable(this.element);
       } else {
         this.lengthTool().enable();
         this.simpleAngle().enable();
+        cornerstoneTools.ellipticalRoi.enable(this.element);
       }
     },
     resize() {
@@ -429,7 +441,7 @@ export default {
     loadImage(imageUrl,data) {
       //切换图片
       let imageId = "wadouri:" + imageUrl;
-      console.log(cornerstoneTools);
+      // console.log(cornerstoneTools);
       // console.log(cornerstoneTools.appState.save(this.element))
       cornerstone.loadImage(imageId).then(
         image => {
@@ -438,16 +450,20 @@ export default {
             this.element,
             image
           );
+          
           if(data&&data.location){//恢复病灶
               this.setEllipticalRoi(data)
+          }else{
+              cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
           }
+
           viewport.voi.windowWidth = 400;
           viewport.voi.windowCenter = 40;
           cornerstoneTools.clearToolState(this.element, "simpleAngle");
           cornerstoneTools.clearToolState(this.element, "length");
           cornerstone.updateImage(this.element);
+          this.isTagging = false
           // 显示图像
-          
           cornerstone.displayImage(this.element, image, viewport);
           // 激活工具
           this.initCanvasTools();
