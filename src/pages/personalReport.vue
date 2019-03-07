@@ -60,11 +60,13 @@
                   <el-col :span="24">
                     <el-table :data="tableData" stripe ref="singleTable" @row-click="listClick">
                       <el-table-column type="index" label="结节编号" width="120"></el-table-column>
-                      <el-table-column prop="diseaseDesc" label="病灶类型"></el-table-column>
+                      <el-table-column prop="diseaseDesc" label="病灶类型">
+                        <template slot-scope="scope">肺结节</template>
+                      </el-table-column>
                       <el-table-column prop="imageNo" label="所在图层"></el-table-column>
                       <el-table-column prop="diameter" label="大小"></el-table-column>
                       <el-table-column prop="probability" label="准确度">
-                        <template slot-scope="scope">{{scope.row.probability}}%</template>
+                        <template slot-scope="scope">{{scope.row.probability}}</template>
                       </el-table-column>
                     </el-table>
                   </el-col>
