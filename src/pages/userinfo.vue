@@ -70,11 +70,20 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
-                     :page-size="pageParameter.pageSize"
-                     layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
-      </el-pagination>
+      <el-row>
+        <el-col :span="12">
+          <div class="page-content">
+            共{{pageParameter.total}}条记录，第{{pageParameter.currentPage}}/{{pageParameter.total|totalPageFilter(pageParameter.pageSize)}}页
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                         :current-page.sync="pageParameter.currentPage" :page-sizes="pageParameter.pageSizes"
+                         :page-size="pageParameter.pageSize"
+                         layout="prev, pager, next,sizes,jumper" :total="pageParameter.total">
+          </el-pagination>
+        </el-col>
+      </el-row>
       <addUser ref="addUser" @renewList="getData"></addUser>
     </el-main>
   </el-container>
@@ -121,6 +130,15 @@
       this.queryRegionInfo()
       this.queryOrganizationList()
     },
+    filters: {
+      totalPageFilter(val, pageSize) {
+        let c = val % pageSize
+        let a = val - c
+        let b = a / pageSize
+        let d = b + (c > 0 ? 1 : 0)
+        return d
+      }
+    },
     computed: {
       provincesValue() {
         return this.provinces.value
@@ -139,7 +157,7 @@
         this.queryOrganizationList(true)
       },
       cityValue(val) {
-        // this.channel = {value: '', list: []}
+        this.institution = {value: '', list: []}
         this.queryOrganizationList(true)
       },
       officeValue(val) {

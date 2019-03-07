@@ -120,12 +120,6 @@
           institutionContact: '',
         },
         rules: {
-          upRelate: [
-            {required: false, message: '请选择所属上级机构', trigger: 'change'}
-          ],
-          downRelate: [
-            {required: false, message: '请选择所属下级机构', trigger: 'change'}
-          ],
           channelUser: [
             {required: false, message: '请输入渠道联系人', trigger: 'blur'},
             {min: 2, max: 25, message: '长度为2 到 25 个字符', trigger: 'blur'}
@@ -176,9 +170,9 @@
       downRelateArr(val) {
       },
       dialogTableVisible(val) {
-        !val && setTimeout(() => {
-          this.$refs['ruleForm'].resetFields();
-        }, 0);
+        // !val && setTimeout(() => {
+        //   this.$refs['ruleForm'].resetFields();
+        // }, 0);
       }
     },
     mounted() {
@@ -222,12 +216,12 @@
       editMechanism(obj) {
         console.log(obj)
         this.parameter = obj
-        this.ruleForm = {}
+        // this.ruleForm = {}
         this.ruleForm.channelUser = obj.channelUser || ''
         this.ruleForm.channelContact = obj.channelContact || ''
         this.ruleForm.institutionUser = obj.institutionUser || ''
         this.ruleForm.institutionContact = obj.institutionContact || ''
-        this.queryRelateInstitutionList(this.parameter.institutionId)
+        this.queryRelateInstitutionList(obj.institutionId)
 
       },
       queryRelateInstitutionList(institutionId) {
@@ -251,9 +245,9 @@
             for (let i in downRelate) {
               this.downRelateArr.push(downRelate[i].institutionId)
             }
-            setTimeout(() => {
-              this.$refs['ruleForm'].resetFields();
-            }, 0);
+            // setTimeout(() => {
+            //   this.$refs['ruleForm'].resetFields();
+            // }, 0);
           })
       },
       changeDialogTableVisible() {
