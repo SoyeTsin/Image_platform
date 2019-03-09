@@ -10,14 +10,15 @@
               <img src="./assets/login/usernameadmin.png">
               <div>用户名</div>
             </div>
-            <input placeholder="输入用户名" class="so-input" v-model="userParameter.userName"></input>
+            <input placeholder="输入用户名" class="so-input" v-model.trim="userParameter.userName"></input>
           </div>
           <div class="input-box">
             <div class="icon">
               <img src="./assets/login/password.png">
               <div>密码</div>
             </div>
-            <input placeholder="输入密码" type="password" class="so-input" v-model="userParameter.password" @keyup.enter="login"></input>
+            <input placeholder="输入密码" type="password" class="so-input" v-model.trim="userParameter.password"
+                   @keyup.enter="login"></input>
             <div class="validate-msg" v-if="msg">
               <img src="./assets/login/warning.png"/>
               <div>
@@ -77,6 +78,14 @@
     methods: {
       login() {
         let parameter = this.userParameter
+        if (!this.userParameter.userName || !this.userParameter.password) {
+          this.msg = '账户名和密码均不能为空'
+          return
+        }
+        if (this.userParameter.userName.length > 25 || this.userParameter.password.length > 25) {
+          this.msg = '账户名或密码长度超过25个字符'
+          return
+        }
         this.$post('/account/login', parameter)
           .then((response) => {
             if (response.code != '000000') {
@@ -86,8 +95,9 @@
             localStorage.setItem('token', response.data.token)   //return this
             localStorage.setItem('userId', response.data.userId)   //return this
             localStorage.setItem('phoneNum', response.data.phoneNum)   //return this
+            localStorage.setItem('userName', response.data.userName)   //return this
+            localStorage.setItem('userType', response.data.userType)   //return this
             localStorage.setItem('routerPath', this.$route.path)   //return this
-            
             this.$router.push({
               path: '/userinfo'
             })

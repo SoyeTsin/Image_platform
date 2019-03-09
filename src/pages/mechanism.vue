@@ -28,7 +28,8 @@
               :value="item.channelId">
             </el-option>
           </el-select>
-          <el-select clearable v-model="institution.value" filterable placeholder="机构" class="main-input main-right">
+          <el-select clearable v-model="institution.value" filterable placeholder="机构"
+                     class="main-input main-right">
             <el-option
               v-for="item in institution.list"
               :key="item.institutionId"
@@ -44,7 +45,7 @@
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
       </el-row>
-      <el-table :data="tableData" stripe>
+      <el-table :data="tableData" stripe :header-cell-style="{background:'#F3F6FC '}">
         <el-table-column prop="institutionName" label="机构名称" show-overflow-tooltip>
         </el-table-column>
         <el-table-column prop="channelName" label="渠道" show-overflow-tooltip>
@@ -66,7 +67,9 @@
         </el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
-            <img :src="icon_edit" class="table-icon" @click="editUser(scope.row)">
+            <el-tooltip class="item" effect="dark" content="点击编辑" placement="bottom">
+              <img :src="icon_edit" class="table-icon" @click="editUser(scope.row)">
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -129,6 +132,7 @@
       this.getData()
       this.queryRegionInfo()
       this.queryOrganizationList()
+      this.queryOrganizationList(0)
     },
     computed: {
       provincesValue() {
@@ -148,19 +152,21 @@
       provincesValue(val) {
         this.queryRegionInfo(val)
         this.city = {value: '', list: []}
-        // this.queryOrganizationList()
+        this.queryOrganizationList()
+        this.queryOrganizationList(0)
       },
       cityValue(val) {
-        // this.queryOrganizationList()
+        this.queryOrganizationList()
+        this.queryOrganizationList(0)
       },
       channelValue(val) {
         let channelId = val
-        if (val == this.channel.list[0].channelName) {
-          channelId = this.channel.list[0].channelId
-        }
+        this.institution = {value: '', list: []}
         this.channel.key = channelId
         if (channelId) {
           this.queryOrganizationList(2, channelId)
+        } else {
+          this.queryOrganizationList(0)
         }
       },
       institutionIdValue(val) {
@@ -192,7 +198,7 @@
             }
             if (parameter.provinceCode) {
               this.city.list = response.data
-              this.city.value = this.city.list.length > 0 ? this.city.list[0].cityCode : ''
+              // this.city.value = this.city.list.length > 0 ? this.city.list[0].cityCode : ''
             } else {
               this.provinces.list = response.data
             }
@@ -205,6 +211,8 @@
         this.institution.value = ''
         this.institution.list = []
         this.search()
+        this.queryOrganizationList()
+        this.queryOrganizationList(0)
       },
       search() {
         this.parameter = {
@@ -236,27 +244,41 @@
       },
       queryOrganizationList(dataType = 1, channelId = '') {
         let parameter = {
-          // provinceCode: this.provinces.value,
-          // cityCode: this.city.value,
+          provinceCode: this.provinces.value,
+          cityCode: this.city.value,
           channelId,
           dataType
         }
         this.$post('/manager/queryOrganizationList', parameter)
           .then((response) => {
+
             if (response.code != '000000') {
               this.$message(response.msg);
               return
             }
             if (dataType == 1) {
+              this.channel = {value: '', list: []}
               this.channel.list = response.data.channelList
-              // this.channel.value = response.data.channelList[0].channelName
-              // this.queryOrganizationList(2, response.data.channelList[0].channelId)
-            } else {
-              this.institution.list = response.data.institutionList
-              if (channelId) {
-                this.institution.value = this.institution.list.length > 0 ? this.institution.list[0].institutionId : ''
+            } else if (dataType == 0) {
+              this.institution = {value: '', list: []}
+              let newData = response.data.group
+              let list = []
+              for (let i in newData) {
+                let m = newData[i]
+                let y = {}
+                for (let j in m.institutions) {
+                  y = {
+                    institutionName: m.institutions[j].institutionName,
+                    institutionId: m.institutions[j].institutionId,
+                    type: 1
+                  }
+                  list.push(y)
+                }
+                this.institution.list = list
               }
-              // this.parameter.institutionId = response.data.institutionList[0].institutionId
+            } else {
+              this.institution = {value: '', list: []}
+              this.institution.list = response.data.institutionList
             }
           })
       },

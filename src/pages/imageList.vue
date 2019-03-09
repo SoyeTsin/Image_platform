@@ -72,7 +72,7 @@
             <el-button type="success" class="search-button" @click="search">查询</el-button>
           </el-col>
         </el-row>
-        <el-table :data="tableData" stripe>
+        <el-table :data="tableData" stripe :header-cell-style="{background:'#F3F6FC '}">
           <el-table-column prop="serialUID" label="影像编号" width="210">
           </el-table-column>
           <el-table-column prop="examDate" label="检查时间" sortable width="150">
@@ -111,6 +111,14 @@
                     :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
                     <img src="./assets/image/bg.png" class="table-icon">
                   </router-link>
+                </el-tooltip>
+              </div>
+              <div v-show='scope.row.aiCode!="000000"'>
+                <el-tooltip class="item" effect="dark" placement="bottom">
+                  <img src="./assets/list/listyxh@2x.png" class="table-icon">
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" placement="bottom">
+                  <img src="./assets/list/listbgh@2x.png" class="table-icon">
                 </el-tooltip>
               </div>
             </template>
@@ -439,9 +447,21 @@
         this.getData('刷新成功')
       },
       intoReport() {
+        let institutionName = ''
+        for (let i in this.institution.list) {
+          if (this.institution.value == this.institution.list[i].institutionId) {
+            institutionName = this.institution.list[i].institutionName
+          }
+        }
+        let diseaseName = ''
+        for (let i in this.disease.list) {
+          if (this.disease.value == this.disease.list[i].id) {
+            diseaseName = this.disease.list[i].val
+          }
+        }
         this.$router.push({
           name: 'statisticalReport',
-          query: {institutionId: this.parameter.institutionId}
+          query: {institutionId: this.parameter.institutionId, institutionName, diseaseName}
         })
       }
     },
