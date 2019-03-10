@@ -39,23 +39,40 @@
       }
     },
     methods: {
-      drawChart(datas) {
+      drawChart(val) {
         // 如果图形存在则删除再创建，这个地方感觉稍微有点坑
         // 具体的G2 api函数说明请看上面提供的官网地址，此处不再逐一说明
         this.chart && this.chart.destroy();
-        let data = datas;
+        let data = val.datas;
+        let dfs = val.dfs;
         this.chart = new G2.Chart({
           id: this.id,
           forceFit: true,
-          padding: [ 20, 60, 130, 80]
+          padding: [20, 60, 130, 80]
         });
-        this.chart.source(data);
+        this.chart.source(data, dfs, {
+          value: {
+            min: 0,   // 坐标轴的起始值
+            max: 1,  // 坐标轴的结束值
+            formatter: val => {    // 设置坐标轴和提示框的文字
+              return val + '%';
+            },
+            tickInterval: 0.003,  // 设置坐标轴间隔
+            alias: '比例'       // 提示信息起别名
+          },
+        });
         this.chart.scale({
           rate: {
-            alias: 'AI占比(%)'
+            alias: 'AI占比(%)',
+            tickCount: 7
           },
           value: {
-            alias: '次数'
+            alias: '次数',
+            tickCount: 7
+          },
+          time:{
+            alias: '次数',
+            tickCount: 7
           }
         });
         this.chart.axis('value', {
@@ -73,7 +90,7 @@
             type: 'line'
           }
         });
-        this.chart.interval().position('time*value').color('name', ['#7567FF', '#167EFF']).adjust([{
+        this.chart.interval().position('time*value').color('name', ['l(90) 0:#B8B1FF 1:#7567FF', '#BEDFFF']).adjust([{
           type: 'dodge',
           marginRatio: 1 / 32
         }]);
@@ -85,14 +102,14 @@
             value: 'AI检出序列',
             marker: {
               symbol: 'square',
-              fill: '#7567FF',
+              fill: 'l(90) 0:#B8B1FF 1:#7567FF',
               radius: 5
             }
           }, {
             value: '上传序列',
             marker: {
               symbol: 'square',
-              fill: '#167EFF',
+              fill: '#BEDFFF',
               radius: 5,
             }
           }, {

@@ -65,7 +65,7 @@
       },
       classFilter(val) {
         let num = val || ''
-        return num.length > 500?'zhishu red':'zhishu'
+        return num.length > 500 ? 'zhishu red' : 'zhishu'
       }
     },
     mounted() {
@@ -81,6 +81,25 @@
             return false;
           }
         });
+      },
+      serialImages() {
+        let parameter = {
+          institutionId: this.parameter.institutionId,
+          serialUID: this.parameter.serialUID,
+          channelId: this.parameter.channelId,
+          diseaseType: this.parameter.diseaseType,
+        }
+        this.$post('/api/serialImages', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.$message(response.msg);
+              return
+            }
+            this.$message({
+              message: response.msg, type: 'success'
+            });
+            this.dialogTableVisible = false
+          })
       },
       addFeedback() {
         this.parameter.institutionId = (JSON.parse(localStorage.getItem('institution'))).institutionId

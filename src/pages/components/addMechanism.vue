@@ -11,10 +11,10 @@
             <el-form-item label="渠道：" prop="channelName" class="">
               {{parameter.channelName}}
             </el-form-item>
-            <el-form-item label="渠道联系人" prop="channelUser" class="">
+            <el-form-item label="渠道联系人：" prop="channelUser" class="">
               <el-input v-model="ruleForm.channelUser"></el-input>
             </el-form-item>
-            <el-form-item label="机构联系人" prop="institutionUser" class="">
+            <el-form-item label="机构联系人：" prop="institutionUser" class="">
               <el-input v-model="ruleForm.institutionUser"></el-input>
             </el-form-item>
           </el-col>
@@ -25,10 +25,10 @@
             <el-form-item label="所在地区：" prop="provinceName" class="">
               {{parameter.provinceName}}{{parameter.cityName}}
             </el-form-item>
-            <el-form-item label="联系方式" prop="channelContact" class="">
+            <el-form-item label="联系方式：" prop="channelContact" class="">
               <el-input v-model="ruleForm.channelContact"></el-input>
             </el-form-item>
-            <el-form-item label="联系方式" prop="institutionContact" class="">
+            <el-form-item label="联系方式：" prop="institutionContact" class="">
               <el-input v-model="ruleForm.institutionContact"></el-input>
             </el-form-item>
           </el-col>
@@ -38,7 +38,7 @@
 
           </el-col>
           <el-col :span="24">
-            <el-form-item label="上级机构" prop="upRelate" class="dialog-item">
+            <el-form-item label="上级机构：" prop="upRelate" class="dialog-item">
               <el-select clearable multiple v-model="upRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in upRelate.list"
@@ -51,7 +51,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="下级机构" prop="downRelate" class="dialog-item">
+            <el-form-item label="下级机构：" prop="downRelate" class="dialog-item">
               <el-select clearable multiple v-model="downRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in downRelate.list"
