@@ -13,7 +13,7 @@
         </div>
         <div class="report-main">
           <div class="report-title">
-            <img src="./assets/statisticalReport.png" class="title-icon">
+            <img src="./assets/grbg.png" class="title-icon">
             AI辅助筛查统计报告（个人）
           </div>
           <div class="report-content">
@@ -21,8 +21,8 @@
               <div>{{institution}}</div>
             </div>
             <div class="report-nav report-nav-between">
-              <div>项目名称：{{diseaseType}}</div>
-              <div>报告日期：{{serial.examDate}}</div>
+              <div>项目名称：{{diseaseType}}筛查</div>
+              <div>报告日期：{{FormatDate}}</div>
             </div>
             <div class="report-nav report-nav-left">
               <div>
@@ -35,7 +35,7 @@
                   <img src="./assets/jbxx.png" class="tishi-icon">患者基本信息
                 </div>
                 <el-row class="report-item">
-                  <el-col :span="8">患者姓名：{{serial.examDate}}</el-col>
+                  <el-col :span="8">患者姓名：{{serial.patientName}}</el-col>
                   <el-col :span="8">患者年龄：{{serial.studyAge}}</el-col>
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
@@ -48,10 +48,7 @@
                   <img src="./assets/zdjg.png" class="tishi-icon">AI诊断结果
                 </div>
                 <el-row class="report-item">
-                  <el-col :span="24">AI检测结果：该患者疑似存在3个肺结节</el-col>
-                </el-row>
-                <el-row class="report-item">
-                  <el-col :span="24">AI影像分析：中线结构偏右</el-col>
+                  <el-col :span="24">AI检测结果：该患者疑似存在{{tableData.length}}个肺结节</el-col>
                 </el-row>
                 <el-row class="report-item">
                   <el-col :span="24">AI病灶编号：</el-col>
@@ -59,12 +56,20 @@
                 <el-row class="report-item">
                   <el-col :span="24">
                     <el-table :data="tableData" stripe ref="singleTable" @row-click="listClick">
-                      <el-table-column type="index" label="结节编号" width="120"></el-table-column>
-                      <el-table-column prop="diseaseDesc" label="病灶类型">
-                        <template slot-scope="scope">肺结节</template>
+                      <el-table-column type="index" label="结节编号" width="120">
+                        <template slot-scope="scope">结节{{scope.row.imageNo?scope.row.imageNo:'--'}}</template>
                       </el-table-column>
-                      <el-table-column prop="imageNo" label="所在图层"></el-table-column>
-                      <el-table-column prop="diameter" label="大小"></el-table-column>
+                      <el-table-column prop="diseaseDesc" label="病灶类型">
+                        <template
+                          slot-scope="scope"
+                        >{{scope.row.diseaseTypeDesc?scope.row.diseaseTypeDesc:'肺结节'}}</template>
+                      </el-table-column>
+                      <el-table-column prop="imageNo" label="所在图层">
+                        <template slot-scope="scope"> -- </template>
+                      </el-table-column>
+                      <el-table-column prop="diameter" label="大小">
+                        <template slot-scope="scope">{{scope.row.diameter?scope.row.diameter+'px':'--'}}</template>
+                      </el-table-column>
                       <el-table-column prop="probability" label="准确度">
                         <template slot-scope="scope">{{scope.row.probability}}</template>
                       </el-table-column>
@@ -82,7 +87,7 @@
                     class="ct-button-1"
                     @click="$router.push({path:'fjjCT',query:$route.query})"
                   >查看影像</el-button>
-                  <el-button type="success" class="ct-button-2">错误反馈</el-button>
+                  <el-button type="success" class="ct-button-2" @click="dialogVisible = true">错误反馈</el-button>
                 </div>
               </div>
             </div>
@@ -90,26 +95,41 @@
         </div>
       </div>
     </el-main>
+    <el-dialog
+      title="错误反馈"
+      :visible.sync="dialogVisible"
+      width="660px"
+      class="feedback"
+      :before-close="handleClose"
+    >
+      <p>
+        <span>*</span>请填写错误详情说明
+      </p>
+      <el-input type="textarea" :rows="5" placeholder="请输入内容" :maxlength="500" v-model="textarea"></el-input>
+      <el-checkbox v-model="checked">是否愿意接受电话回访</el-checkbox>
+      <button class="submit" v-if="textarea.length>0" @click="submit">提交</button>
+      <button class="submit" v-else style="opacity: 0.6;">提交</button>
+    </el-dialog>
   </el-container>
 </template>
 
 <script>
 import top from "./components/top";
 import CornerstoneCanvas from "@/components/CornerstoneCanvas";
+import feedback from "./components/feedback";
 export default {
   name: "userInfo",
   data() {
-    const item = {
-      date: "2016-05-02",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1518 弄"
-    };
     return {
       tableData: [],
       serial: {},
       serialImages: {},
       queryDiagnosis: {},
-      diseaseType: ""
+      diseaseType: "",
+      FormatDate: "",
+      dialogVisible: false,
+      textarea: "",
+      checked: false
     };
   },
   components: {
@@ -117,21 +137,69 @@ export default {
     top
   },
   methods: {
+    handleClose(done) {
+      if (this.textarea.length > 0) {
+        this.$confirm("内容未提交,是否直接关闭？")
+          .then(_ => {
+            this.textarea = "";
+            done();
+          })
+          .catch(_ => {});
+      } else {
+        done();
+      }
+    },
     returnGo() {
       this.$router.go(-1);
     },
     listClick(row) {
-      console.log(row);
       this.cornerstone.loadImage(row.imageUrl);
+    },
+    submit() {
+      let query = this.$route.query;
+      this.$post(
+        "/api/patientFeedback",
+        Object.assign(query, {
+          content: this.textarea,
+          canCall: this.checked ? 1 : 0
+        })
+      ).then(res => {
+        if (res.code == "000000") {
+          this.dialogVisible = false;
+          this.checked = false;
+          this.textarea = "";
+          this.$message({
+            message: "反馈成功",
+            type: "success"
+          });
+        }
+      });
     }
   },
   mounted() {},
   created() {
+    function myDate() {
+      var date = new Date();
+      var seperator1 = "-";
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var strDate = date.getDate();
+      if (month >= 1 && month <= 9) {
+        month = "0" + month;
+      }
+      if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+      }
+      var currentdate = year + seperator1 + month + seperator1 + strDate;
+      return currentdate;
+    }
+    this.FormatDate = myDate()
     this.$fetch("/api/diseaseType").then(res => {
       if (res.code == "000000") {
         this.diseaseType = res.data[this.$route.query.diseaseType];
       }
     });
+
     this.institution = JSON.parse(
       localStorage.getItem("institution")
     ).institutionName;
@@ -155,7 +223,7 @@ export default {
       } else if (value == "f") {
         return "女";
       } else {
-        return "未知";
+        return "--";
       }
     }
   }

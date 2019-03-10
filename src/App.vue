@@ -99,4 +99,19 @@
       }
     }
   }
+  .feedback .el-dialog__body{
+    text-align: left;
+    .submit{
+      margin: 40px auto 80px auto;
+    }
+    .el-checkbox{
+      padding-top: 14px;
+    }
+    p{
+      padding-bottom: 14px;
+      span{
+        color: #FF5555;
+      }
+    }
+  }
 </style>
