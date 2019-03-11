@@ -105,7 +105,7 @@
       margin: 40px auto 80px auto;
     }
     .el-checkbox{
-      padding-top: 14px;
+      // padding-top: 14px;
     }
     p{
       padding-bottom: 14px;
@@ -113,5 +113,10 @@
         color: #FF5555;
       }
     }
+  }
+  .text-length{
+    position: absolute;
+    right: 15px;
+    bottom: 8px;
   }
 </style>

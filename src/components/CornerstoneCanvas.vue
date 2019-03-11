@@ -243,6 +243,7 @@ export default {
             let xx = Number(data.location.split(',')[0])
             let yy = Number(data.location.split(',')[1])
             let diameter =  Number(data.diameter / 2)
+            console.log(xx,yy,diameter)
             let ellipticalRoi = {
               active: false,
               // area: 6151.977806452801,
@@ -443,8 +444,6 @@ export default {
     loadImage(imageUrl,data) {
       //切换图片
       let imageId = "wadouri:" + imageUrl;
-      // console.log(cornerstoneTools);
-      // console.log(cornerstoneTools.appState.save(this.element))
       cornerstone.loadImage(imageId).then(
         image => {
           // 设置元素视口
@@ -452,11 +451,11 @@ export default {
             this.element,
             image
           );
-          
+         console.log(data,222222)
           if(data&&data.location){//恢复病灶
               this.setEllipticalRoi(data)
           }else{
-              cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
+              // cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
           }
 
           viewport.voi.windowWidth = 400;
