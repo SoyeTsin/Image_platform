@@ -130,6 +130,8 @@ export default {
             if(data&&data.location){//恢复病灶
                 this.setEllipticalRoi(data)
             }
+            // .string('x00080030')
+            // console.log(dicomParser.readTag(canvas))
             // 激活工具
             this.initCanvasTools();
             resolve(cornerstone);

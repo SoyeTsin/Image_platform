@@ -27,7 +27,7 @@
       </div>
       <div class="info-list">
         <div class="title">
-          <h4>AI检测信息（{{exampleStudyImageIds.length}}）</h4>
+          <h4>AI检测信息（{{exampleStudyImageIds1.length}}）</h4>
           <span @click="isResult">
             <img src="../../static/fjj-icon/yc.png" alt>
           </span>
@@ -41,7 +41,7 @@
           </div>
           <ul style="max-height: 264px;overflow-y: scroll;">
             <li
-              v-for="(x,index) in exampleStudyImageIds"
+              v-for="(x,index) in exampleStudyImageIds1"
               :class="[index == listIndex?'active':'']"
               :key="index"
               @click="listClick(index,x)"
@@ -452,6 +452,7 @@ export default {
         ]
       },
       exampleStudyImageIds: [],
+      exampleStudyImageIds1: [],
       isRemind: false,
       isCorrect: false,
       isDelete: false,
@@ -604,11 +605,22 @@ export default {
       } else {
         this.isDetail = false;
       }
-      this.$refs.slider.setIndex(index);
-      this.cornerstone.loadImage(
-        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
-        this.exampleStudyImageIds[this.$refs.slider.getIndex()]
-      );
+      this.exampleStudyImageIds.map((v,k)=>{
+        if(data.imageNo == v.imageNo){
+          this.$refs.slider.setIndex(k);
+          this.cornerstone.loadImage(
+            this.exampleStudyImageIds[k].imageUrl,
+            this.exampleStudyImageIds[k]
+          );
+        }
+      })
+      
+      // console.log(data)
+      // this.$refs.slider.setIndex(index);
+      // this.cornerstone.loadImage(
+      //   this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
+      //   this.exampleStudyImageIds[this.$refs.slider.getIndex()]
+      // );
     },
     sliderCallback() {
       //拖动回调
@@ -620,7 +632,7 @@ export default {
         this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
         this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
-      this.listIndex = this.$refs.slider.getIndex();
+      // this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
       if (this.listDetail.location) {
         this.isDetail = true;
@@ -648,7 +660,7 @@ export default {
         this.exampleStudyImageIds[this.slider.value].imageUrl,
         this.exampleStudyImageIds[this.slider.value]
       );
-      this.listIndex = this.$refs.slider.getIndex();
+      // this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
       if (this.listDetail.location) {
         this.isDetail = true;
@@ -764,27 +776,60 @@ export default {
     this.$post("/api/serial", data).then(res => {
       this.detail = res.data;
     });
-    this.$post("/api/serialImages", data).then(res => {
+     this.$post("/api/listOriginalImages", data).then(res => {
       this.exampleStudyImageIds = res.data;
       this.slider.max = res.data.lenght - 1;
-      this.listDetail = this.exampleStudyImageIds[0];
-      setTimeout(() => {
-        this.$refs.cornerstone
-          .init(
-            this.exampleStudyImageIds[0].imageUrl,
-            this.exampleStudyImageIds[0]
-          )
-          .then(res => {
-            //初始化工具
-            this.cornerstone = this.$refs.cornerstone;
-          });
-        this.$refs.cornerstone1
-          .init(this.exampleStudyImageIds[0].imageUrl)
-          .then(res => {
-            //初始化缩略图
-            this.cornerstone1 = this.$refs.cornerstone1;
-          });
-      }, 100);
+       this.$post("/api/serialImages", data).then(res => {
+        this.exampleStudyImageIds1 = res.data;
+        this.listDetail = this.exampleStudyImageIds1[0];
+        this.exampleStudyImageIds.map((v,k)=>{
+          this.exampleStudyImageIds1.map((n,m)=>{
+            if(v.imageNo == n.imageNo){
+                this.exampleStudyImageIds[k] = n
+            }
+          })
+        })
+         setTimeout(() => {
+          this.$refs.cornerstone
+            .init(
+              this.exampleStudyImageIds[0].imageUrl,
+              this.exampleStudyImageIds[0]
+            )
+            .then(res => {
+              //初始化工具
+              this.cornerstone = this.$refs.cornerstone;
+            });
+          this.$refs.cornerstone1
+            .init(this.exampleStudyImageIds[0].imageUrl)
+            .then(res => {
+              //初始化缩略图
+              this.cornerstone1 = this.$refs.cornerstone1;
+            });
+        }, 100);
+      });
+     
+    });
+    this.$post("/api/serialImages", data).then(res => {
+      this.exampleStudyImageIds1 = res.data;
+      // this.slider.max = res.data.lenght - 1;
+      this.listDetail = this.exampleStudyImageIds1[0];
+      // setTimeout(() => {
+      //   this.$refs.cornerstone
+      //     .init(
+      //       this.exampleStudyImageIds[0].imageUrl,
+      //       this.exampleStudyImageIds[0]
+      //     )
+      //     .then(res => {
+      //       //初始化工具
+      //       this.cornerstone = this.$refs.cornerstone;
+      //     });
+      //   this.$refs.cornerstone1
+      //     .init(this.exampleStudyImageIds[0].imageUrl)
+      //     .then(res => {
+      //       //初始化缩略图
+      //       this.cornerstone1 = this.$refs.cornerstone1;
+      //     });
+      // }, 100);
     });
   },
   computed: {

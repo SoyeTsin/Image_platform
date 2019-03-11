@@ -115,6 +115,9 @@ export default {
     this.$fetch("/api/diseaseType").then(res => {
       if (res.code == "000000") {
         this.diseaseType = res.data[this.$route.query.diseaseType];
+        // res.data.map((v,k)=>{
+        //   console.log(v,k)
+        // })
       }
     });
     this.institution = JSON.parse(
