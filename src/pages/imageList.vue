@@ -93,7 +93,7 @@
           <el-table-column label="AI检测情况">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="light" :content="scope.row.aiMsg" placement="bottom">
-                <span :style="scope.row.aiCode|msgColorFilter">{{scope.row.aiMsg}}</span>
+                <span :style="scope.row.aiCode|msgColorFilter">{{scope.row.aiCode}}{{scope.row.aiMsg}}</span>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -114,10 +114,10 @@
                 </el-tooltip>
               </div>
               <div v-show='scope.row.aiCode!="000000"'>
-                <el-tooltip class="item" effect="dark" placement="bottom">
+                <el-tooltip class="item" effect="dark" placement="bottom"  content="无法查看">
                   <img src="./assets/list/listyxh@2x.png" class="table-icon">
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" placement="bottom">
+                <el-tooltip class="item" effect="dark" placement="bottom"  content="无法查看">
                   <img src="./assets/list/listbgh@2x.png" class="table-icon">
                 </el-tooltip>
               </div>
@@ -234,13 +234,13 @@
         }
       },
       msgColorFilter(value) {
-        const msgColor = ['#008DFF', '#FF2929', '#999999', '#00CB9E',]
+        const msgColor = ['#008DFF', '#999999', '#00CB9E', '#FF2929',]
         let coler = ''
         if (value == '000000') {
           coler = msgColor[3]
         } else if (value == '000001') {
           coler = msgColor[2]
-        } else if (value == '003101') {
+        } else if (value.indexOf('0031') == 0) {
           coler = msgColor[1]
         } else {
           coler = msgColor[0]
@@ -392,6 +392,7 @@
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
+        this.pageParameter.currentPage = 1
         this.parameter = {
           institutionId: this.institution.value,
           diseaseType: this.disease.value * 1,
@@ -407,6 +408,7 @@
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
+        this.pageParameter.currentPage = 1
         this.parameter = {
           institutionId: this.institution.value,
           diseaseType: this.disease.value * 1,

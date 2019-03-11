@@ -215,6 +215,7 @@
         this.queryOrganizationList(0)
       },
       search() {
+        this.pageParameter.currentPage = 1
         this.parameter = {
           channelId: this.channel.value,
           institutionId: this.institution.value,
@@ -231,6 +232,7 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.pageParameter.currentPage = 1
         this.parameter = {
           channelId: this.parameter.channelId,
           institutionId: this.parameter.institutionId,

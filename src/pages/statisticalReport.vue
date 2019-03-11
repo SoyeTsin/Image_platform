@@ -50,11 +50,11 @@
                 平安颖像肺结节智能筛查系统提示：通过对您病区患者的肺结节影像智能筛查，筛查状况见下表，此提示仅供您参考，请进一步诊断确认！
               </div>
             </div>
-            <div class="report-des">
+            <div :class="pieCount>0?'report-des':'report-des pie-hide'">
               <div class="chart-content chart-content-1">
                 <columnG2 :charData="serverData" :id="'c1'" id="c1"></columnG2>
               </div>
-              <div class="chart-content chart-content-2">
+              <div class="chart-content chart-content-2" v-show="pieCount>0">
                 <pieG2 :charData="pieData" :id="'c1'" id="c2"></pieG2>
               </div>
             </div>
@@ -85,6 +85,7 @@
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
       end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
       return {
+        pieCount: 0,
         timeArr: [start, end],
         serverData: [],
         pieData: [],
@@ -187,23 +188,30 @@
             let aiSeriesCountMap = response.data.aiSeriesCountMap
             let seriesCountMap = response.data.seriesCountMap
             for (let i in aiSeriesCountMap) {
+              let rate = ((aiSeriesCountMap[i] || 0) / (seriesCountMap[i] || 1) * 100)
+              rate = (rate % 1 == 0 ? rate : rate.toFixed(2)) + '%'
               myArr.push({
                 name: "AI检出序列",
-                time: i.substring(5, 7) + '.' + i.substring(8, 10),
+                time: i.replace(/-/g, " "),
                 value: aiSeriesCountMap[i], //+ Math.ceil(Math.random() * 10),
-                rate: aiSeriesCountMap[i]//((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
-
+                rate
               })
               myArr.push({
                 name: "上传序列",
-                time: i.substring(5, 7) + '.' + i.substring(8, 10),
+                time: i.replace(/-/g, " "),
                 value: seriesCountMap[i],// + Math.ceil(Math.random() * 10),
-                rate: aiSeriesCountMap[i]// ((aiSeriesCountMap[i] + Math.ceil(Math.random() * 10)) / (seriesCountMap[i] + Math.ceil(Math.random() * 10))).toFixed(2) * 10
+                rate
               })
+              console.log(i)
+              console.log(aiSeriesCountMap[i])
+              console.log(seriesCountMap[i])
+              console.log(rate)
             }
             let probabilityArr = []
             let probabilityMap = response.data.probabilityMap
+            let count = 0;
             for (let i in probabilityMap) {
+              count += probabilityMap[i] || 0
               switch (i) {
                 case 'probability2040Count':
                   probabilityArr.push({
@@ -232,7 +240,8 @@
                   break;
               }
             }
-            that.serverData = myArr
+            this.pieCount = count
+            that.serverData = {datas: myArr, dfs: []}
             that.pieData = probabilityArr
           })
       },
@@ -277,6 +286,10 @@
     padding: 20px;
     background: rgb(246, 246, 246);
     height: 100%;
+
+    .pie-hide {
+      justify-content: center;
+    }
   }
 
   .el-header {
@@ -409,6 +422,7 @@
   }
 
   .button-center {
-    background-image: linear-gradient(90deg, #34EDB6 0%, #28C3D5 100%);
+    background-image: linear-gradient(90deg, #19ff66, #16a7ff);
+    border: none;
   }
 </style>

@@ -3,16 +3,16 @@
 
     <el-dialog :title="editType?'添加账户':'编辑账号'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="用户姓名" prop="userName" class="dialog-item" v-show="!editType">
+        <el-form-item label="用户姓名：" prop="userName" class="dialog-item" v-show="!editType">
           {{ruleForm.userName}}
         </el-form-item>
-        <el-form-item label="用户    ID" prop="userName" class="dialog-item" v-show="!editType">
+        <el-form-item label="用户    ID：" prop="userName" class="dialog-item" v-show="!editType">
           {{parameter.userId}}
         </el-form-item>
-        <el-form-item label="用户姓名" prop="userName" class="dialog-item" v-show="editType">
+        <el-form-item label="用户姓名：" prop="userName" class="dialog-item" v-show="editType">
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
-        <el-form-item label="所处机构" prop="institutionValue" class="dialog-item">
+        <el-form-item label="所处机构：" prop="institutionValue" class="dialog-item">
           <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in institution.list"
@@ -23,7 +23,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="所处科室" prop="officeValue" class="dialog-item">
+        <el-form-item label="所处科室：" prop="officeValue" class="dialog-item">
           <el-select v-model="ruleForm.officeValue" filterable placeholder="科室" class="main-input">
             <el-option
               v-for="item in office.list"
@@ -33,10 +33,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="手机号码" prop="phoneNum" class="dialog-item">
+        <el-form-item label="手机号码：" prop="phoneNum" class="dialog-item">
           <el-input v-model="ruleForm.phoneNum"></el-input>
         </el-form-item>
-        <el-form-item label="权限" prop="isEnableValue" class="dialog-item">
+        <el-form-item label="权限：" prop="isEnableValue" class="dialog-item">
           <el-select v-model="ruleForm.isEnableValue" filterable placeholder="请选择" class="main-input">
             <el-option
               v-for="item in isEnable.list"
@@ -60,7 +60,7 @@
     data() {
       var checkPhone = (rule, value, callback) => {
         if (!value) {
-          // return callback(new Error('手机号不能为空'));
+          return callback(new Error('手机号不能为空'));
           callback();
         } else {
           const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
@@ -94,7 +94,7 @@
             {min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur'}
           ],
           phoneNum: [
-            {validator: checkPhone, trigger: 'blur'}
+            {required: true,validator: checkPhone, trigger: 'blur'}
           ],
           channelValue: [
             {required: true, message: '请选择所属渠道', trigger: 'change'}
