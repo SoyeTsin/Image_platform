@@ -26,7 +26,7 @@
               </div>
             </div>
           </div>
-          <div class="login-button" @click="login">登&nbsp;&nbsp;录</div>
+          <div class="login-button" @click="getPublicKey">登&nbsp;&nbsp;录</div>
           <div class="login-des">暂不支持注册</div>
         </div>
       </div>
@@ -64,6 +64,7 @@
         login_bg_2,
         login_kuang,
         msg: '',
+        publicKey: '',
         userParameter: {
           userType: 0,
           password: '',
@@ -76,8 +77,27 @@
 
     },
     methods: {
-      login() {
-        let parameter = this.userParameter
+      getPublicKey() {
+        //account/getPublicKey
+        if (!this.userParameter.userName || !this.userParameter.password) {
+          this.msg = '账户名和密码均不能为空'
+          return
+        }
+        let parameter = {userName: this.userParameter.userName}
+        this.$post('account/getPublicKey', parameter)
+          .then((response) => {
+            if (response.code != '000000') {
+              this.msg = response.msg
+              return
+            }
+            this.publicKey = response.data.publicKey
+            var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(this.publicKey)
+            let password = encrypt.encrypt(this.userParameter.password)
+            this.login(password)
+          })
+      },
+      login(password) {
         if (!this.userParameter.userName || !this.userParameter.password) {
           this.msg = '账户名和密码均不能为空'
           return
@@ -85,6 +105,11 @@
         if (this.userParameter.userName.length > 25 || this.userParameter.password.length > 25) {
           this.msg = '账户名或密码长度超过25个字符'
           return
+        }
+        let parameter = {
+          userName: this.userParameter.userName,
+          userType: 0,
+          password
         }
         this.$post('/account/login', parameter)
           .then((response) => {

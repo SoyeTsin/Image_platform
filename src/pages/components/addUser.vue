@@ -1,16 +1,16 @@
 <template>
   <el-container>
 
-    <el-dialog :title="editType?'添加账户':'编辑账号'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
+    <el-dialog :title="editType?'创建账号':'编辑账号'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="用户姓名：" prop="userName" class="dialog-item" v-show="!editType">
+        <el-form-item label="用户姓名：" prop="userName"  class="dialog-item" v-show="!editType">
           {{ruleForm.userName}}
         </el-form-item>
         <el-form-item label="用户    ID：" prop="userName" class="dialog-item" v-show="!editType">
           {{parameter.userId}}
         </el-form-item>
         <el-form-item label="用户姓名：" prop="userName" class="dialog-item" v-show="editType">
-          <el-input v-model="ruleForm.userName"></el-input>
+          <el-input v-model="ruleForm.userName" placeholder="姓名"  maxlength="25"></el-input>
         </el-form-item>
         <el-form-item label="所处机构：" prop="institutionValue" class="dialog-item">
           <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
@@ -47,7 +47,8 @@
           </el-select>
         </el-form-item>
         <el-row>
-          <el-button type="success" class="button-center" @click="submitForm('ruleForm')">确定</el-button>
+          <el-button type="success" class="button-center" @click="submitForm('ruleForm')">{{editType?'创建':'确定'}}
+          </el-button>
         </el-row>
       </el-form>
     </el-dialog>
@@ -94,16 +95,16 @@
             {min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur'}
           ],
           phoneNum: [
-            {required: true,validator: checkPhone, trigger: 'blur'}
+            {required: true, validator: checkPhone, trigger: 'blur'}
           ],
           channelValue: [
             {required: true, message: '请选择所属渠道', trigger: 'change'}
           ],
           institutionValue: [
-            {required: true, message: '请选择所属机构', trigger: 'change'}
+            {required: true, message: '请选择所处机构', trigger: 'change'}
           ],
           officeValue: [
-            {required: true, message: '请选择活动区域', trigger: 'change'}
+            {required: true, message: '请选择所处科室', trigger: 'change'}
           ],
           isEnableValue: [
             {required: true, message: '请选择活动区域', trigger: 'change'}
@@ -202,7 +203,10 @@
           })
       },
       addUser() {
+        this.user = ''
         this.parameter = {userName: '', phoneNum: '', userId: ''}
+        this.institution.value = ''
+        this.office.value = ''
         this.isEnable = {value: '启用', key: 0, list: [{value: 0, label: '启用'}, {value: 1, label: '禁用'}]}
         this.ruleForm = {
           userName: '',

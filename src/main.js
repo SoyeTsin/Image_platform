@@ -7,6 +7,7 @@ import App from './App'
 import router from './router'
 import { sync } from 'vuex-router-sync'
 import store from './store'
+import { JSEncrypt } from 'jsencrypt'
 import axios from 'axios'
 import {post, fetch, patch, put} from './pages/utils/http'
 //定义全局变量

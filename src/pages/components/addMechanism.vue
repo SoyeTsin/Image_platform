@@ -12,10 +12,10 @@
               {{parameter.channelName}}
             </el-form-item>
             <el-form-item label="渠道联系人：" prop="channelUser" class="">
-              <el-input v-model="ruleForm.channelUser"></el-input>
+              <el-input v-model="ruleForm.channelUser" maxlength="25"></el-input>
             </el-form-item>
             <el-form-item label="机构联系人：" prop="institutionUser" class="">
-              <el-input v-model="ruleForm.institutionUser"></el-input>
+              <el-input v-model="ruleForm.institutionUser" maxlength="25"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -26,10 +26,10 @@
               {{parameter.provinceName}}{{parameter.cityName}}
             </el-form-item>
             <el-form-item label="联系方式：" prop="channelContact" class="">
-              <el-input v-model="ruleForm.channelContact"></el-input>
+              <el-input v-model="ruleForm.channelContact" maxlength="25"></el-input>
             </el-form-item>
             <el-form-item label="联系方式：" prop="institutionContact" class="">
-              <el-input v-model="ruleForm.institutionContact"></el-input>
+              <el-input v-model="ruleForm.institutionContact" maxlength="25"></el-input>
             </el-form-item>
           </el-col>
         </el-row>

@@ -93,7 +93,7 @@
           <el-table-column label="AI检测情况">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="light" :content="scope.row.aiMsg" placement="bottom">
-                <span :style="scope.row.aiCode|msgColorFilter">{{scope.row.aiCode}}{{scope.row.aiMsg}}</span>
+                <span :style="scope.row.aiCode|msgColorFilter(scope.row.aiMsg)">{{scope.row.aiMsg}}</span>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -105,6 +105,7 @@
                     :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
                     <img src="./assets/image/ck.png" class="table-icon">
                   </router-link>
+                  npm install jsencrypt
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
                   <router-link
@@ -114,10 +115,10 @@
                 </el-tooltip>
               </div>
               <div v-show='scope.row.aiCode!="000000"'>
-                <el-tooltip class="item" effect="dark" placement="bottom"  content="无法查看">
+                <el-tooltip class="item" effect="dark" placement="bottom" content="无法查看">
                   <img src="./assets/list/listyxh@2x.png" class="table-icon">
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" placement="bottom"  content="无法查看">
+                <el-tooltip class="item" effect="dark" placement="bottom" content="无法查看">
                   <img src="./assets/list/listbgh@2x.png" class="table-icon">
                 </el-tooltip>
               </div>
@@ -162,7 +163,7 @@
         disease: {value: '', key: null, list: []},
         aiResult: {value: '', key: null, list: []},
         options: '',
-        timeArr: ['', ''],
+        timeArr: null,
         tableData: [],
         pageParameter: common.pageParameter,
         parameter: {
@@ -233,11 +234,14 @@
           return '未知'
         }
       },
-      msgColorFilter(value) {
+      msgColorFilter(value, msg) {
         const msgColor = ['#008DFF', '#999999', '#00CB9E', '#FF2929',]
         let coler = ''
         if (value == '000000') {
           coler = msgColor[3]
+          if (msg == 'AI检测无异常') {
+            coler = msgColor[2]
+          }
         } else if (value == '000001') {
           coler = msgColor[2]
         } else if (value.indexOf('0031') == 0) {
@@ -281,10 +285,15 @@
       this.queryOrganizationList()
     },
     methods: {
+      format(time) {
+        let str = time.getFullYear() + '-' + ((time.getMonth() + 1) < 10 ? '0' + (time.getMonth() + 1) : (time.getMonth() + 1)) + '-' + (time.getDate() < 10 ? '0' + time.getDate() : time.getDate()) + ' '
+        str += (time.getHours() < 10 ? '0' + time.getHours() : time.getHours()) + ':' + (time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()) + ':' + (time.getSeconds() < 10 ? '0' + time.getHours() : time.getSeconds())
+        return str
+      },
       getData(msg = '') {
-        if (this.timeArr[0] && this.timeArr[1]) {
-          this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
-          this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
+        if (this.timeArr) {
+          this.parameter.beginDate = this.format(this.timeArr[0])
+          this.parameter.endDate = this.format(this.timeArr[1])
         }
         this.$post('/api/serials', this.parameter)
           .then((response) => {
@@ -388,7 +397,7 @@
         this.search()
       },
       search() {
-        if (this.timeArr[0] && this.timeArr[1]) {
+        if (this.timeArr) {
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
@@ -404,7 +413,7 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
-        if (this.timeArr[0] && this.timeArr[1]) {
+        if (this.timeArr) {
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
@@ -419,7 +428,7 @@
         this.getData()
       },
       handleCurrentChange(val) {
-        if (this.timeArr[0] && this.timeArr[1]) {
+        if (this.timeArr) {
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
