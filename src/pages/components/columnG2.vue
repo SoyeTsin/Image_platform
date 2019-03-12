@@ -40,79 +40,87 @@
     },
     methods: {
       drawChart(val) {
-        app.title = '折柱混合';
-
-        let option = {
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              crossStyle: {
-                color: '#999'
-              }
+        // 如果图形存在则删除再创建，这个地方感觉稍微有点坑
+        // 具体的G2 api函数说明请看上面提供的官网地址，此处不再逐一说明
+        this.chart && this.chart.destroy();
+        let data = val.datas;
+        let dfs = val.dfs;
+        this.chart = new G2.Chart({
+          id: this.id,
+          forceFit: true,
+          padding: [20, 60, 130, 80]
+        });
+        this.chart.source(data, dfs, {
+          value: {
+            min: 0,   // 坐标轴的起始值
+            max: 1,  // 坐标轴的结束值
+            formatter: val => {    // 设置坐标轴和提示框的文字
+              return val + '%';
+            },
+            tickInterval: 0.003,  // 设置坐标轴间隔
+            alias: '比例'       // 提示信息起别名
+          },
+        });
+        this.chart.scale({
+          rate: {
+            alias: 'AI占比(%)',
+            tickCount: 7
+          },
+          value: {
+            tickCount: 7
+          },
+          time: {
+            tickCount: 7
+          }
+        });
+        this.chart.axis('value', {
+          label: {
+            textStyle: {
+              fill: '#aaaaaa'
             }
           },
-          toolbox: {
-            feature: {
-              dataView: {show: true, readOnly: false},
-              magicType: {show: true, type: ['line', 'bar']},
-              restore: {show: true},
-              saveAsImage: {show: true}
+          title: {
+            offset: 50
+          }
+        });
+        this.chart.tooltip({
+          crosshairs: {
+            type: 'line'
+          }
+        });
+        this.chart.interval().position('time*value').color('name', ['l(90) 0:#B8B1FF 1:#7567FF', '#BEDFFF']).adjust([{
+          type: 'dodge',
+          marginRatio: 1 / 32
+        }]);
+        this.chart.line().position('time*rate').size(2).color('#FFB74F');
+        this.chart.legend({
+          custom: true,
+          allowAllCanceled: true,
+          items: [{
+            value: 'AI检出序列',
+            marker: {
+              symbol: 'square',
+              fill: 'l(90) 0:#B8B1FF 1:#7567FF',
+              radius: 5
             }
-          },
-          legend: {
-            data: ['蒸发量', '降水量', '平均温度']
-          },
-          xAxis: [
-            {
-              type: 'category',
-              data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-              axisPointer: {
-                type: 'shadow'
-              }
+          }, {
+            value: '上传序列',
+            marker: {
+              symbol: 'square',
+              fill: '#BEDFFF',
+              radius: 5,
             }
-          ],
-          yAxis: [
-            {
-              type: 'value',
-              name: '水量',
-              min: 0,
-              max: 250,
-              interval: 50,
-              axisLabel: {
-                formatter: '{value} ml'
-              }
-            },
-            {
-              type: 'value',
-              name: '温度',
-              min: 0,
-              max: 25,
-              interval: 5,
-              axisLabel: {
-                formatter: '{value} °C'
-              }
+          }, {
+            value: 'AI检出占比',
+            marker: {
+              symbol: 'hyphen',
+              stroke: '#FFB74F',
+              radius: 5,
+              lineWidth: 3
             }
-          ],
-          series: [
-            {
-              name: '蒸发量',
-              type: 'bar',
-              data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-            },
-            {
-              name: '降水量',
-              type: 'bar',
-              data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
-            },
-            {
-              name: '平均温度',
-              type: 'line',
-              yAxisIndex: 1,
-              data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-            }
-          ]
-        };
+          }]
+        });
+        this.chart.render();
       }
     }
   }
