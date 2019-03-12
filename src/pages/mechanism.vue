@@ -178,7 +178,7 @@
         this.$post('/manager/queryInstitutionList', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.tableData = response.data.list
@@ -193,7 +193,7 @@
         this.$post('/manager/queryRegionInfo', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             if (parameter.provinceCode) {
@@ -255,7 +255,7 @@
           .then((response) => {
 
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             if (dataType == 1) {

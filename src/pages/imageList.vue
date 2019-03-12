@@ -66,8 +66,9 @@
             </el-date-picker>
           </el-col>
           <el-col :span="4" class="display-right">
-            <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0">
-              <img src="./assets/chongzhi.png" class="so-icon"/>
+            <el-button  type="success" class="search-button" @click="refreshFun" style="margin: 0">
+              <!--<img src="./assets/chongzhi.png" class="so-icon"/>-->
+              清空
             </el-button>
             <el-button type="success" class="search-button" @click="search">查询</el-button>
           </el-col>
@@ -240,7 +241,7 @@
         } else if (value == 'f') {
           return '女'
         } else {
-          return '未知'
+          return '--'
         }
       },
       msgColorFilter(value, msg) {
@@ -307,7 +308,7 @@
         this.$post('/api/serials', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             if (msg) {
@@ -328,7 +329,7 @@
         this.$post('manager/queryRelateInstitutionList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.institution.list.push(this.userInstitution)
@@ -347,7 +348,7 @@
         this.$post('/api/findAllDiseaseTypeCountList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             // this.parameter.aiMsg = response.msg
@@ -359,7 +360,7 @@
         this.$fetch('/api/aiResult', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let list = [];
@@ -380,7 +381,7 @@
         this.$fetch('/api/diseaseType', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let list = [];
@@ -457,7 +458,7 @@
         this.$post('/api/findAllDiseaseTypeCountList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.diseaseCount = response.data

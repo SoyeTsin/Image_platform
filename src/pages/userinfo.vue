@@ -182,7 +182,7 @@
         this.$post('/account/queryUserList', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.tableData = response.data.list
@@ -199,7 +199,7 @@
         this.$post('/account/queryUserList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let restaurants = response.data.list
@@ -222,7 +222,7 @@
         this.$post('/manager/queryRegionInfo', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             if (parameter.provinceCode) {
@@ -242,7 +242,7 @@
         this.$post('/manager/queryOrganizationList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let newData = response.data.group
@@ -273,7 +273,7 @@
         this.$post('/manager/queryOfficeList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.office.list = response.data
@@ -301,7 +301,7 @@
           this.$post('/account/delUser', parameter)
             .then((response) => {
               if (response.code != '000000') {
-                this.$message(response.msg);
+                this.$message.error(response.msg);
                 return
               }
               this.$message({

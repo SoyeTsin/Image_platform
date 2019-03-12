@@ -3,16 +3,16 @@
 
     <el-dialog :title="editType?'创建账号':'编辑账号'" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="用户姓名：" prop="userName"  class="dialog-item" v-show="!editType">
+        <el-form-item label="用户姓名：" prop="userName" class="dialog-item" v-show="!editType">
           {{ruleForm.userName}}
         </el-form-item>
         <el-form-item label="用户    ID：" prop="userName" class="dialog-item" v-show="!editType">
           {{parameter.userId}}
         </el-form-item>
         <el-form-item label="用户姓名：" prop="userName" class="dialog-item" v-show="editType">
-          <el-input v-model="ruleForm.userName" placeholder="姓名"  maxlength="25"></el-input>
+          <el-input v-model="ruleForm.userName" placeholder="姓名" maxlength="25"></el-input>
         </el-form-item>
-        <el-form-item label="所处机构：" prop="institutionValue" class="dialog-item">
+        <el-form-item label="所属机构：" prop="institutionValue" class="dialog-item">
           <el-select v-model="ruleForm.institutionValue" filterable placeholder="机构" class="main-input">
             <el-option
               v-for="item in institution.list"
@@ -192,11 +192,15 @@
         this.$post('/account/editUserInfo', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
+            let msg = '创建成功'
+            if (this.parameter.userId) {
+              msg = '编辑成功'
+            }
             this.$message({
-              message: response.msg, type: 'success'
+              message: msg, type: 'success'
             });
             this.dialogTableVisible = false
             this.$emit('renewList')
@@ -242,7 +246,7 @@
         this.$post('/manager/queryOfficeList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.office.list = response.data
@@ -259,7 +263,7 @@
         this.$post('/manager/queryOrganizationList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let newData = response.data.group

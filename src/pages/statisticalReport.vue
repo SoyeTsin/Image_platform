@@ -178,7 +178,7 @@
         this.$post('/api/findDiseaseDetailData', this.parameter)
           .then((response) => {
             if (response.code != '000000') {
-              that.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             console.log(response.data)
@@ -252,7 +252,7 @@
         this.$fetch('/api/diseaseType', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let list = [];

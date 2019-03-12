@@ -11,10 +11,10 @@
             <el-form-item label="渠道：" prop="channelName" class="">
               {{parameter.channelName}}
             </el-form-item>
-            <el-form-item label="渠道联系人：" prop="channelUser" class="">
+            <el-form-item label="渠道联系人" prop="channelUser" class="">
               <el-input v-model="ruleForm.channelUser" maxlength="25"></el-input>
             </el-form-item>
-            <el-form-item label="机构联系人：" prop="institutionUser" class="">
+            <el-form-item label="机构联系人" prop="institutionUser" class="">
               <el-input v-model="ruleForm.institutionUser" maxlength="25"></el-input>
             </el-form-item>
           </el-col>
@@ -25,10 +25,10 @@
             <el-form-item label="所在地区：" prop="provinceName" class="">
               {{parameter.provinceName}}{{parameter.cityName}}
             </el-form-item>
-            <el-form-item label="联系方式：" prop="channelContact" class="">
+            <el-form-item label="联系方式" prop="channelContact" class="">
               <el-input v-model="ruleForm.channelContact" maxlength="25"></el-input>
             </el-form-item>
-            <el-form-item label="联系方式：" prop="institutionContact" class="">
+            <el-form-item label="联系方式" prop="institutionContact" class="">
               <el-input v-model="ruleForm.institutionContact" maxlength="25"></el-input>
             </el-form-item>
           </el-col>
@@ -38,7 +38,7 @@
 
           </el-col>
           <el-col :span="24">
-            <el-form-item label="上级机构：" prop="upRelate" class="dialog-item">
+            <el-form-item label="上级机构" prop="upRelate" class="dialog-item">
               <el-select clearable multiple v-model="upRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in upRelate.list"
@@ -51,7 +51,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="下级机构：" prop="downRelate" class="dialog-item">
+            <el-form-item label="下级机构" prop="downRelate" class="dialog-item">
               <el-select clearable multiple v-model="downRelateArr" filterable placeholder="机构" class="main-input">
                 <el-option
                   v-for="item in downRelate.list"
@@ -66,16 +66,8 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="4">
-            &nbsp;
-          </el-col>
-          <el-col :span="8">
-            <el-button class="button-center-def" @click="dialogTableVisible=false">跳过</el-button>
-          </el-col>
-          <el-col :span="8">
+          <el-col :span="24">
             <el-button type="success" class="button-center" @click="submitForm('ruleForm')">确定</el-button>
-          </el-col>
-          <el-col :span="4">
           </el-col>
         </el-row>
       </el-form>
@@ -203,11 +195,11 @@
         this.$post('/manager/editInstitutionInfo', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.$message({
-              message: response.msg, type: 'success'
+              message: '编辑成功', type: 'success'
             });
             this.dialogTableVisible = false
             this.$emit('renewList')
@@ -229,7 +221,7 @@
         this.$post('manager/queryRelateInstitutionList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let arr = []
@@ -260,7 +252,7 @@
         this.$post('/manager/queryOrganizationList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             let newData = response.data.group
@@ -292,7 +284,7 @@
         this.$post('/manager/queryOfficeList', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.$message(response.msg);
+              this.$message.error(response.msg);
               return
             }
             this.office.list = response.data

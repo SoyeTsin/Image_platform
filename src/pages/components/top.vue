@@ -64,7 +64,7 @@
         this.$post('/account/logout', parameter)
           .then((response) => {
             if (response.code != '000000') {
-              this.msg = response.msg
+              this.$message.error(response.msg);
               return
             }
             let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/login')
