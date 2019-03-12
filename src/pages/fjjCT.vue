@@ -10,18 +10,17 @@
       </div>
       <div class="info">
         <div class="img">
-          <cornerstone-canvas height="100%" width="100%" ref="cornerstone1"></cornerstone-canvas>
+          <cornerstone-canvas height="100%" width="100%" ref="cornerstone1" :images="exampleStudyImageIds"></cornerstone-canvas>
           <span>{{exampleStudyImageIds.length}}张</span>
         </div>
         <div class="text">
           <p>
             <span>{{detail.patientName}}</span>
             <span>{{detail.sex|genderFilter}}</span>
-            {{detail.studyAge}}
-            <span>岁</span>
+            <span>{{detail.studyAge?detail.studyAge+'岁':''}}</span>
           </p>
           <p>
-            <span>{{detail.examDate|myDate}}</span>
+            <span>{{myDate(detail.examDate)}}</span>
           </p>
         </div>
       </div>
@@ -39,7 +38,7 @@
             <span>层面</span>
             <span>概率</span>
           </div>
-          <ul style="max-height: 220px;overflow-y: scroll;">
+          <ul style="max-height: 220px;overflow-y: auto;">
             <li
               v-for="(x,index) in exampleStudyImageIds1"
               :class="[index == listIndex?'active':'']"
@@ -202,32 +201,40 @@
           center
           :before-close="handleClose"
         >
-          <el-row>
-            <el-col :span="24" style="padding:5px 0 14px 0;">影像描述</el-col>
-            <el-col :span="24" style="position: relative;">
-              <el-input type="textarea" :rows="5" :maxlength='500' v-model="describe"></el-input>
-              <div class="text-length">
-                {{describe.length}}/500
-              </div>
-            </el-col>
-            <el-col :span="24" style="padding:30px 0 14px 0;">诊断结果</el-col>
-            <el-col :span="24" style="position: relative;">
-              <el-input type="textarea" :rows="5" :maxlength='500' v-model="result"></el-input>
-              <div class="text-length">
-                {{result.length}}/500
-              </div>
-            </el-col>
-          </el-row>
+        <el-form :model="doctor" :rules="doctorRules" ref="ruleForm1">
+          
+            <el-row>
+              <el-form-item prop="describe">
+                <el-col :span="24" style="padding:5px 0 14px 0;">影像描述</el-col>
+                <el-col :span="24" style="position: relative;">
+                  <el-input type="textarea" :rows="5" :maxlength='500' v-model="doctor.describe"></el-input>
+                  <div class="text-length">
+                    {{doctor.describe.length}}/500
+                  </div>
+                </el-col>
+            </el-form-item>
+             <el-form-item prop="result">
+                <el-col :span="24" style="padding:30px 0 14px 0;">诊断结果</el-col>
+              <el-col :span="24" style="position: relative;">
+                <el-input type="textarea" :rows="5" :maxlength='500' v-model="doctor.result"></el-input>
+                <div class="text-length">
+                  {{doctor.result.length}}/500
+                </div>
+              </el-col>
+            </el-form-item>
+            </el-row>
+        </el-form>
           <span slot="footer" class="dialog-footer">
             <button
               class="submit"
-              v-if="result.length >0&&describe.length>0"
-              @click="editResult()"
+              v-if="doctor.result.length >0&&doctor.describe.length>0"
+              @click="submitForm1('ruleForm1')"
             >{{queryDiagnosis&&queryDiagnosis.doctor_desc&&queryDiagnosis.doctor_result?'保存':'提交'}}</button>
             <button
               class="submit"
               v-else
               style="opacity: 0.6;"
+              @click="submitForm1('ruleForm1')"
             >{{queryDiagnosis&&queryDiagnosis.doctor_desc&&queryDiagnosis.doctor_result?'保存':'提交'}}</button>
           </span>
         </el-dialog>
@@ -255,44 +262,58 @@
             </i>
             <el-popover placement="top" width="216" v-model="isCorrect" trigger="click">
               <div class="tips" style="height: auto;padding: 8px;">
-                <p style="padding-bottom: 20px;">信息修正</p>
+                <p style="padding-bottom: 20px;display: block;">信息修正</p>
                 <!-- <p
-                  style="padding-bottom: 15px;"
+                  style=""
                 >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p> -->
-                <p style="display: flex;padding-bottom: 15px;">
-                  <span style="width: 70px;">直径：</span>
-                  <span>
-                    <input type="text" v-model="correct.diameter" placeholder="请输入">
-                  </span>
+                <el-form :model="correct" :rules="correctRules" ref="ruleForm">
+                  <el-form-item prop="diameter">
+                       <p style="display: flex;">
+                        <span style="width: 70px;display: block;">直径：</span>
+                        <span>
+                          <input type="text" v-model="correct.diameter" placeholder="请输入">
+                        </span>
+                      </p>
+                    </el-form-item>
+                    <el-form-item prop="density">
+                        <p style="display: flex;">
+                      <span style="width: 70px;display: block;">密度：</span>
+                      <span>
+                        <input type="text" v-model="correct.density" placeholder="请输入">
+                      </span>
                 </p>
-                <p style="display: flex;padding-bottom: 15px;">
-                  <span style="width: 70px;">密度：</span>
-                  <span>
-                    <input type="text" v-model="correct.density" placeholder="请输入">
-                  </span>
-                </p>
-                <p style="display: flex;padding-bottom: 15px;">
-                  <span style="width: 70px;">可能性：</span>
+                    </el-form-item>
+                    <el-form-item prop="probability">
+                        <p style="display: flex;">
+                  <span style="width: 70px;display: block;">可能性：</span>
                   <span>
                     <input type="text" v-model="correct.probability" placeholder="请输入">
                   </span>
                 </p>
-                <p style="display: flex;padding-bottom: 15px;">
-                  <span style="width: 70px;">坐标：</span>
+                    </el-form-item>
+                     <el-form-item prop="location">
+                        <p style="display: flex;">
+                  <span style="width: 70px;display: block;">坐标：</span>
                   <span>
                     <input type="text" v-model="correct.location" placeholder="请输入">
                   </span>
                 </p>
-                <p style="display: flex;padding-bottom: 15px;">
-                  <span style="width: 70px;">病灶描述：</span>
+                    </el-form-item>
+                    <el-form-item prop="diseaseTypeDesc">
+                       <p style="display: flex;">
+                  <span style="width: 70px;display: block;">病灶描述：</span>
                   <span>
                     <input type="text" v-model="correct.diseaseTypeDesc" placeholder="请输入">
                   </span>
                 </p>
+                    </el-form-item>
+                </el-form>
+               
+                
                 <div class="btn">
                   <span @click="isCorrect = false">取消</span>
                   <span
-                    @click="serialImage({},1)"
+                    @click="submitForm('ruleForm')"
                   >确定</span>
                 </div>
               </div>
@@ -306,7 +327,7 @@
                 <div class="btn">
                   <span @click="isDelete = false">取消</span>
                   <span
-                    @click="serialImage({deletedFlag:1,imageNo:listDetail.imageNo,imageId:listIndex+1,diameter:listDetail.diameter,probability:listDetail.probability,density:listDetail.density,location:listDetail.location,diseaseTypeDesc:listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:'肺结节'},2)"
+                    @click="serialImage(2)"
                   >删除</span>
                 </div>
               </div>
@@ -335,7 +356,7 @@
           {{detail.examDate}}
           <br>
         </div>
-        <cornerstone-canvas height="92vh" width="100%" ref="cornerstone"></cornerstone-canvas>
+        <cornerstone-canvas height="92vh" width="100%" ref="cornerstone" :images="exampleStudyImageIds"></cornerstone-canvas>
         <div class="right">
           <p>
             <span>{{slider.value+1}}</span>
@@ -386,6 +407,7 @@ export default {
   },
   data() {
     return {
+     
       cornerstone: null,
       asideWidth: "280px",
       isAside: true,
@@ -448,6 +470,18 @@ export default {
       dialogVisible: false,
       describe: "",
       result: "",
+      doctor:{
+        describe: "",
+        result: "",
+      },
+      doctorRules: {
+        describe: [
+          { required: true,message: '请输入影像详情', trigger: 'blur' }
+        ],
+        result: [
+          { required: true,message: '请输入诊断结果', trigger: 'blur' }
+        ],
+      },
       slider: {
         direction: "vertical",
         reverse: true,
@@ -495,8 +529,6 @@ export default {
         pageX: 0,
         pageY: 0
       },
-      doctorDesc: "",
-      doctorResult: "",
       correct:{
         diameter:'',
         density:'',
@@ -504,11 +536,45 @@ export default {
         location:'',
         diseaseTypeDesc:''
       },
+      correctRules: {
+        diameter: [
+          { required: true,message: '请输入直径', trigger: 'blur' }
+        ],
+        density: [
+          { required: true,message: '请输入密度', trigger: 'blur' }
+        ],
+        probability: [
+          { required: true,message: '请输入可能性', trigger: 'blur' }
+        ],
+        location: [
+          { required: true,message: '请输入坐标', trigger: 'blur' }
+        ],
+        diseaseTypeDesc: [
+          { required: true,message: '请输入病灶描述', trigger: 'blur' }
+        ],
+      },
       queryDiagnosis: null
     };
   },
   methods: {
-    
+    submitForm1(formName) {//编辑诊断结果
+        this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.editResult()
+        } else {
+          return false;
+        }
+      });
+    },
+    submitForm(formName) {//信息提交验证
+        this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.serialImage(1)
+        } else {
+          return false;
+        }
+      });
+    },
     isResult() {
       if (this.listDetail.location) {
         this.isDetail = !this.isDetail;
@@ -529,8 +595,8 @@ export default {
           if (type == 1) {
             this.queryDiagnosis = res.data;
             if(res.data){
-                this.describe = res.data.doctor_desc;
-                this.result = res.data.doctor_result;
+                this.doctor.describe = res.data.doctor_desc;
+                this.doctor.result = res.data.doctor_result;
             }
             this.dialogVisible = true;
           } else if (type == 2) {
@@ -551,19 +617,35 @@ export default {
       this.$post(
         "/api/diagnosis",
         Object.assign(this.$route.query, {
-          doctorDesc: this.describe,
-          doctorResult: this.result
+          doctorDesc: this.doctor.describe,
+          doctorResult: this.doctor.result
         })
       ).then(res => {
         console.log(res);
       });
       this.dialogVisible = false;
     },
-    serialImage(obj, type) {
+    serialImage(type) {
       let query = this.$route.query;
       //保存方法  type:1 编辑  2删除  3漏诊提醒
+      let data = {
+        institutionId:query.institutionId,
+        serialUID:query.serialUID,
+        diseaseType:query.diseaseType,
+        channelId:query.channelId,
+        imageId:this.correct.imageId,
+        imageNo:this.correct.imageNo,
+        diameter:this.correct.diameter,
+        probability:this.correct.probability,
+        density:this.correct.density,
+        location:this.correct.location,
+        diseaseTypeDesc:this.correct.diseaseTypeDesc,
+        deletedFlag:0
+      }
       if (type == 1) {
-        this.$post("/api/serialImage",Object.assign(query, this.correct)).then(res => {
+        //1 编辑
+        data.deletedFlag = 0
+        this.$post("/api/serialImage",data).then(res => {
           if (res.code == "000000") {
             this.$message({
               message: "修正成功",
@@ -574,11 +656,11 @@ export default {
           }
         });
       } else if (type == 2) {
-        this.correct.deletedFalg = 1
         //2删除
-        this.$post("/api/serialImage", Object.assign(query, this.correct)).then(res => {
+        data.deletedFlag = 1
+        this.$post("/api/serialImage", data).then(res => {
           if (res.code == "000000") {
-            if (this.correct.deletedFalg == 1) {
+            if (data.deletedFlag == 1) {
               let sliderIndex = this.$refs.slider.getIndex()
               if(sliderIndex>1){
                 this.$refs.slider.setIndex(this.$refs.slider.getIndex() - 1)
@@ -634,7 +716,6 @@ export default {
       this.listDetail = data;
       this.correct = data
       this.correct.imageId = index+1
-      this.correct.deletedFalg = 0
       if(!this.correct.diseaseTypeDesc){
         this.correct.diseaseTypeDesc = '肺结节'
       }
@@ -684,22 +765,22 @@ export default {
           this.$refs.slider.setIndex(this.$refs.slider.getIndex() + 1);
         }
       }
-      this.cornerstone.loadImage(
-        this.exampleStudyImageIds[this.slider.value].imageUrl,
-        this.exampleStudyImageIds[this.slider.value]
-      );
-      this.cornerstone1.loadImage(
-        this.exampleStudyImageIds[this.slider.value].imageUrl,
-        this.exampleStudyImageIds[this.slider.value]
-      );
-      // this.listIndex = this.$refs.slider.getIndex();
-      this.listDetail = this.exampleStudyImageIds[this.slider.value];
-      if (this.listDetail.location) {
-        this.isDetail = true;
-      } else {
-        this.isDetail = false;
-      }
-      this.windowFun(400, 40, 0);
+      // this.cornerstone.loadImage(
+      //   this.exampleStudyImageIds[this.slider.value].imageUrl,
+      //   this.exampleStudyImageIds[this.slider.value]
+      // );
+      // this.cornerstone1.loadImage(
+      //   this.exampleStudyImageIds[this.slider.value].imageUrl,
+      //   this.exampleStudyImageIds[this.slider.value]
+      // );
+      // // this.listIndex = this.$refs.slider.getIndex();
+      // this.listDetail = this.exampleStudyImageIds[this.slider.value];
+      // if (this.listDetail.location) {
+      //   this.isDetail = true;
+      // } else {
+      //   this.isDetail = false;
+      // }
+      // this.windowFun(400, 40, 0);
     },
     handleClose(done) {
       //弹窗关闭回调
@@ -710,8 +791,8 @@ export default {
       ) {
         //编辑结果
         if (
-          this.describe != this.queryDiagnosis.doctor_desc ||
-          this.result != this.queryDiagnosis.doctor_result
+          this.doctor.describe != this.queryDiagnosis.doctor_desc ||
+          this.doctor.result != this.queryDiagnosis.doctor_result
         ) {
           this.$confirm("内容未提交，是否直接关闭？")
             .then(_ => {
@@ -723,7 +804,7 @@ export default {
         }
       } else {
         //提交结果
-        if (this.describe.length > 1 && this.result.length > 1) {
+        if (this.doctor.describe.length > 1 && this.doctor.result.length > 1) {
           this.$confirm("内容未提交，是否直接关闭？")
             .then(_ => {
               done();
@@ -759,6 +840,8 @@ export default {
       this.cornerstone.lengthTool().deactivate();
       switch (data) {
         case "yd":
+          this.cornerstone.lengthTool().deactivate();
+          this.cornerstone.simpleAngle().deactivate();
           this.cornerstone.pan().activate();
           break;
         case "xz":
@@ -809,7 +892,6 @@ export default {
         this.listDetail = this.exampleStudyImageIds1[0];
         this.correct = this.exampleStudyImageIds1[0]
         this.correct.imageId = 1
-        this.correct.deletedFalg = 0
         if(!this.correct.diseaseTypeDesc){
           this.correct.diseaseTypeDesc = '肺结节'
         }
@@ -822,7 +904,12 @@ export default {
         })
          
       });
-    }
+    },
+    myDate(value){//格式化时间
+      if(!value) return ''
+      let myDate = value.split('-')
+      return myDate[0]+'年'+myDate[1]+'月'+myDate[2].substring(0,2)+'日'
+    },
   },
   created() {
     let data = this.$route.query;
@@ -879,16 +966,13 @@ export default {
       } else if (value == "f") {
         return "女";
       } else {
-        return "--";
+        return "";
       }
     },
     toFixedTwo(value) {
       return Number(value).toFixed(2);
     },
-    myDate(value){
-      let myDate = value.split('-')
-      return myDate[0]+'年'+myDate[1]+'月'+myDate[2].substring(0,2)+'日'
-    },
+    
     identifier(value){
       if(value<10){
         return '00'+value

@@ -31,7 +31,7 @@
                 </div>
                 <el-row class="report-item">
                   <el-col :span="8">患者姓名：{{serial.patientName}}</el-col>
-                  <el-col :span="8">患者年龄：{{serial.studyAge}}</el-col>
+                  <el-col :span="8">患者年龄：{{serial.studyAge?serial.studyAge:'--'}}</el-col>
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
                 <el-row class="report-item">
@@ -119,10 +119,9 @@ export default {
         this.cornerstone = this.$refs.cornerstone;
       });
     });
-    // this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
-    //   this.queryDiagnosis = res.data;
-    //   console.log(this.queryDiagnosis, "/api/queryDiagnosis");
-    // });
+    this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
+      this.queryDiagnosis = res.data;
+    });
   },
   mounted(){
      function myDate() {
