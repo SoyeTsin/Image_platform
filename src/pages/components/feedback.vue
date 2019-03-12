@@ -1,7 +1,8 @@
 <template>
   <el-container>
 
-    <el-dialog title="错误反馈" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px">
+    <el-dialog title="错误反馈" :visible.sync="dialogTableVisible" :append-to-body='true' width="600px"
+               :before-close="beforeClose">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
         <el-form-item label="请填写错误详情说明" prop="descValue">
           <el-input type="textarea" v-model="parameter.content" :rows="8" maxlength="500"></el-input>
@@ -28,6 +29,7 @@
 
       return {
         dialogTableVisible: false,
+        centerDialogVisible: false,
         canCall: [],
         parameter: {
           institutionId: '',
@@ -125,6 +127,14 @@
       },
       changeDialogTableVisible() {
         this.dialogTableVisible = !this.dialogTableVisible
+      },
+      beforeClose(done) {
+        this.$confirm('内容未提交,确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {
+          });
       },
     }
   }

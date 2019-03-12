@@ -8,8 +8,13 @@
       </div>
     </el-col>
     <el-col :span="12" v-show="pathType">
-      <div class="text-right padding-right">您好，{{userName}} &nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;<span
-        class="logout" @click="logout">安全退出</span></div>
+      <div class="text-right padding-right title-userinfo-right">
+        <div>您好，{{userName}} &nbsp;&nbsp;</div>
+        <div class="logo-line"></div>
+        <div>
+          <span class="logout" @click="logout">安全退出</span>
+        </div>
+      </div>
     </el-col>
   </div>
 </template>
@@ -94,6 +99,13 @@
       height: 25px;
       margin: 17.5px 0;
     }
+  }
+
+  .title-userinfo-right {
+    display: flex;
+    justify-content: flex-start;
+    text-align: right;
+    float: right;
   }
 
   .top-content {

@@ -54,7 +54,7 @@
               <div class="chart-content chart-content-1">
                 <columnG2 :charData="serverData" :id="'c1'" id="c1"></columnG2>
               </div>
-              <div class="chart-content chart-content-2" v-show="pieCount>0">
+              <div class="chart-content chart-content-2" v-if="pieCount>0">
                 <pieG2 :charData="pieData" :id="'c1'" id="c2"></pieG2>
               </div>
             </div>
@@ -241,7 +241,9 @@
               }
             }
             this.pieCount = count
-            that.serverData = {datas: myArr, dfs: []}
+            that.serverData = {
+              datas: myArr, dfs: []
+            }
             that.pieData = probabilityArr
           })
       },
@@ -325,6 +327,7 @@
     height: 30px;
     position: relative;
     top: 6px;
+    font-weight: 600;
   }
 
   .tishi-icon {

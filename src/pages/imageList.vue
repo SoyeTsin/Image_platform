@@ -10,11 +10,11 @@
           <div v-show="diseaseCount.length>0">
             最近30天筛查出
             <span class="text-color-red" @click="intoReport" v-for="(item, index) in diseaseCount" v-if="index==0">
-            &nbsp;{{item.diseaseSeriesCount}}&nbsp;例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}
+            &nbsp;{{item.diseaseSeriesCount}}&nbsp;例疑似存在肺结节
+              <!--例疑似{{item.diseaseName}}{{(index+1)==diseaseCount.length?'':'、'}}-->
           </span>
             ，点击红色字体立即查看
           </div>
-          &nbsp;
         </el-row>
         <el-row class="text-left main-screen">
           <el-col :span="20">
@@ -77,14 +77,16 @@
           </el-table-column>
           <el-table-column prop="examDate" label="检查时间" sortable width="150">
           </el-table-column>
-          <el-table-column prop="patientName" label="姓名">
+          <el-table-column label="姓名">
+            <template slot-scope="scope">{{scope.row.patientName|ifNull}}</template>
           </el-table-column>
           <el-table-column label="性别">
             <template slot-scope="scope">
               {{ scope.row.gender|genderFilter }}
             </template>
           </el-table-column>
-          <el-table-column prop="studyAge" label="年龄">
+          <el-table-column label="年龄">
+            <template slot-scope="scope">{{scope.row.studyAge|ifNull}}</template>
           </el-table-column>
           <el-table-column prop="bodyPartExamined" label="拍摄部位">
           </el-table-column>
@@ -218,6 +220,13 @@
       }
     },
     filters: {
+      ifNull(val) {
+        if (!val) {
+          return '--'
+        } else {
+          return val
+        }
+      },
       totalPageFilter(val, pageSize) {
         let c = val % pageSize
         let a = val - c
@@ -291,7 +300,7 @@
         return str
       },
       getData(msg = '') {
-        if (this.timeArr) {
+        if (this.timeArr && this.timeArr.length > 0) {
           this.parameter.beginDate = this.format(this.timeArr[0])
           this.parameter.endDate = this.format(this.timeArr[1])
         }
@@ -397,7 +406,7 @@
         this.search()
       },
       search() {
-        if (this.timeArr) {
+        if (this.timeArr && this.timeArr.length > 0) {
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
@@ -413,7 +422,7 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
-        if (this.timeArr) {
+        if (this.timeArr && this.timeArr.length > 0) {
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }
@@ -428,7 +437,7 @@
         this.getData()
       },
       handleCurrentChange(val) {
-        if (this.timeArr) {
+        if (this.timeArr && this.timeArr.length > 0) {
           this.parameter.beginDate = this.timeArr[0].getFullYear() + '-' + ((this.timeArr[0].getMonth() + 1) < 10 ? '0' + (this.timeArr[0].getMonth() + 1) : (this.timeArr[0].getMonth() + 1)) + '-' + (this.timeArr[0].getDate() < 10 ? '0' + this.timeArr[0].getDate() : this.timeArr[0].getDate())
           this.parameter.endDate = this.timeArr[1].getFullYear() + '-' + ((this.timeArr[1].getMonth() + 1) < 10 ? '0' + (this.timeArr[1].getMonth() + 1) : (this.timeArr[1].getMonth() + 1)) + '-' + (this.timeArr[1].getDate() < 10 ? '0' + this.timeArr[1].getDate() : this.timeArr[1].getDate())
         }

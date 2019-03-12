@@ -155,7 +155,7 @@
           if (valid) {
             this.addUserInfo()
           } else {
-            this.$message('请正确填写表单内容！');
+            // this.$message('请正确填写表单内容！');
             return false;
           }
         });

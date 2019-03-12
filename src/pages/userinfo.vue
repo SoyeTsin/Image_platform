@@ -14,9 +14,10 @@
             v-model="parameter.userName"
             :fetch-suggestions="querySearch"
             value-key="userName"
-            placeholder="请输入内容"
+            placeholder="请输入姓名"
             :trigger-on-focus="false"
             @select="handleSelect"
+            @input="maxlengthFun(parameter.userName,25)"
           ></el-autocomplete>
           <el-select clearable v-model="provinces.value" filterable placeholder="省份或直辖市" class="main-input">
             <el-option
@@ -373,6 +374,11 @@
       handleSelect(item) {
         console.log(item);
       },
+      maxlengthFun(value, maxlength) {
+        if (value.length > maxlength) {
+          this.parameter.userName = value.slice(0, maxlength)
+        }
+      }
     },
   }
 </script>
