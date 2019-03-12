@@ -40,7 +40,7 @@
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
                 <el-row class="report-item">
-                  <el-col :span="8">拍摄部位：{{diseaseType}}</el-col>
+                  <el-col :span="8">拍摄部位：{{serial.bodyPartExamined}}</el-col>
                   <el-col :span="8">检查设备：{{serial.modality}}</el-col>
                   <el-col :span="8">检查时间：{{serial.examDate}}</el-col>
                 </el-row>
@@ -57,7 +57,7 @@
                   <el-col :span="24">
                     <el-table :data="tableData" stripe ref="singleTable" @row-click="listClick">
                       <el-table-column type="index" label="结节编号" width="120">
-                        <template slot-scope="scope">结节{{scope.row.imageNo?scope.row.imageNo:'--'}}</template>
+                        <!-- <template slot-scope="scope">结节{{scope.row.imageNo?scope.row.imageNo:'--'}}</template> -->
                       </el-table-column>
                       <el-table-column prop="diseaseDesc" label="病灶类型">
                         <template
@@ -105,10 +105,22 @@
       <p>
         <span>*</span>请填写错误详情说明
       </p>
-      <el-input type="textarea" :rows="5" placeholder="请输入内容" :maxlength="500" v-model="textarea"></el-input>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+         <el-form-item prop="textarea">
+            <el-row>
+              <el-col :span="24" style="position: relative;">
+                <el-input type="textarea" :rows="5" placeholder="请输入内容" :maxlength='500' v-model="ruleForm.textarea"></el-input>
+                <div class="text-length">
+                  {{textarea.length}}/500
+                </div>
+              </el-col>
+            </el-row>
+          </el-form-item>
+      </el-form>
+       
       <el-checkbox v-model="checked">是否愿意接受电话回访</el-checkbox>
-      <button class="submit" v-if="textarea.length>0" @click="submit">提交</button>
-      <button class="submit" v-else style="opacity: 0.6;">提交</button>
+      <button class="submit" v-if="ruleForm.textarea.length>0" @click="submitForm('ruleForm')" >提交</button>
+      <button class="submit" v-else style="opacity: 0.6;" @click="submitForm('ruleForm')" >提交</button>
     </el-dialog>
   </el-container>
 </template>
@@ -129,7 +141,15 @@ export default {
       FormatDate: "",
       dialogVisible: false,
       textarea: "",
-      checked: false
+      checked: false,
+      ruleForm:{
+        textarea:''
+      },
+      rules: {
+          textarea: [
+            { required: true, message: '请输入反馈信息', trigger: 'blur' }
+          ]
+        }
     };
   },
   components: {
@@ -137,6 +157,33 @@ export default {
     top
   },
   methods: {
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let query = this.$route.query;
+          this.$post(
+            "/api/patientFeedback",
+            Object.assign(query, {
+              content: this.ruleForm.textarea,
+              canCall: this.checked ? 1 : 0
+            })
+          ).then(res => {
+            if (res.code == "000000") {
+              this.dialogVisible = false;
+              this.checked = false;
+              // this.textarea = "";
+              this.$message({
+                message: "反馈成功",
+                type: "success"
+              });
+            }
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
     handleClose(done) {
       if (this.textarea.length > 0) {
         this.$confirm("内容未提交,是否直接关闭？")
@@ -167,7 +214,7 @@ export default {
         if (res.code == "000000") {
           this.dialogVisible = false;
           this.checked = false;
-          this.textarea = "";
+          // this.textarea = "";
           this.$message({
             message: "反馈成功",
             type: "success"

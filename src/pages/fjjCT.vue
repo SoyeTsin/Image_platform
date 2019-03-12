@@ -21,13 +21,13 @@
             <span>岁</span>
           </p>
           <p>
-            <span>{{detail.examDate}}</span>
+            <span>{{detail.examDate|myDate}}</span>
           </p>
         </div>
       </div>
       <div class="info-list">
         <div class="title">
-          <h4>AI检测信息（{{exampleStudyImageIds.length}}）</h4>
+          <h4>AI检测信息（{{exampleStudyImageIds1.length}}）</h4>
           <span @click="isResult">
             <img src="../../static/fjj-icon/yc.png" alt>
           </span>
@@ -39,18 +39,19 @@
             <span>层面</span>
             <span>概率</span>
           </div>
-          <ul style="max-height: 264px;overflow-y: scroll;">
+          <ul style="max-height: 220px;overflow-y: scroll;">
             <li
-              v-for="(x,index) in exampleStudyImageIds"
+              v-for="(x,index) in exampleStudyImageIds1"
               :class="[index == listIndex?'active':'']"
               :key="index"
               @click="listClick(index,x)"
             >
-              <span>{{index+1}}</span>
+              <span>{{index+1|identifier}}</span>
               <el-popover placement="bottom" width="200" trigger="hover" content="肺结节">
                 <span slot="reference">{{x.diseaseTypeDesc?x.diseaseTypeDesc:"肺结节"}}</span>
               </el-popover>
-              <span>{{x.imageNo}}</span>
+              <span> -- </span>
+              <!-- <span>{{x.imageNo}}</span> -->
               <span>{{x.probability}}</span>
             </li>
           </ul>
@@ -169,7 +170,7 @@
               <div class="tips">
                 <p style="text-align: center;padding-top: 18px;">是否出现漏诊？</p>
                 <div class="btn">
-                  <span @click="serialImage({missedDiagnosisFlag:0,imageNo:listDetail.imageNo},3)">否</span>
+                  <span @click="isRemind = false">否</span>
                   <span @click="serialImage({missedDiagnosisFlag:1,imageNo:listDetail.imageNo},3)">是</span>
                 </div>
               </div>
@@ -203,12 +204,18 @@
         >
           <el-row>
             <el-col :span="24" style="padding:5px 0 14px 0;">影像描述</el-col>
-            <el-col :span="24">
+            <el-col :span="24" style="position: relative;">
               <el-input type="textarea" :rows="5" :maxlength='500' v-model="describe"></el-input>
+              <div class="text-length">
+                {{describe.length}}/500
+              </div>
             </el-col>
             <el-col :span="24" style="padding:30px 0 14px 0;">诊断结果</el-col>
-            <el-col :span="24">
+            <el-col :span="24" style="position: relative;">
               <el-input type="textarea" :rows="5" :maxlength='500' v-model="result"></el-input>
+              <div class="text-length">
+                {{result.length}}/500
+              </div>
             </el-col>
           </el-row>
           <span slot="footer" class="dialog-footer">
@@ -240,28 +247,52 @@
             <p>坐标：{{listDetail.location}}</p>
           </div>
           <div class="popup-btn">
-            <i @click="sliderSwitch(true)">
+            <i @click="listClick(listIndex-1)">
               <img src="../../static/fjj-icon/jgl.png" alt>
             </i>
-            <i @click="sliderSwitch(false)">
+            <i @click="listClick(listIndex+1)">
               <img src="../../static/fjj-icon/jgr.png" alt>
             </i>
             <el-popover placement="top" width="216" v-model="isCorrect" trigger="click">
-              <div class="tips" style="height: 159px;padding: 8px;">
+              <div class="tips" style="height: auto;padding: 8px;">
                 <p style="padding-bottom: 20px;">信息修正</p>
-                <p
+                <!-- <p
                   style="padding-bottom: 15px;"
-                >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p>
+                >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p> -->
                 <p style="display: flex;padding-bottom: 15px;">
-                  <span>实际情况：</span>
+                  <span style="width: 70px;">直径：</span>
                   <span>
-                    <input type="text" v-model="correct" placeholder="请输入">
+                    <input type="text" v-model="correct.diameter" placeholder="请输入">
+                  </span>
+                </p>
+                <p style="display: flex;padding-bottom: 15px;">
+                  <span style="width: 70px;">密度：</span>
+                  <span>
+                    <input type="text" v-model="correct.density" placeholder="请输入">
+                  </span>
+                </p>
+                <p style="display: flex;padding-bottom: 15px;">
+                  <span style="width: 70px;">可能性：</span>
+                  <span>
+                    <input type="text" v-model="correct.probability" placeholder="请输入">
+                  </span>
+                </p>
+                <p style="display: flex;padding-bottom: 15px;">
+                  <span style="width: 70px;">坐标：</span>
+                  <span>
+                    <input type="text" v-model="correct.location" placeholder="请输入">
+                  </span>
+                </p>
+                <p style="display: flex;padding-bottom: 15px;">
+                  <span style="width: 70px;">病灶描述：</span>
+                  <span>
+                    <input type="text" v-model="correct.diseaseTypeDesc" placeholder="请输入">
                   </span>
                 </p>
                 <div class="btn">
                   <span @click="isCorrect = false">取消</span>
                   <span
-                    @click="serialImage({diseaseTypeDesc:correct,imageNo:listDetail.imageNo,imageId:listIndex+1,diameter:listDetail.diameter,probability:listDetail.probability,density:listDetail.density,location:listDetail.location},1)"
+                    @click="serialImage({},1)"
                   >确定</span>
                 </div>
               </div>
@@ -275,7 +306,7 @@
                 <div class="btn">
                   <span @click="isDelete = false">取消</span>
                   <span
-                    @click="serialImage({deleteFlag:1,imageNo:listDetail.imageNo,imageId:listIndex+1,diameter:listDetail.diameter,probability:listDetail.probability,density:listDetail.density,location:listDetail.location,diseaseTypeDesc:listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:'肺结节'},2)"
+                    @click="serialImage({deletedFlag:1,imageNo:listDetail.imageNo,imageId:listIndex+1,diameter:listDetail.diameter,probability:listDetail.probability,density:listDetail.density,location:listDetail.location,diseaseTypeDesc:listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:'肺结节'},2)"
                   >删除</span>
                 </div>
               </div>
@@ -452,6 +483,7 @@ export default {
         ]
       },
       exampleStudyImageIds: [],
+      exampleStudyImageIds1: [],
       isRemind: false,
       isCorrect: false,
       isDelete: false,
@@ -465,11 +497,18 @@ export default {
       },
       doctorDesc: "",
       doctorResult: "",
-      correct: "",
+      correct:{
+        diameter:'',
+        density:'',
+        probability:'',
+        location:'',
+        diseaseTypeDesc:''
+      },
       queryDiagnosis: null
     };
   },
   methods: {
+    
     isResult() {
       if (this.listDetail.location) {
         this.isDetail = !this.isDetail;
@@ -494,7 +533,6 @@ export default {
                 this.result = res.data.doctor_result;
             }
             this.dialogVisible = true;
-            console.log(this.dialogVisible)
           } else if (type == 2) {
             if (res.data && res.data.doctor_result && res.data.doctor_desc) {
               this.$router.push({ name: "report", query: this.$route.query });
@@ -524,55 +562,43 @@ export default {
     serialImage(obj, type) {
       let query = this.$route.query;
       //保存方法  type:1 编辑  2删除  3漏诊提醒
-      let data = Object.assign(query, obj);
       if (type == 1) {
-        this.$post("/api/serialImage", data).then(res => {
+        this.$post("/api/serialImage",Object.assign(query, this.correct)).then(res => {
           if (res.code == "000000") {
-            this.exampleStudyImageIds[
-              obj.imageId - 1
-            ].diseaseTypeDesc = this.correct;
             this.$message({
               message: "修正成功",
               type: "success"
             });
+            this.getSerialImages()
             this.isCorrect = false;
-            this.correct = "";
           }
         });
       } else if (type == 2) {
+        this.correct.deletedFalg = 1
         //2删除
-        this.$post("/api/serialImage", data).then(res => {
+        this.$post("/api/serialImage", Object.assign(query, this.correct)).then(res => {
           if (res.code == "000000") {
-            if (data.deleteFlag == 1) {
-              this.exampleStudyImageIds.map((v, k) => {
-                if (v.imageNo == obj.imageNo) {
-                  let delData = {
-                    deletedFalg: null,
-                    density: null,
-                    diameter: null,
-                    diseaseTypeDesc: null,
-                    imageId: null,
-                    imageNo: v.imageNo,
-                    imageUrl: v.imageUrl,
-                    location: null,
-                    missedDiagnosisFlag: null,
-                    probability: null
-                  };
-                  this.listDetail = delData;
-                  this.isDetail = false;
-                  this.exampleStudyImageIds[k] = delData;
-                  this.cornerstone.loadImage(
-                    this.exampleStudyImageIds[this.$refs.slider.getIndex()]
-                      .imageUrl,
-                    this.exampleStudyImageIds[this.$refs.slider.getIndex()]
-                  );
-                  this.cornerstone1.loadImage(
-                    this.exampleStudyImageIds[this.$refs.slider.getIndex()]
-                      .imageUrl,
-                    this.exampleStudyImageIds[this.$refs.slider.getIndex()]
-                  );
-                }
-              });
+            if (this.correct.deletedFalg == 1) {
+              let sliderIndex = this.$refs.slider.getIndex()
+              if(sliderIndex>1){
+                this.$refs.slider.setIndex(this.$refs.slider.getIndex() - 1)
+              }else{
+                this.$refs.slider.setIndex(this.$refs.slider.getIndex() + 1)
+              }
+               this.cornerstone.loadImage(
+                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
+                    .imageUrl,
+                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
+                );
+                this.cornerstone1.loadImage(
+                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
+                    .imageUrl,
+                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
+                );
+                
+              this.isDetail = false
+              this.listIndex = -1
+              this.getSerialImages()
               this.$message({
                 message: "删除成功",
                 type: "success"
@@ -582,7 +608,8 @@ export default {
         });
         this.isDelete = false;
       } else if (type == 3) {
-        this.$post("/api/image/missDiagnosis", data).then(res => {
+      let data = this.exampleStudyImageIds[this.$refs.slider.getIndex()]
+        this.$post("/api/image/missDiagnosis", Object.assign(query,{imageNo:data.imageNo,missedDiagnosisFlag:1})).then(res => {
           if (res.code == "000000") {
             if (data.missedDiagnosisFlag == 1) {
               this.$message({
@@ -595,20 +622,37 @@ export default {
         });
       }
     },
-    listClick(index, data) {
+    listClick(index) {
       //点击列表
+      if(index >= this.exampleStudyImageIds1.length){
+        index = this.exampleStudyImageIds1.length-1
+      }else if(index<0){
+        index = 0
+      }
+      let data = this.exampleStudyImageIds1[index]
       this.listIndex = index;
       this.listDetail = data;
+      this.correct = data
+      this.correct.imageId = index+1
+      this.correct.deletedFalg = 0
+      if(!this.correct.diseaseTypeDesc){
+        this.correct.diseaseTypeDesc = '肺结节'
+      }
       if (data.location) {
         this.isDetail = true;
       } else {
         this.isDetail = false;
       }
-      this.$refs.slider.setIndex(index);
       this.cornerstone.loadImage(
-        this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
-        this.exampleStudyImageIds[this.$refs.slider.getIndex()]
+        this.exampleStudyImageIds1[index].imageUrl,
+        this.exampleStudyImageIds1[index]
       );
+      this.exampleStudyImageIds.map((v,k)=>{
+        if(data.imageNo == v.imageNo){
+          this.$refs.slider.setIndex(k);
+          
+        }
+      })
     },
     sliderCallback() {
       //拖动回调
@@ -620,7 +664,7 @@ export default {
         this.exampleStudyImageIds[this.$refs.slider.getIndex()].imageUrl,
         this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
-      this.listIndex = this.$refs.slider.getIndex();
+      // this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
       if (this.listDetail.location) {
         this.isDetail = true;
@@ -648,7 +692,7 @@ export default {
         this.exampleStudyImageIds[this.slider.value].imageUrl,
         this.exampleStudyImageIds[this.slider.value]
       );
-      this.listIndex = this.$refs.slider.getIndex();
+      // this.listIndex = this.$refs.slider.getIndex();
       this.listDetail = this.exampleStudyImageIds[this.slider.value];
       if (this.listDetail.location) {
         this.isDetail = true;
@@ -724,10 +768,10 @@ export default {
           this.cornerstone.zoom().activate();
           break;
         case "zyfz":
-          this.cornerstone.vFlip();
+          this.cornerstone.hFlip();
           break;
         case "sxfz":
-          this.cornerstone.hFlip();
+          this.cornerstone.vFlip();
           break;
         case "cj":
           this.cornerstone.lengthTool().activate();
@@ -757,34 +801,58 @@ export default {
       } else {
         this.isWindow = false;
       }
+    },
+    getSerialImages(){//请求病灶
+        let data = this.$route.query;
+       this.$post("/api/serialImages", data).then(res => {
+        this.exampleStudyImageIds1 = res.data;
+        this.listDetail = this.exampleStudyImageIds1[0];
+        this.correct = this.exampleStudyImageIds1[0]
+        this.correct.imageId = 1
+        this.correct.deletedFalg = 0
+        if(!this.correct.diseaseTypeDesc){
+          this.correct.diseaseTypeDesc = '肺结节'
+        }
+        this.exampleStudyImageIds.map((v,k)=>{
+          this.exampleStudyImageIds1.map((n,m)=>{
+            if(v.imageUrl == n.imageUrl){
+                this.exampleStudyImageIds[k] = n
+            }
+          })
+        })
+         
+      });
     }
   },
   created() {
     let data = this.$route.query;
-    this.$post("/api/serial", data).then(res => {
+
+    this.$post("/api/serial", data).then(res => { //获取患者信息
       this.detail = res.data;
     });
-    this.$post("/api/serialImages", data).then(res => {
+
+     this.$post("/api/listOriginalImages", data).then(res => { //请求全部影像列表
       this.exampleStudyImageIds = res.data;
       this.slider.max = res.data.lenght - 1;
-      this.listDetail = this.exampleStudyImageIds[0];
       setTimeout(() => {
-        this.$refs.cornerstone
-          .init(
-            this.exampleStudyImageIds[0].imageUrl,
-            this.exampleStudyImageIds[0]
-          )
-          .then(res => {
-            //初始化工具
-            this.cornerstone = this.$refs.cornerstone;
-          });
-        this.$refs.cornerstone1
-          .init(this.exampleStudyImageIds[0].imageUrl)
-          .then(res => {
-            //初始化缩略图
-            this.cornerstone1 = this.$refs.cornerstone1;
-          });
-      }, 100);
+          this.$refs.cornerstone
+            .init(
+              this.exampleStudyImageIds[0].imageUrl,
+              this.exampleStudyImageIds[0]
+            )
+            .then(res => {
+              //初始化工具
+              this.cornerstone = this.$refs.cornerstone;
+            });
+          this.$refs.cornerstone1
+            .init(this.exampleStudyImageIds[0].imageUrl)
+            .then(res => {
+              //初始化缩略图
+              this.cornerstone1 = this.$refs.cornerstone1;
+            });
+        }, 100);
+      this.getSerialImages()
+     
     });
   },
   computed: {
@@ -816,7 +884,20 @@ export default {
     },
     toFixedTwo(value) {
       return Number(value).toFixed(2);
-    }
+    },
+    myDate(value){
+      let myDate = value.split('-')
+      return myDate[0]+'年'+myDate[1]+'月'+myDate[2].substring(0,2)+'日'
+    },
+    identifier(value){
+      if(value<10){
+        return '00'+value
+      }else if(value>9){
+        return '0'+value
+      }else if(value>100){
+        return value
+      }
+    },
   }
 };
 </script>

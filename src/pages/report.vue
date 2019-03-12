@@ -21,8 +21,8 @@
               <div>{{institution}}</div>
             </div>
             <div class="report-nav report-nav-between">
-              <div>项目名称：{{diseaseType}}筛查</div>
-              <div>报告日期：{{serial.FormatDate}}</div>
+              <div>诊断医生：{{name}}</div>
+              <div>报告日期：{{FormatDate}}</div>
             </div>
             <div class="report-des">
               <div class="report-main-left">
@@ -35,7 +35,7 @@
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
                 <el-row class="report-item">
-                  <el-col :span="8">拍摄部位：{{diseaseType}}</el-col>
+                  <el-col :span="8">拍摄部位：{{serial.bodyPartExamined}}</el-col>
                   <el-col :span="8">检查设备：{{serial.modality}}</el-col>
                   <el-col :span="8">检查时间：{{serial.examDate}}</el-col>
                 </el-row>
@@ -83,7 +83,8 @@ export default {
       serialImages: {},
       queryDiagnosis: {},
       institution: "",
-      FormatDate:''
+      FormatDate:'',
+      name:''
     };
   },
   methods: {
@@ -96,6 +97,34 @@ export default {
     top
   },
   created() {
+    this.name = localStorage.getItem('userName')
+    
+    this.$fetch("/api/diseaseType").then(res => {
+      if (res.code == "000000") {
+        this.diseaseType = res.data[this.$route.query.diseaseType];
+        // res.data.map((v,k)=>{
+        //   console.log(v,k)
+        // })
+      }
+    });
+    this.institution = JSON.parse(
+      localStorage.getItem("institution")
+    ).institutionName;
+    this.$post("/api/serial", this.$route.query).then(res => {
+      this.serial = res.data;
+    });
+    this.$post("/api/serialImages", this.$route.query).then(res => {
+      this.tableData = res.data;
+      this.$refs.cornerstone.init(this.tableData[0].imageUrl).then(res => {
+        this.cornerstone = this.$refs.cornerstone;
+      });
+    });
+    // this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
+    //   this.queryDiagnosis = res.data;
+    //   console.log(this.queryDiagnosis, "/api/queryDiagnosis");
+    // });
+  },
+  mounted(){
      function myDate() {
       var date = new Date();
       var seperator1 = "-";
@@ -111,28 +140,8 @@ export default {
       var currentdate = year + seperator1 + month + seperator1 + strDate;
       return currentdate;
     }
+    console.log(myDate())
     this.FormatDate = myDate()
-    this.$fetch("/api/diseaseType").then(res => {
-      if (res.code == "000000") {
-        this.diseaseType = res.data[this.$route.query.diseaseType];
-      }
-    });
-    this.institution = JSON.parse(
-      localStorage.getItem("institution")
-    ).institutionName;
-    this.$post("/api/serial", this.$route.query).then(res => {
-      this.serial = res.data;
-    });
-    this.$post("/api/serialImages", this.$route.query).then(res => {
-      this.tableData = res.data;
-      this.$refs.cornerstone.init(this.tableData[0].imageUrl).then(res => {
-        this.cornerstone = this.$refs.cornerstone;
-      });
-    });
-    this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
-      this.queryDiagnosis = res.data;
-      console.log(this.queryDiagnosis, "/api/queryDiagnosis");
-    });
   },
   filters: {
     genderFilter(value) {
