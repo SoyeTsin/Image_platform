@@ -56,6 +56,9 @@ export default {
     height: {
       type: String,
       required: true
+    },
+    images:{
+      type: Array
     }
   },
   data() {
@@ -95,12 +98,10 @@ export default {
             xx = Math.min(xx, columns);
             yy = Math.min(yy, columns);
             const index = yy * columns + xx;
-            // const slope = data.string('x00281053');
-            // const intercept = data.string('x00281052');
+           
             const pixel = pixelData[index];
             const val = pixel * slope + (intercept - 0);
-            // console.log(slope)
-            // console.log(intercept)
+          
             const point = {
               x: xx,
               y: yy,
@@ -110,9 +111,10 @@ export default {
             // console.log(point)
           });
         });
-
+        // let imageId = "wadouri:" + imageUrl.replace(new RegExp("https:"), "");
         // 在 DOM 中将 canvas 元素注册到 cornerstone
         cornerstone.enable(canvas);
+        
         let imageId = "wadouri:" + imageUrl;
 
         //  Load & Display
@@ -123,6 +125,12 @@ export default {
               canvas,
               image
             );
+             if(!image.maxPixelValue){
+              image.maxPixelValue = 2749
+            }
+            if(!image.minPixelValue){
+              image.minPixelValue = 0
+            } 
             viewport.voi.windowWidth = 400;
             viewport.voi.windowCenter = 40;
             // 显示图像
@@ -130,6 +138,7 @@ export default {
             if(data&&data.location){//恢复病灶
                 this.setEllipticalRoi(data)
             }
+            // console.log(cornerstone.getElementData(canvas))
             // .string('x00080030')
             // console.log(dicomParser.readTag(canvas))
             // 激活工具
@@ -147,14 +156,14 @@ export default {
       let _self = this;
       let canvas = this.$refs.canvas;
       this.isInitLoad = false;
-
       // 为 canvasStack 找到 imageIds
-      // let allImageIds = [];
-      // this.exampleStudyImageIds.forEach(function(imageId) {
-      //   let imageUrl = "wadouri:" + _self.baseUrl + imageId;
-      //   allImageIds.push(imageUrl);
-      // });
-
+      let allImageIds = [];
+      if(this.images){
+        this.images.forEach(function(v) {
+          let imageUrl = "wadouri:" + v.imageUrl;
+          allImageIds.push(imageUrl);
+        });
+      }
       let config = {
         // invert: true,
         minScale: 0.2,
@@ -169,8 +178,8 @@ export default {
       // Create canvasStack
       let canvasStack = {
         currentImageIdIndex: 0,
-        touchEnabled: false
-        // imageIds: allImageIds
+        touchEnabled: false,
+        imageIds: allImageIds
       };
       // Enable Inputs
       cornerstoneTools.mouseInput.enable(canvas);
@@ -230,7 +239,7 @@ export default {
       // cornerstoneTools.zoom.activate(this.element, 4); // 4 is right mouse button
       cornerstoneTools.probe.deactivate(this.element, 1);
       // cornerstoneTools.length.deactivate(this.element, 1);
-      cornerstoneTools.ellipticalRoi.deactivate(this.element, 1);
+      // cornerstoneTools.ellipticalRoi.deactivate(this.element, 1);
       cornerstoneTools.rectangleRoi.deactivate(this.element, 1);
       // cornerstoneTools.angle.deactivate(this.element, 1);
       cornerstoneTools.highlight.deactivate(this.element, 1);
@@ -238,45 +247,46 @@ export default {
       // cornerstoneTools.eraser.deactivate(this.element, 1);
     },
     setEllipticalRoi(data){//绘制病灶
-        cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
-        if(data&&data.location){
+            cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
             let xx = Number(data.location.split(',')[0])
             let yy = Number(data.location.split(',')[1])
             let diameter =  Number(data.diameter / 2)
-            console.log(xx,yy,diameter)
-            let ellipticalRoi = {
-              active: false,
-              // area: 6151.977806452801,
-              color:'#FF1515',
-              handles: {
-                start: {
-                  active: false,
-                  highlight: true,
-                  x: xx - diameter,
-                  y: yy - diameter
+            
+            setTimeout(()=>{
+              let config = {
+                active: false,
+                // area: 6151.977806452801,
+                color:'#FF1515',
+                handles: {
+                  start: {
+                    active: false,
+                    highlight: true,
+                    x: xx - diameter,
+                    y: yy - diameter
+                  },
+                  end: {
+                    active: false,
+                    highlight: true,
+                    x: xx + diameter,
+                    y: yy + diameter
+                  },
+                  textBox: {
+                    active: false,
+                    drawnIndependently: true,
+                    hasBoundingBox: true,
+                    hasMoved: false
+                  }
                 },
-                end: {
-                  active: false,
-                  highlight: true,
-                  x: xx + diameter,
-                  y: yy + diameter
-                },
-                textBox: {
-                  active: false,
-                  drawnIndependently: true,
-                  hasBoundingBox: true,
-                  hasMoved: false
-                }
-              },
-              invalidated: false,
-              visible: true
-            };
-            cornerstoneTools.addToolState(
-              this.element,
-              "ellipticalRoi",
-              ellipticalRoi
-            );
-        }
+                invalidated: false,
+                visible: true
+              };
+              cornerstoneTools.addToolState(
+                this.element,
+                "ellipticalRoi",
+                config
+              );
+            })
+            
     },
     rotate(rotation) {
       //旋转
@@ -350,7 +360,6 @@ export default {
     ellipticalRoi(){ //椭圆工具
       return {
         clear:()=>{//清除工具
-          console.log('11111')
           cornerstoneTools.clearToolState(this.element, "ellipticalRoi");
         }
       }
@@ -421,12 +430,12 @@ export default {
       //显示或隐藏标注
       this.isTagging = !this.isTagging;
       if (this.isTagging) {
-        this.lengthTool().disable();
-        this.simpleAngle().disable();
+        // this.lengthTool().disable();
+        // this.simpleAngle().disable();
         cornerstoneTools.ellipticalRoi.disable(this.element);
       } else {
-        this.lengthTool().enable();
-        this.simpleAngle().enable();
+        // this.lengthTool().enable();
+        // this.simpleAngle().enable();
         cornerstoneTools.ellipticalRoi.enable(this.element);
       }
     },
@@ -444,35 +453,70 @@ export default {
     loadImage(imageUrl,data) {
       //切换图片
       let imageId = "wadouri:" + imageUrl;
-      cornerstone.loadImage(imageId).then(
-        image => {
-          // 设置元素视口
-          let viewport = cornerstone.getDefaultViewportForImage(
-            this.element,
-            image
-          );
-         console.log(data,222222)
-          if(data&&data.location){//恢复病灶
-              this.setEllipticalRoi(data)
-          }else{
-              // cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
+      // if(cornerstone.loadImage){
+        cornerstone.loadImage(imageId).then(
+          image => {
+            // 设置元素视口
+            if(!image.maxPixelValue){
+              image.maxPixelValue = 2749
+            }
+            if(!image.minPixelValue){
+              image.minPixelValue = 0
+            } 
+            let viewport = cornerstone.getDefaultViewportForImage(
+              this.element,
+              image
+            );
+            viewport.voi.windowWidth = 400;
+            viewport.voi.windowCenter = 40;
+            cornerstoneTools.clearToolState(this.element, "simpleAngle");
+            cornerstoneTools.clearToolState(this.element, "length");
+            cornerstone.updateImage(this.element);
+            this.isTagging = false
+            cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
+            if(data&&data.location){//恢复病灶
+                this.setEllipticalRoi(data)
+            }
+            // 显示图像
+            cornerstone.displayImage(this.element, image, viewport);
+          
+            // 激活工具
+            this.initCanvasTools();
+          },
+          err => {
+            alert(err);
           }
-
-          viewport.voi.windowWidth = 400;
-          viewport.voi.windowCenter = 40;
-          cornerstoneTools.clearToolState(this.element, "simpleAngle");
-          cornerstoneTools.clearToolState(this.element, "length");
-          cornerstone.updateImage(this.element);
-          this.isTagging = false
-          // 显示图像
-          cornerstone.displayImage(this.element, image, viewport);
-          // 激活工具
-          this.initCanvasTools();
-        },
-        err => {
-          alert(err);
-        }
-      );
+        );
+      // }else{
+      //    cornerstone.loadAndCacheImage(imageId).then(
+      //     image => {
+      //       // 设置元素视口
+      //       let viewport = cornerstone.getDefaultViewportForImage(
+      //         this.element,
+      //         image
+      //       );
+          
+      //       viewport.voi.windowWidth = 400;
+      //       viewport.voi.windowCenter = 40;
+      //       cornerstoneTools.clearToolState(this.element, "simpleAngle");
+      //       cornerstoneTools.clearToolState(this.element, "length");
+      //       cornerstone.updateImage(this.element);
+      //       this.isTagging = false
+      //       cornerstoneTools.clearToolState(this.element, "ellipticalRoi"); //清理工具
+      //       if(data&&data.location){//恢复病灶
+      //           this.setEllipticalRoi(data)
+      //       }
+      //       // 显示图像
+      //       cornerstone.displayImage(this.element, image, viewport);
+          
+      //       // 激活工具
+      //       this.initCanvasTools();
+      //     },
+      //     err => {
+      //       alert(err);
+      //     }
+      //   );
+      // }
     }
   }
 };

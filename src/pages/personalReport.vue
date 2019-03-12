@@ -36,7 +36,7 @@
                 </div>
                 <el-row class="report-item">
                   <el-col :span="8">患者姓名：{{serial.patientName}}</el-col>
-                  <el-col :span="8">患者年龄：{{serial.studyAge}}</el-col>
+                  <el-col :span="8">患者年龄：{{serial.studyAge?serial.studyAge:'--'}}</el-col>
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
                 <el-row class="report-item">
@@ -124,7 +124,6 @@
     </el-dialog>
   </el-container>
 </template>
-
 <script>
 import top from "./components/top";
 import CornerstoneCanvas from "@/components/CornerstoneCanvas";

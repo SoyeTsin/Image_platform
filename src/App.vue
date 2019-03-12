@@ -116,7 +116,11 @@
   }
   .text-length{
     position: absolute;
-    right: 15px;
-    bottom: 8px;
+    right: 1px;
+    bottom: -34px;
+    color: #606266;
+  }
+  .el-dialog__header{
+    text-align: left;
   }
 </style>
