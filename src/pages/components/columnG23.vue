@@ -2,12 +2,12 @@
   <!--此处的id用变量，方便同一页面引用多次相同的组件-->
   <div class="chart">
     <div class="title">数据趋势</div>
-    <div :id="id"></div>
+    <div id="main" style="width: 100%;height:400px"></div>
   </div>
 </template>
 
 <script>
-  import G2 from '@antv/g2'
+  // import G2 from '@antv/g2'
 
   export default {
     data() {
@@ -17,7 +17,7 @@
     },
     props: {
       charData: {
-        type: Array,
+        type: Object,
         default() {
           return {
             data: []
@@ -27,6 +27,7 @@
       id: String
     },
     mounted() {
+      this.myChart = this.$echarts.init(document.getElementById('main'));
 //      this.drawChart();       // 第一步想到的是创建的时候更新图表，但是这个不适用于异步请求接口获取相关数据，所以采用下面的监听的方式
     },
     beforeUpdate() {
@@ -41,32 +42,31 @@
     methods: {
       drawChart(val) {
         app.title = '折柱混合';
-
         let option = {
+          grid: {
+            left: 30,
+            right: 30,
+            bottom: 60,
+            top: 10,
+            containLabel: true
+          },
           tooltip: {
             trigger: 'axis',
             axisPointer: {
               type: 'cross',
               crossStyle: {
-                color: '#999'
+                color: '#e5e5e5'
               }
             }
           },
-          toolbox: {
-            feature: {
-              dataView: {show: true, readOnly: false},
-              magicType: {show: true, type: ['line', 'bar']},
-              restore: {show: true},
-              saveAsImage: {show: true}
-            }
-          },
           legend: {
-            data: ['蒸发量', '降水量', '平均温度']
+            data: [{name: 'AI检出序列', icon: 'rect'}, {name: '上传序列', icon: 'rect'}, {name: 'AI检出占比'}],
+            bottom: 20
           },
           xAxis: [
             {
               type: 'category',
-              data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+              data: val.date,
               axisPointer: {
                 type: 'shadow'
               }
@@ -75,44 +75,70 @@
           yAxis: [
             {
               type: 'value',
-              name: '水量',
+              name: '',
               min: 0,
-              max: 250,
-              interval: 50,
+              interval: 25,
               axisLabel: {
-                formatter: '{value} ml'
+                formatter: '{value}'
               }
             },
             {
               type: 'value',
-              name: '温度',
+              name: '',
+              show: false,
               min: 0,
-              max: 25,
-              interval: 5,
+              max: 100,
+              interval: 25,
               axisLabel: {
-                formatter: '{value} °C'
+                formatter: '{value} %'
               }
             }
           ],
           series: [
             {
-              name: '蒸发量',
+              name: 'AI检出序列',
               type: 'bar',
-              data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+              data: val.aiSeriesCountArr,
+              itemStyle: {
+                normal: {
+                  //颜色渐变
+                  color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: '#B8B1FF'
+                  }, {
+                    offset: 1,
+                    color: '#7567FF'
+                  }])
+                }
+              }
             },
             {
-              name: '降水量',
+              name: '上传序列',
               type: 'bar',
-              data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+              data: val.seriesCountArr,
+              itemStyle: {
+                normal: {
+                  //颜色渐变
+                  color: '#BEDFFF'
+                }
+              }
             },
             {
-              name: '平均温度',
+              name: 'AI检出占比',
               type: 'line',
               yAxisIndex: 1,
-              data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+              data: val.rate,
+              itemStyle: {
+                normal: {
+                  //颜色渐变
+                  color: '#FFB74F'
+                }
+              }
             }
           ]
         };
+        // 使用刚指定的配置项和数据显示图表。
+        this.myChart.setOption(option);
       }
     }
   }

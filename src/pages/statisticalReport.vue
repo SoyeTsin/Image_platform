@@ -41,7 +41,7 @@
               <div>{{institutionName}}</div>
             </div>
             <div class="report-nav report-nav-between">
-              <div>项目名称：{{diseaseName}}</div>
+              <div>项目名称：{{diseaseName}}筛查</div>
               <div>报告日期：{{nowDate}}</div>
             </div>
             <div class="report-nav report-nav-left">
@@ -54,9 +54,9 @@
               <div class="chart-content chart-content-1">
                 <columnG2 :charData="serverData" :id="'c1'" id="c1"></columnG2>
               </div>
-              <div class="chart-content chart-content-2" v-if="pieCount>0">
-                <pieG2 :charData="pieData" :id="'c1'" id="c2"></pieG2>
-              </div>
+              <!--<div class="chart-content chart-content-2" v-if="pieCount>0">-->
+              <!--<pieG2 :charData="pieData" :id="'c1'" id="c2"></pieG2>-->
+              <!--</div>-->
             </div>
             <div class="button-right">
               <el-button type="success" class="button-center" @click="addFeedbackFun">错误反馈</el-button>
@@ -71,14 +71,14 @@
 
 <script>
   import G2 from "@antv/g2";
-  import columnG2 from "./components/columnG2";
-  import pieG2 from "./components/pieG2";
+  import columnG2 from "./components/columnG23";
+  // import pieG2 from "./components/pieG2";
   import top from "./components/top";
   import feedback from './components/feedback'
 
   export default {
     name: "userInfo",
-    components: {columnG2, pieG2, top, feedback},
+    components: {columnG2, top, feedback},
     data() {
       const end = new Date();
       const start = new Date();
@@ -87,8 +87,7 @@
       return {
         pieCount: 0,
         timeArr: [start, end],
-        serverData: [],
-        pieData: [],
+        serverData: {},
         institutionName: '',
         nowDate: '',
         diseaseName: '',
@@ -168,7 +167,7 @@
       let nowDate = new Date()
       this.nowDate = nowDate.getFullYear() + '-' + ((nowDate.getMonth() + 1) < 10 ? '0' + (nowDate.getMonth() + 1) : (nowDate.getMonth() + 1)) + '-' + (nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate())
       this.diseaseType()
-      this.serverData = []
+      this.serverData = {}
     },
     methods: {
       getData() {
@@ -183,68 +182,70 @@
             }
             console.log(response.data)
             // this.myData=response.data
-            let myArr = []
+            let myArr = {aiSeriesCountArr: [], seriesCountArr: [], rate: [], date: []}
             let lineArr = []
             let aiSeriesCountMap = response.data.aiSeriesCountMap
             let seriesCountMap = response.data.seriesCountMap
             for (let i in aiSeriesCountMap) {
               let rate = ((aiSeriesCountMap[i] || 0) / (seriesCountMap[i] || 1) * 100)
-              rate = (rate % 1 == 0 ? rate : rate.toFixed(2)) + '%'
-              myArr.push({
+              rate = (rate % 1 == 0 ? rate : rate.toFixed(2))
+              myArr.aiSeriesCountArr.push({
                 name: "AI检出序列",
-                time: i.replace(/-/g, " "),
+                // time: new Date(i),
+                time: i,
                 value: aiSeriesCountMap[i], //+ Math.ceil(Math.random() * 10),
-                rate
               })
-              myArr.push({
+              myArr.seriesCountArr.push({
                 name: "上传序列",
-                time: i.replace(/-/g, " "),
+                time: i,
                 value: seriesCountMap[i],// + Math.ceil(Math.random() * 10),
-                rate
               })
-              console.log(i)
-              console.log(aiSeriesCountMap[i])
-              console.log(seriesCountMap[i])
-              console.log(rate)
+              myArr.rate.push({
+                name: "AI占比",
+                time: i,
+                value: rate,// + Math.ceil(Math.random() * 10),
+              })
+              myArr.date.push(i)
             }
-            let probabilityArr = []
-            let probabilityMap = response.data.probabilityMap
-            let count = 0;
-            for (let i in probabilityMap) {
-              count += probabilityMap[i] || 0
-              switch (i) {
-                case 'probability2040Count':
-                  probabilityArr.push({
-                    type: '较低数量', value: probabilityMap[i] || 0
-                  })
-                  break;
-                case 'probability4060Count':
-                  probabilityArr.push({
-                    type: '一般数量', value: probabilityMap[i] || 0
-                  })
-                  break;
-                case 'probability6080Count':
-                  probabilityArr.push({
-                    type: '较高数量', value: probabilityMap[i] || 0
-                  })
-                  break;
-                case 'probabilityLe80Count':
-                  probabilityArr.push({
-                    type: '极高数量', value: probabilityMap[i] || 0
-                  })
-                  break;
-                case 'probabilityLt20Count':
-                  probabilityArr.push({
-                    type: '极低数量', value: probabilityMap[i] || 0
-                  })
-                  break;
-              }
-            }
-            this.pieCount = count
-            that.serverData = {
-              datas: myArr, dfs: []
-            }
-            that.pieData = probabilityArr
+            that.serverData = myArr
+
+
+            // let probabilityArr = []
+            // let probabilityMap = response.data.probabilityMap
+            // let count = 0;
+            // for (let i in probabilityMap) {
+            //   count += probabilityMap[i] || 0
+            //   switch (i) {
+            //     case 'probability2040Count':
+            //       probabilityArr.push({
+            //         type: '较低数量', value: probabilityMap[i] || 0
+            //       })
+            //       break;
+            //     case 'probability4060Count':
+            //       probabilityArr.push({
+            //         type: '一般数量', value: probabilityMap[i] || 0
+            //       })
+            //       break;
+            //     case 'probability6080Count':
+            //       probabilityArr.push({
+            //         type: '较高数量', value: probabilityMap[i] || 0
+            //       })
+            //       break;
+            //     case 'probabilityLe80Count':
+            //       probabilityArr.push({
+            //         type: '极高数量', value: probabilityMap[i] || 0
+            //       })
+            //       break;
+            //     case 'probabilityLt20Count':
+            //       probabilityArr.push({
+            //         type: '极低数量', value: probabilityMap[i] || 0
+            //       })
+            //       break;
+            //   }
+            // }
+            // this.pieCount = count
+
+            // that.pieData = probabilityArr
           })
       },
       diseaseType() {
@@ -274,7 +275,7 @@
       },
       addFeedbackFun() {
         this.$refs.addFeedback.changeDialogTableVisible()
-        this.$refs.addFeedback.initParameter(this.parameter)
+        this.$refs.addFeedback.initParameter(this.parameter, this.timeArr)
       }
     }
   };

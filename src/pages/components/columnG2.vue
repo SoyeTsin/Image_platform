@@ -35,11 +35,13 @@
     watch: {
       charData(val, oldVal) {    // 监听charData，当放生变化时，触发这个回调函数绘制图表
         console.log('new: %s, old: %s', val, oldVal);
+        debugger
         this.drawChart(val);
       }
     },
     methods: {
       drawChart(val) {
+        debugger
         // 如果图形存在则删除再创建，这个地方感觉稍微有点坑
         // 具体的G2 api函数说明请看上面提供的官网地址，此处不再逐一说明
         this.chart && this.chart.destroy();
@@ -48,7 +50,7 @@
         this.chart = new G2.Chart({
           id: this.id,
           forceFit: true,
-          padding: [20, 60, 130, 80]
+          padding: [20, 80, 130, 45]
         });
         this.chart.source(data, dfs, {
           value: {

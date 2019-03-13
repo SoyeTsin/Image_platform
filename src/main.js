@@ -10,6 +10,10 @@ import store from './store'
 import { JSEncrypt } from 'jsencrypt'
 import axios from 'axios'
 import {post, fetch, patch, put} from './pages/utils/http'
+
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
+
 //定义全局变量
 Vue.prototype.$post = post;
 Vue.prototype.$fetch = fetch;
