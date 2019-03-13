@@ -66,7 +66,7 @@
             </el-date-picker>
           </el-col>
           <el-col :span="4" class="display-right">
-            <el-button  type="success" class="search-button" @click="refreshFun" style="margin: 0">
+            <el-button type="success" class="search-button" @click="refreshFun" style="margin: 0">
               <!--<img src="./assets/chongzhi.png" class="so-icon"/>-->
               清空
             </el-button>
@@ -436,6 +436,7 @@
           pageSize: val
         }
         this.getData()
+        this.pageParameter.pageSize = val
       },
       handleCurrentChange(val) {
         if (this.timeArr && this.timeArr.length > 0) {
@@ -450,6 +451,7 @@
           pageSize: common.pageParameter.pageSize
         }
         this.getData()
+        this.pageParameter.nowPage = val
       },
       findAllDiseaseTypeCountList() {
         let parameter = {
