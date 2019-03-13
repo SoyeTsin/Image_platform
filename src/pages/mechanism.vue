@@ -39,8 +39,9 @@
           </el-select>
         </el-col>
         <el-col :span="4" class="display-right">
-          <el-button plain type="primary" class="add-button" @click="refreshFun" style="margin: 0">
-            <img src="./assets/chongzhi.png" class="so-icon"/>
+          <el-button type="success" class="search-button"  @click="refreshFun" style="margin: 0">
+            <!--<img src="./assets/chongzhi.png" class="so-icon"/>-->
+            清空
           </el-button>
           <el-button type="success" class="search-button" @click="search">查询</el-button>
         </el-col>
@@ -210,7 +211,7 @@
         this.channel.value = ''
         this.institution.value = ''
         this.institution.list = []
-        this.search()
+        // this.search()
         this.queryOrganizationList()
         this.queryOrganizationList(0)
       },

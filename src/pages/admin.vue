@@ -10,7 +10,7 @@
               <img src="./assets/login/usernameadmin.png">
               <div>用户名</div>
             </div>
-            <input placeholder="输入用户名" class="so-input" v-model.trim="userParameter.userName"></input>
+            <input placeholder="输入用户名" class="so-input" v-model.trim="userParameter.userName" maxlength="25"></input>
           </div>
           <div class="input-box">
             <div class="icon">
@@ -18,7 +18,8 @@
               <div>密码</div>
             </div>
             <input placeholder="输入密码" type="password" class="so-input" v-model.trim="userParameter.password"
-                   @keyup.enter="login"></input>
+                   maxlength="25"
+                   @keyup.enter="getPublicKey"></input>
             <div class="validate-msg" v-if="msg">
               <img src="./assets/login/warning.png"/>
               <div>
@@ -65,6 +66,7 @@
         login_kuang,
         msg: '',
         publicKey: '',
+        newPassword: '',
         userParameter: {
           userType: 0,
           password: '',
@@ -77,6 +79,9 @@
 
     },
     methods: {
+      userFil() {
+        this.userParameter.userName = this.userParameter.userName.replace(/[^1-9]/g, '')
+      },
       getPublicKey() {
         //account/getPublicKey
         if (!this.userParameter.userName || !this.userParameter.password) {
@@ -94,10 +99,11 @@
             var encrypt = new JSEncrypt();
             encrypt.setPublicKey(this.publicKey)
             let password = encrypt.encrypt(this.userParameter.password)
-            this.login(password)
+            this.newPassword = password
+            this.login()
           })
       },
-      login(password) {
+      login() {
         if (!this.userParameter.userName || !this.userParameter.password) {
           this.msg = '账户名和密码均不能为空'
           return
@@ -109,7 +115,7 @@
         let parameter = {
           userName: this.userParameter.userName,
           userType: 0,
-          password
+          password: this.newPassword
         }
         this.$post('/account/login', parameter)
           .then((response) => {

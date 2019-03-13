@@ -10,7 +10,8 @@
               <img src="./assets/login/username.png">
               <div>手机号</div>
             </div>
-            <input placeholder="11位手机号" class="so-input" v-model.trim="userParameter.phoneNum"></input>
+            <input placeholder="11位手机号" class="so-input" v-model.trim="userParameter.phoneNum" maxlength="25"
+                   @input="userFil"></input>
           </div>
           <div class="input-box">
             <div class="icon">
@@ -73,6 +74,21 @@
 
     },
     methods: {
+      userFil() {
+        let value = this.userParameter.phoneNum
+        this.userParameter.phoneNum = value.replace(/[^0-9]/g, '')
+        if (value.length == 11) {
+          const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+          console.log(reg.test(value));
+          if (reg.test(value)) {
+            // callback();
+          } else {
+            this.msg = '请输入正确的手机号'
+          }
+        } else if (value.length > 11) {
+          this.userParameter.phoneNum = value.substring(0, 11)
+        }
+      },
       login() {
         let parameter = this.userParameter
         if (!this.userParameter.phoneNum || !this.userParameter.smsCode) {
@@ -113,6 +129,9 @@
             console.log(response)
             if (response.code != '000000') {
               this.msg = response.msg
+              if (response.code == '001001') {
+                this.msg = '请输入正确的手机号'
+              }
               return
             }
           })

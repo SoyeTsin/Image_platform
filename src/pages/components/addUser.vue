@@ -61,7 +61,7 @@
     data() {
       var checkPhone = (rule, value, callback) => {
         if (!value) {
-          return callback(new Error('手机号不能为空'));
+          return callback(new Error('请输入手机号码'));
           callback();
         } else {
           const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
@@ -91,7 +91,7 @@
         },
         rules: {
           userName: [
-            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {required: true, message: '请输入用户姓名', trigger: 'blur'},
             {min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur'}
           ],
           phoneNum: [
@@ -101,7 +101,7 @@
             {required: true, message: '请选择所属渠道', trigger: 'change'}
           ],
           institutionValue: [
-            {required: true, message: '请选择所处机构', trigger: 'change'}
+            {required: true, message: '请选择所属机构', trigger: 'change'}
           ],
           officeValue: [
             {required: true, message: '请选择所处科室', trigger: 'change'}

@@ -2,7 +2,7 @@
   <div class="top-content">
     <el-col :span="12">
       <div class="title-logo">
-        <img :src="logoUrl"/>
+        <img :src="logoPA"/>
         <div class="logo-line"></div>
         <div class="text-left">智能影像体验平台{{roleText}}</div>
       </div>
@@ -29,7 +29,6 @@
       return {
         logo,
         logoPA,
-        logoUrl: '',
         userName: '',
         roleText: '',
         pathType: true,
@@ -40,18 +39,6 @@
         this.pathType = false
       } else {
         this.pathType = true
-      }
-      if (path == '/admin') {
-        this.logoUrl = logo
-      } else if (this.$route.path == '/login') {
-        this.logoUrl = logoPA
-      } else {
-        let userType = localStorage.getItem('userType')
-        if (userType) {
-          this.logoUrl = logoPA
-        } else {
-          this.logoUrl = logo
-        }
       }
       this.setUserInfo()
     }, methods: {

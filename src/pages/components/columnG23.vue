@@ -41,7 +41,7 @@
     },
     methods: {
       drawChart(val) {
-        app.title = '折柱混合';
+        app.title = '';
         let option = {
           grid: {
             left: 30,
@@ -52,11 +52,15 @@
           },
           tooltip: {
             trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              crossStyle: {
-                color: '#e5e5e5'
+            formatter(params) {
+              console.log(params)
+              console.log(typeof (params[0].color))
+              let relVal = params[0].axisValue
+              for (let i = 0, l = params.length; i < l; i++) {
+                let color = (typeof (params[i].color) == 'string') ? params[i].color : ('linear-gradient(180deg, ' + params[i].color.colorStops[0].color + ', ' + params[i].color.colorStops[1].color + ');')
+                relVal += '<div style="box-sizing:border-box;padding: 0 10px;width: 180px;display: flex;justify-content: space-between;margin: 10px 0 4px 0"><div><div style="float:left;margin:4px;width: 10px;height: 10px;border-radius: 50%;background: ' + color + '"></div>' + params[i].seriesName + ' </div><div> ' + params[i].value + (i == 2 ? '%' : "") + "</div></div>";
               }
+              return relVal;
             }
           },
           legend: {
@@ -67,9 +71,9 @@
             {
               type: 'category',
               data: val.date,
-              axisPointer: {
-                type: 'shadow'
-              }
+              axisTick: {
+                alignWithLabel: true
+              },
             }
           ],
           yAxis: [
@@ -118,7 +122,6 @@
               data: val.seriesCountArr,
               itemStyle: {
                 normal: {
-                  //颜色渐变
                   color: '#BEDFFF'
                 }
               }
@@ -130,7 +133,6 @@
               data: val.rate,
               itemStyle: {
                 normal: {
-                  //颜色渐变
                   color: '#FFB74F'
                 }
               }

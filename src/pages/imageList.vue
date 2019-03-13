@@ -236,9 +236,9 @@
         return d
       },
       genderFilter(value) {
-        if (value == 'm') {
+        if (value == 'm' || value == 0 || value == '男') {
           return '男'
-        } else if (value == 'f') {
+        } else if (value == 'f' || value == 1 || value == '女') {
           return '女'
         } else {
           return '--'
@@ -404,7 +404,7 @@
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
         this.timeArr = []
-        this.search()
+        // this.search()
       },
       search() {
         if (this.timeArr && this.timeArr.length > 0) {
