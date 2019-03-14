@@ -83,7 +83,7 @@
           </el-table-column>
           <el-table-column label="性别">
             <template slot-scope="scope">
-              {{ scope.row.gender|genderFilter }}
+              {{ scope.row.sex|genderFilter }}
             </template>
           </el-table-column>
           <el-table-column label="年龄">
