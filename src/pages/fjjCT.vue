@@ -245,7 +245,7 @@
               <img src="../assets/fjj-icon/jgr.png" alt>
             </i>
             <el-popover placement="top" width="240" v-model="isCorrect" trigger="click" @show="showCorrect">
-              <div class="tips" style="height: auto;padding: 8px;">
+              <div class="tips" style="height: auto;padding: 8px;" v-if="isCorrect">
                 <p style="padding-bottom: 20px;display: block;">信息修正</p>
                 <!-- <p
                   style=""
