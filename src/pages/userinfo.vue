@@ -139,7 +139,8 @@
       }
     },
     mounted() {
-      this.pageParameter.currentPage = 1
+      this.pageParameter.currentPage = common.userInfoParameter.newPage
+      this.parameter.pageNum = common.userInfoParameter.newPage
       this.getData()
       this.queryOfficeList()
       this.queryRegionInfo()
@@ -164,6 +165,9 @@
       officeValue() {
         return this.office.value
       },
+      nowPageValue() {
+        return this.pageParameter.currentPage
+      }
     },
     watch: {
       provincesValue(val) {
@@ -177,6 +181,10 @@
       },
       officeValue(val) {
         this.office.key = val
+      },
+      nowPageValue(val) {
+        console.log(val)
+        common.userInfoParameter.newPage = val
       }
     },
     methods: {
@@ -386,7 +394,7 @@
 </script>
 
 <style lang="scss" scoped>
-   @import "../sass/common";
+  @import "../sass/common";
 
   .inline-input {
     width: 150px

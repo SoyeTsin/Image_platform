@@ -9,4 +9,13 @@ common.pageParameter = {
   pageSize: 10,
   total: 100
 }
+common.imageListParameter = {
+  newPage: 0
+}
+common.userInfoParameter = {
+  newPage: 0
+}
+common.mechanismParameter = {
+  newPage: 0
+}
 module.exports = common

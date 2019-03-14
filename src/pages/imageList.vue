@@ -276,7 +276,9 @@
       aiResultValue() {
         return this.aiResult.value
       },
-
+      nowPageValue() {
+        return this.pageParameter.currentPage
+      }
     },
     watch: {
       institutionIdValue(val) {
@@ -292,10 +294,15 @@
       },
       aiResultValue(val) {
         this.aiResult.key = val
+      },
+      nowPageValue(val) {
+        console.log(val)
+        common.imageListParameter.newPage = val
       }
     },
     mounted() {
-      this.pageParameter.currentPage = 1
+      this.pageParameter.currentPage = common.imageListParameter.newPage
+      this.parameter.pageNum = common.imageListParameter.newPage
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
       this.queryOrganizationList()
     },

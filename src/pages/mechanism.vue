@@ -130,7 +130,8 @@
       }
     },
     mounted() {
-      this.pageParameter.currentPage = 1
+      this.pageParameter.currentPage = common.mechanismParameter.newPage
+      this.parameter.pageNum = common.mechanismParameter.newPage
       this.getData()
       this.queryRegionInfo()
       this.queryOrganizationList()
@@ -148,6 +149,9 @@
       },
       institutionIdValue() {
         return this.institution.value
+      },
+      nowPageValue() {
+        return this.pageParameter.currentPage
       },
     },
     watch: {
@@ -174,6 +178,10 @@
       institutionIdValue(val) {
 
       },
+      nowPageValue(val) {
+        console.log(val)
+        common.mechanismParameter.newPage = val
+      }
     },
     methods: {
       getData() {
