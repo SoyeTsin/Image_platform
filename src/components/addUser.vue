@@ -69,7 +69,7 @@
           if (reg.test(value)) {
             callback();
           } else {
-            return callback(new Error('请输入正确的手机号'));
+            return callback(new Error('请输入正确的手机号码'));
           }
         }
       };

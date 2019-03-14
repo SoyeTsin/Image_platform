@@ -236,9 +236,9 @@
         return d
       },
       genderFilter(value) {
-        if (value == 'm' || value == 0 || value == '男') {
+        if (value == 'M' ||value == 'm' || value == 0 || value == '男') {
           return '男'
-        } else if (value == 'f' || value == 1 || value == '女') {
+        } else if (value == 'F' ||value == 'f' || value == 1 || value == '女') {
           return '女'
         } else {
           return '--'
@@ -258,6 +258,9 @@
           coler = msgColor[1]
         } else {
           coler = msgColor[0]
+        }
+        if (msg == 'AI检测失败') {
+          coler = msgColor[1]
         }
         return 'color:' + coler + ';'
       }
