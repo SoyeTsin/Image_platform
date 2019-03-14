@@ -64,6 +64,7 @@
     p {
       display: block;
       text-align: left;
+      overflow: hidden;
       span {
         display: block;
         float: left;
@@ -78,10 +79,26 @@
         &:nth-child(2){
           width:154px;
           position: relative;
-          i{
-            position: absolute;
-            right: 3px;
-            top: 1px;
+         
+        }
+      }
+      .el-form-item__content{
+          float: left;
+         width:154px;
+         span{
+            width: 152px;
+             i{
+              position: absolute;
+              right: 3px;
+              top: 1px;
+            }
+         }
+      }
+      &:nth-child(4){
+        .el-form-item__content{
+          width: 100%;
+          span{
+            width: 100%;
           }
         }
       }
@@ -139,5 +156,13 @@
   }
   .el-dialog__header{
     text-align: left;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+  }
+  
+  input[type="number"] {
+      -moz-appearance: textfield;
   }
 </style>

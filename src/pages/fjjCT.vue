@@ -251,53 +251,54 @@
                   style=""
                 >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p>-->
                 <el-form :model="correct" :rules="correctRules" ref="ruleForm">
-                  <el-form-item prop="diameter">
                     <p>
                       <span>直径：</span>
-                      <span>
-                        <input type="number" v-model="correct.diameter" placeholder="请输入">
-                      </span>
+                      <el-form-item prop="diameter" >
+                          <span>
+                            <input type="number" v-model="correct.diameter" placeholder="请输入">
+                          </span>
+                      </el-form-item>
                     </p>
-                  </el-form-item>
-                  <el-form-item prop="density">
                     <p style="display: flex;">
                       <span>密度：</span>
+                       <el-form-item prop="density">
                       <span>
                         <input type="number" v-model="correct.density" placeholder="请输入">
                       </span>
-                    </p>
                   </el-form-item>
-                  <el-form-item prop="probability">
+                    </p>
                     <p style="display: flex;">
                       <span>可能性：</span>
-                      <span>
-                        <input type="number" max="100" v-model="correct.probability" placeholder="请输入">
-                        <i>%</i>
-                      </span>
+                      <el-form-item prop="probability">
+                          <span>
+                            <input type="number" max="100" v-model="correct.probability" placeholder="请输入">
+                            <i>%</i>
+                          </span>
+                      </el-form-item>
                     </p>
-                  </el-form-item>
                     <p style="display: flex;">
                       <span>坐标：</span>
-                  <el-form-item prop="x">
-                      <span style="width:72px;padding-right:10px;">
+                      <el-form-item prop="x" style="width:72px;margin-right: 8px;">
+                      <span>
                         <input type="number" style="width:100%" v-model="correct.x" placeholder="请输入">
                       </span>
                       </el-form-item>
-                      <el-form-item prop="y">
+                      <el-form-item prop="y" style="width:72px;">
                       <span style="width:72px;">
                         <input type="number" style="width:100%" v-model="correct.y" placeholder="请输入">
                       </span>
                       </el-form-item>
                     </p>
                   
-                  <el-form-item prop="diseaseTypeDesc">
                     <p style="display: flex;">
                       <span>病灶描述：</span>
+                  <el-form-item prop="diseaseTypeDesc">
+
                       <span>
                         <input type="text" v-model="correct.diseaseTypeDesc" placeholder="请输入">
                       </span>
-                    </p>
                   </el-form-item>
+                    </p>
                 </el-form>
 
                 <div class="btn">
@@ -581,6 +582,10 @@ export default {
       }).then(res => {
         if (res.code == "000000") {
           if (type == 1) {
+            this.doctor = {
+                describe: "",
+                result: ""
+              }
             this.queryDiagnosis = res.data;
             if (res.data) {
               this.doctor.describe = res.data.doctor_desc;
@@ -739,6 +744,11 @@ export default {
       return JSON.parse(JSON.stringify(source));
     },
     showCorrect(){
+      let data = this.deepClone(this.listDetail)
+      this.correct = data;
+      this.correct.imageId = this.listIndex + 1;
+      this.correct.x = data.location.split(',')[0]
+      this.correct.y = data.location.split(',')[1]
       this.correct.probability = Number(this.listDetail.probability.replace('%', ''))
     },
     listClick(index) {
