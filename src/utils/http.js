@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Message} from 'element-ui';
+import { Message } from 'element-ui';
 import router from '../router'
 import Vue from 'vue'
 
@@ -37,10 +37,10 @@ axios.interceptors.response.use(
       let routerPath = decodeURIComponent(localStorage.getItem('routerPath') || '/login')
       router.push({
         path: routerPath,
-        querry: {redirect: router.currentRoute.fullPath}//从哪个页面跳转
+        querry: { redirect: router.currentRoute.fullPath }//从哪个页面跳转
       })
     }
-    return response;
+    return response.data;
   },
   error => {
     return Promise.reject(error)
@@ -55,20 +55,11 @@ axios.interceptors.response.use(
  * 封装get方法
  * @param url
  * @param data
- * @returns {Promise}
  */
 
 export function fetch(url, params = {}) {
-  return new Promise((resolve, reject) => {
-    axios.get(url, {
-      params: params
-    })
-      .then(response => {
-        resolve(response.data);
-      })
-      .catch(err => {
-        reject(err)
-      })
+  return axios.get(url, {
+    params: params
   })
 }
 
@@ -77,54 +68,29 @@ export function fetch(url, params = {}) {
  * 封装post请求
  * @param url
  * @param data
- * @returns {Promise}
  */
-
 export function post(url, data = {}) {
-  return new Promise((resolve, reject) => {
-    axios.post(url, data)
-      .then(response => {
-        resolve(response.data);
-      }, err => {
-        reject(err)
-      })
-  })
+  return axios.post(url, data)
 }
-
 /**
  * 封装patch请求
  * @param url
  * @param data
- * @returns {Promise}
  */
 
 export function patch(url, data = {}) {
-  return new Promise((resolve, reject) => {
-    axios.patch(url, data)
-      .then(response => {
-        resolve(response.data);
-      }, err => {
-        reject(err)
-      })
-  })
+  return axios.patch(url, data)
 }
 
 /**
  * 封装put请求
  * @param url
  * @param data
- * @returns {Promise}
+
  */
 
 export function put(url, data = {}) {
-  return new Promise((resolve, reject) => {
-    axios.put(url, data)
-      .then(response => {
-        resolve(response.data);
-      }, err => {
-        reject(err)
-      })
-  })
+  return axios.put(url, data)
 }
 
 
