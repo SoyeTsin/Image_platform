@@ -139,6 +139,7 @@
       }
     },
     mounted() {
+      this.pageParameter.currentPage = 1
       this.getData()
       this.queryOfficeList()
       this.queryRegionInfo()

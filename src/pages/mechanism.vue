@@ -39,7 +39,7 @@
           </el-select>
         </el-col>
         <el-col :span="4" class="display-right">
-          <el-button type="success" class="search-button"  @click="refreshFun" style="margin: 0">
+          <el-button type="success" class="search-button" @click="refreshFun" style="margin: 0">
             <!--<img src="../assets/chongzhi.png" class="so-icon"/>-->
             清空
           </el-button>
@@ -130,6 +130,7 @@
       }
     },
     mounted() {
+      this.pageParameter.currentPage = 1
       this.getData()
       this.queryRegionInfo()
       this.queryOrganizationList()
@@ -303,7 +304,7 @@
 </script>
 
 <style lang="scss" scoped>
-   @import "../sass/common";
+  @import "../sass/common";
 
   .two-col {
     padding: 4px 0;

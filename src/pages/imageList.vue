@@ -89,7 +89,8 @@
           <el-table-column label="年龄">
             <template slot-scope="scope">{{scope.row.studyAge|ifNull}}</template>
           </el-table-column>
-          <el-table-column prop="bodyPartExamined" label="拍摄部位">
+          <el-table-column label="拍摄部位">
+            <template slot-scope="scope">{{scope.row.bodyPartExamined|ifNull}}</template>
           </el-table-column>
           <el-table-column prop="modality" label="检测设备">
           </el-table-column>
@@ -236,9 +237,9 @@
         return d
       },
       genderFilter(value) {
-        if (value == 'm' || value == 0 || value == '男') {
+        if (value == 'M' || value == 'm' || value == 0 || value == '男') {
           return '男'
-        } else if (value == 'f' || value == 1 || value == '女') {
+        } else if (value == 'F' || value == 'f' || value == 1 || value == '女') {
           return '女'
         } else {
           return '--'
@@ -258,6 +259,9 @@
           coler = msgColor[1]
         } else {
           coler = msgColor[0]
+        }
+        if (msg == 'AI检测失败') {
+          coler = msgColor[1]
         }
         return 'color:' + coler + ';'
       }
@@ -291,6 +295,7 @@
       }
     },
     mounted() {
+      this.pageParameter.currentPage = 1
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
       this.queryOrganizationList()
     },
