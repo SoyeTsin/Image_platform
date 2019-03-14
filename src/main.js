@@ -9,7 +9,7 @@ import { sync } from 'vuex-router-sync'
 import store from './store'
 import { JSEncrypt } from 'jsencrypt'
 import axios from 'axios'
-import {post, fetch, patch, put} from './pages/utils/http'
+import {post, fetch, patch, put} from './utils/http'
 
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts

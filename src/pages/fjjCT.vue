@@ -4,20 +4,27 @@
       <div class="top">
         <i class="icon-fanhui iconfont" style="cursor: pointer;" @click="asideFun"></i>
         <i style="padding-left: 16.5px;">
-          <img src="../../static/fjj-icon/yx.png" alt>
+          <img src="../assets/fjj-icon/yx.png" alt>
         </i>
-        <p style="word-wrap: break-word;width: 62%;text-align: left;">{{detail.serialUID}}&nbsp{{detail.bodyPartExamined}}{{detail?detail.modality:''}}</p>
+        <p
+          style="word-wrap: break-word;width: 62%;text-align: left;"
+        >{{detail.serialUID}}&nbsp{{detail.bodyPartExamined}}&nbsp{{detail?detail.modality:''}}</p>
       </div>
       <div class="info">
         <div class="img">
-          <cornerstone-canvas height="100%" width="100%" ref="cornerstone1" :images="exampleStudyImageIds"></cornerstone-canvas>
+          <cornerstone-canvas
+            height="100%"
+            width="100%"
+            ref="cornerstone1"
+            :images="exampleStudyImageIds"
+          ></cornerstone-canvas>
           <span>{{exampleStudyImageIds.length}}张</span>
         </div>
         <div class="text">
           <p>
             <span>{{detail.patientName}}</span>
             <span>{{detail.sex|genderFilter}}</span>
-            <span>{{detail.studyAge?detail.studyAge+'岁':''}}</span>
+            <span>{{detail.studyAge}}</span>
           </p>
           <p>
             <span>{{myDate(detail.examDate)}}</span>
@@ -28,7 +35,7 @@
         <div class="title">
           <h4>AI检测信息（{{exampleStudyImageIds1.length}}）</h4>
           <span @click="isResult">
-            <img src="../../static/fjj-icon/yc.png" alt>
+            <img src="../assets/fjj-icon/yc.png" alt>
           </span>
         </div>
         <div class="list">
@@ -46,10 +53,10 @@
               @click="listClick(index,x)"
             >
               <span>{{index+1|identifier}}</span>
-              <el-popover placement="bottom" width="200" trigger="hover" content="肺结节">
-                <span slot="reference">{{x.diseaseTypeDesc?x.diseaseTypeDesc:"肺结节"}}</span>
-              </el-popover>
-              <span> -- </span>
+              <!-- <el-popover placement="bottom" width="200" trigger="hover" content="肺结节"> -->
+              <span slot="reference">{{x.diseaseTypeDesc?x.diseaseTypeDesc:"肺结节"}}</span>
+              <!-- </el-popover> -->
+              <span>--</span>
               <!-- <span>{{x.imageNo}}</span> -->
               <span>{{x.probability}}</span>
             </li>
@@ -71,43 +78,43 @@
         <el-row type="flex" class="header-btn">
           <el-col :class="[active == 'yd'?'active':'']">
             <p @click="activeFun('yd')">
-              <img src="../../static/fjj-icon/yd.png">
+              <img src="../assets/fjj-icon/yd.png">
               <span>移动</span>
             </p>
           </el-col>
           <el-col :class="[active == 'fd'?'active':'']">
             <p @click="activeFun('fd')">
-              <img src="../../static/fjj-icon/fd.png">
+              <img src="../assets/fjj-icon/fd.png">
               <span>放大</span>
             </p>
           </el-col>
           <el-col :class="[active == 'xz'?'active':'']">
             <p @click="activeFun('xz')">
-              <img src="../../static/fjj-icon/xz.png">
+              <img src="../assets/fjj-icon/xz.png">
               <span>旋转</span>
             </p>
           </el-col>
           <el-col :class="[active == 'zyfz'?'active':'']">
             <p @click="activeFun('zyfz')">
-              <img src="../../static/fjj-icon/zyfz.png">
+              <img src="../assets/fjj-icon/zyfz.png">
               <span>左右翻转</span>
             </p>
           </el-col>
           <el-col :class="[active == 'sxfz'?'active':'']">
             <p @click="activeFun('sxfz')">
-              <img src="../../static/fjj-icon/sxfz.png">
+              <img src="../assets/fjj-icon/sxfz.png">
               <span>上下翻转</span>
             </p>
           </el-col>
           <el-col :class="[active == 'ckcw'?'active':'']" style="position: relative;">
             <p @click="activeFun('ckcw')">
-              <img src="../../static/fjj-icon/ckcw.png">
+              <img src="../assets/fjj-icon/ckcw.png">
               <span>窗口窗位</span>
             </p>
             <i class="xl-icon">
               <img
                 :style="{transform:isWindow?'rotateX(180deg)':'rotateX(0deg)'}"
-                src="../../static/fjj-icon/xl-icon.png"
+                src="../assets/fjj-icon/xl-icon.png"
                 alt
               >
             </i>
@@ -124,25 +131,25 @@
           </el-col>
           <el-col :class="[active == 'cj'?'active':'']">
             <p @click="activeFun('cj')">
-              <img src="../../static/fjj-icon/cj.png">
+              <img src="../assets/fjj-icon/cj.png">
               <span>测距</span>
             </p>
           </el-col>
           <el-col :class="[active == 'jd'?'active':'']">
             <p @click="activeFun('jd')">
-              <img src="../../static/fjj-icon/jdcl.png">
+              <img src="../assets/fjj-icon/jdcl.png">
               <span>角度</span>
             </p>
           </el-col>
           <el-col :class="[active == 'bzyc'?'active':'']">
             <p @click="activeFun('bzyc')">
-              <img src="../../static/fjj-icon/ycbz.png">
+              <img src="../assets/fjj-icon/ycbz.png">
               <span>标注隐藏</span>
             </p>
           </el-col>
           <el-col>
             <p @click="activeFun('fy');">
-              <img src="../../static/fjj-icon/fy.png">
+              <img src="../assets/fjj-icon/fy.png">
               <span>复原</span>
             </p>
           </el-col>
@@ -152,12 +159,12 @@
                 <p style="text-align: center;padding-top: 18px;">是否出现漏诊？</p>
                 <div class="btn">
                   <span @click="isRemind = false">否</span>
-                  <span @click="serialImage({missedDiagnosisFlag:1,imageNo:listDetail.imageNo},3)">是</span>
+                  <span @click="serialImage(3)">是</span>
                 </div>
               </div>
               <i slot="reference">
                 <p @click="activeFun('lztx')">
-                  <img src="../../static/fjj-icon/lztx-1.png">
+                  <img src="../assets/fjj-icon/lztx-1.png">
                   <span>漏诊提醒</span>
                 </p>
               </i>
@@ -165,7 +172,7 @@
           </el-col>
           <el-col>
             <p @click="$router.go(-1)">
-              <img src="../../static/fjj-icon/lztx.png">
+              <img src="../assets/fjj-icon/lztx.png">
               <span>退出</span>
             </p>
           </el-col>
@@ -183,29 +190,24 @@
           center
           :before-close="handleClose"
         >
-        <el-form :model="doctor" :rules="doctorRules" ref="ruleForm1">
-          
+          <el-form :model="doctor" :rules="doctorRules" ref="ruleForm1">
             <el-row>
               <el-form-item prop="describe">
                 <el-col :span="24" style="padding:5px 0 14px 0;">影像描述</el-col>
                 <el-col :span="24" style="position: relative;">
-                  <el-input type="textarea" :rows="5" :maxlength='500' v-model="doctor.describe"></el-input>
-                  <div class="text-length">
-                    {{doctor.describe.length}}/500
-                  </div>
+                  <el-input type="textarea" :rows="5" :maxlength="500" v-model="doctor.describe"></el-input>
+                  <div class="text-length">{{doctor.describe.length}}/500</div>
                 </el-col>
-            </el-form-item>
-             <el-form-item prop="result">
+              </el-form-item>
+              <el-form-item prop="result">
                 <el-col :span="24" style="padding:30px 0 14px 0;">诊断结果</el-col>
-              <el-col :span="24" style="position: relative;">
-                <el-input type="textarea" :rows="5" :maxlength='500' v-model="doctor.result"></el-input>
-                <div class="text-length">
-                  {{doctor.result.length}}/500
-                </div>
-              </el-col>
-            </el-form-item>
+                <el-col :span="24" style="position: relative;">
+                  <el-input type="textarea" :rows="5" :maxlength="500" v-model="doctor.result"></el-input>
+                  <div class="text-length">{{doctor.result.length}}/500</div>
+                </el-col>
+              </el-form-item>
             </el-row>
-        </el-form>
+          </el-form>
           <span slot="footer" class="dialog-footer">
             <button
               class="submit"
@@ -225,7 +227,7 @@
             <i></i>
             <h4>AI诊断结果</h4>
             <i @click="isDetail = false">
-              <img src="../../static/fjj-icon/yxgb.png" alt>
+              <img src="../assets/fjj-icon/yxgb.png" alt>
             </i>
           </div>
           <div class="text">
@@ -237,70 +239,74 @@
           </div>
           <div class="popup-btn">
             <i @click="listClick(listIndex-1)">
-              <img src="../../static/fjj-icon/jgl.png" alt>
+              <img src="../assets/fjj-icon/jgl.png" alt>
             </i>
             <i @click="listClick(listIndex+1)">
-              <img src="../../static/fjj-icon/jgr.png" alt>
+              <img src="../assets/fjj-icon/jgr.png" alt>
             </i>
-            <el-popover placement="top" width="216" v-model="isCorrect" trigger="click">
+            <el-popover placement="top" width="240" v-model="isCorrect" trigger="click" @show="showCorrect">
               <div class="tips" style="height: auto;padding: 8px;">
                 <p style="padding-bottom: 20px;display: block;">信息修正</p>
                 <!-- <p
                   style=""
-                >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p> -->
+                >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p>-->
                 <el-form :model="correct" :rules="correctRules" ref="ruleForm">
                   <el-form-item prop="diameter">
-                       <p style="display: flex;">
-                        <span style="width: 70px;display: block;">直径：</span>
-                        <span>
-                          <input type="text" v-model="correct.diameter" placeholder="请输入">
-                        </span>
-                      </p>
-                    </el-form-item>
-                    <el-form-item prop="density">
-                        <p style="display: flex;">
-                      <span style="width: 70px;display: block;">密度：</span>
+                    <p>
+                      <span>直径：</span>
                       <span>
-                        <input type="text" v-model="correct.density" placeholder="请输入">
+                        <input type="number" v-model="correct.diameter" placeholder="请输入">
                       </span>
-                </p>
-                    </el-form-item>
-                    <el-form-item prop="probability">
-                        <p style="display: flex;">
-                  <span style="width: 70px;display: block;">可能性：</span>
-                  <span>
-                    <input type="text" v-model="correct.probability" placeholder="请输入">
-                  </span>
-                </p>
-                    </el-form-item>
-                     <el-form-item prop="location">
-                        <p style="display: flex;">
-                  <span style="width: 70px;display: block;">坐标：</span>
-                  <span>
-                    <input type="text" v-model="correct.location" placeholder="请输入">
-                  </span>
-                </p>
-                    </el-form-item>
-                    <el-form-item prop="diseaseTypeDesc">
-                       <p style="display: flex;">
-                  <span style="width: 70px;display: block;">病灶描述：</span>
-                  <span>
-                    <input type="text" v-model="correct.diseaseTypeDesc" placeholder="请输入">
-                  </span>
-                </p>
-                    </el-form-item>
+                    </p>
+                  </el-form-item>
+                  <el-form-item prop="density">
+                    <p style="display: flex;">
+                      <span>密度：</span>
+                      <span>
+                        <input type="number" v-model="correct.density" placeholder="请输入">
+                      </span>
+                    </p>
+                  </el-form-item>
+                  <el-form-item prop="probability">
+                    <p style="display: flex;">
+                      <span>可能性：</span>
+                      <span>
+                        <input type="number" max="100" v-model="correct.probability" placeholder="请输入">
+                        <i>%</i>
+                      </span>
+                    </p>
+                  </el-form-item>
+                    <p style="display: flex;">
+                      <span>坐标：</span>
+                  <el-form-item prop="x">
+                      <span style="width:72px;padding-right:10px;">
+                        <input type="number" style="width:100%" v-model="correct.x" placeholder="请输入">
+                      </span>
+                      </el-form-item>
+                      <el-form-item prop="y">
+                      <span style="width:72px;">
+                        <input type="number" style="width:100%" v-model="correct.y" placeholder="请输入">
+                      </span>
+                      </el-form-item>
+                    </p>
+                  
+                  <el-form-item prop="diseaseTypeDesc">
+                    <p style="display: flex;">
+                      <span>病灶描述：</span>
+                      <span>
+                        <input type="text" v-model="correct.diseaseTypeDesc" placeholder="请输入">
+                      </span>
+                    </p>
+                  </el-form-item>
                 </el-form>
-               
-                
+
                 <div class="btn">
                   <span @click="isCorrect = false">取消</span>
-                  <span
-                    @click="submitForm('ruleForm')"
-                  >确定</span>
+                  <span @click="submitForm('ruleForm')">确定</span>
                 </div>
               </div>
               <i slot="reference">
-                <img src="../../static/fjj-icon/bjjg.png" alt>
+                <img src="../assets/fjj-icon/bjjg.png" alt>
               </i>
             </el-popover>
             <el-popover placement="top" width="216" v-model="isDelete" trigger="click">
@@ -308,21 +314,19 @@
                 <p style="text-align: center;padding-top: 18px;">是否确定删除AI提示？</p>
                 <div class="btn">
                   <span @click="isDelete = false">取消</span>
-                  <span
-                    @click="serialImage(2)"
-                  >删除</span>
+                  <span @click="serialImage(2)">删除</span>
                 </div>
               </div>
               <i slot="reference">
-                <img src="../../static/fjj-icon/scjg.png" alt>
+                <img src="../assets/fjj-icon/scjg.png" alt>
               </i>
             </el-popover>
           </div>
         </div>
-        <div class="direction" style="top:18px;left:50%;transform:translate(-50%,0%);">A</div>
-        <div class="direction" style="top:50%;right:18px;transform:translate(0%,-50%);">R</div>
-        <div class="direction" style="top:50%;left:18px;transform:translate(0%,-50%);">L</div>
-        <div class="direction" style="bottom:18px;left:50%;transform:translate(-50%,0%);">D</div>
+        <div class="direction a">A</div>
+        <div class="direction r">R</div>
+        <div class="direction l">L</div>
+        <div class="direction d">D</div>
         <div class="left-top" style="left:18px;top:18px;">LIDC-IDRI-0586
           <br>CT LUNG SCREEN
         </div>
@@ -333,12 +337,18 @@
           <br>T : 2.5mm &nbsp&nbsp L : -46.8
           <br>
         </div>
-        <div class="right-bottom" style="right:18px;bottom:18px;">{{$store.state.ctdata.ma}}mA &nbsp&nbsp {{$store.state.ctdata.kv}}KV
+        <div class="right-bottom" style="right:18px;bottom:18px;">
+          {{$store.state.ctdata.ma}}mA &nbsp&nbsp {{$store.state.ctdata.kv}}KV
           <br>
           {{detail.examDate}}
           <br>
         </div>
-        <cornerstone-canvas height="92vh" width="100%" ref="cornerstone" :images="exampleStudyImageIds"></cornerstone-canvas>
+        <cornerstone-canvas
+          height="92vh"
+          width="100%"
+          ref="cornerstone"
+          :images="exampleStudyImageIds"
+        ></cornerstone-canvas>
         <div class="right">
           <p>
             <span>{{slider.value+1}}</span>
@@ -368,10 +378,10 @@
             ></vue-slider>
           </div>
           <a @click="sliderSwitch(true)">
-            <img src="../../static/fjj-icon/fyxs.png" alt>
+            <img src="../assets/fjj-icon/fyxs.png" alt>
           </a>
           <a @click="sliderSwitch(false)">
-            <img src="../../static/fjj-icon/fyxx.png" alt>
+            <img src="../assets/fjj-icon/fyxx.png" alt>
           </a>
         </div>
       </el-main>
@@ -389,7 +399,6 @@ export default {
   },
   data() {
     return {
-     
       cornerstone: null,
       asideWidth: "280px",
       isAside: true,
@@ -452,17 +461,15 @@ export default {
       dialogVisible: false,
       describe: "",
       result: "",
-      doctor:{
+      doctor: {
         describe: "",
-        result: "",
+        result: ""
       },
       doctorRules: {
         describe: [
-          { required: true,message: '请输入影像详情', trigger: 'blur' }
+          { required: true, message: "请输入影像详情", trigger: "blur" }
         ],
-        result: [
-          { required: true,message: '请输入诊断结果', trigger: 'blur' }
-        ],
+        result: [{ required: true, message: "请输入诊断结果", trigger: "blur" }]
       },
       slider: {
         direction: "vertical",
@@ -511,47 +518,46 @@ export default {
         pageX: 0,
         pageY: 0
       },
-      correct:{
-        diameter:'',
-        density:'',
-        probability:'',
-        location:'',
-        diseaseTypeDesc:''
+      correct: {
+        diameter: "",
+        density: "",
+        probability: "",
+        location: "",
+        diseaseTypeDesc: "",
+        x: 0,
+        y: 0
       },
       correctRules: {
-        diameter: [
-          { required: true,message: '请输入直径', trigger: 'blur' }
-        ],
-        density: [
-          { required: true,message: '请输入密度', trigger: 'blur' }
-        ],
+        diameter: [{ required: true, message: "请输入直径", trigger: "blur" }],
+        density: [{required: true, message: "请输入密度", trigger: "blur" }],
         probability: [
-          { required: true,message: '请输入可能性', trigger: 'blur' }
+          {required: true, message: "请输入可能性", trigger: "blur" }
         ],
-        location: [
-          { required: true,message: '请输入坐标', trigger: 'blur' }
-        ],
+        x: [{required: true, message: "请输入坐标X", trigger: "blur" }],
+        y: [{required: true, message: "请输入坐标Y", trigger: "blur" }],
         diseaseTypeDesc: [
-          { required: true,message: '请输入病灶描述', trigger: 'blur' }
-        ],
+          { required: true, message: "请输入病灶描述", trigger: "blur" }
+        ]
       },
       queryDiagnosis: null
     };
   },
   methods: {
-    submitForm1(formName) {//编辑诊断结果
-        this.$refs[formName].validate((valid) => {
+    submitForm1(formName) {
+      //编辑诊断结果
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          this.editResult()
+          this.editResult();
         } else {
           return false;
         }
       });
     },
-    submitForm(formName) {//信息提交验证
-        this.$refs[formName].validate((valid) => {
+    submitForm(formName) {
+      //信息提交验证
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          this.serialImage(1)
+          this.serialImage(1);
         } else {
           return false;
         }
@@ -576,9 +582,9 @@ export default {
         if (res.code == "000000") {
           if (type == 1) {
             this.queryDiagnosis = res.data;
-            if(res.data){
-                this.doctor.describe = res.data.doctor_desc;
-                this.doctor.result = res.data.doctor_result;
+            if (res.data) {
+              this.doctor.describe = res.data.doctor_desc;
+              this.doctor.result = res.data.doctor_result;
             }
             this.dialogVisible = true;
           } else if (type == 2) {
@@ -611,83 +617,112 @@ export default {
       let query = this.$route.query;
       //保存方法  type:1 编辑  2删除  3漏诊提醒
       let data = {
-        institutionId:query.institutionId,
-        serialUID:query.serialUID,
-        diseaseType:query.diseaseType,
-        channelId:query.channelId,
-        imageId:this.correct.imageId,
-        imageNo:this.correct.imageNo,
-        diameter:this.correct.diameter,
-        probability:this.correct.probability,
-        density:this.correct.density,
-        location:this.correct.location,
-        diseaseTypeDesc:this.correct.diseaseTypeDesc,
-        deletedFlag:0,
-        imageIndex:this.correct.imageIndex
-      }
+        institutionId: query.institutionId,
+        serialUID: query.serialUID,
+        diseaseType: query.diseaseType,
+        channelId: query.channelId,
+        imageId: this.correct.imageId,
+        imageNo: this.correct.imageNo,
+        diameter: this.correct.diameter,
+        probability: Number(this.correct.probability)+'%',
+        density: this.correct.density,
+        location: this.correct.x+','+this.correct.y+','+this.correct.imageNo,
+        diseaseTypeDesc: this.correct.diseaseTypeDesc,
+        deletedFlag: 0,
+        imageIndex: this.correct.imageIndex
+      };
+      this.correct.location = data.location
+      this.correct.probability = data.probability
       if (type == 1) {
         //1 编辑
-        data.deletedFlag = 0
-        this.$post("/api/serialImage",data).then(res => {
+        data.deletedFlag = 0;
+        console.log(data.probability)
+        this.$post("/api/serialImage", data).then(res => {
           if (res.code == "000000") {
             this.$message({
               message: "修正成功",
               type: "success"
             });
-            this.exampleStudyImageIds.map((v,k)=>{ //删除指定并且赋值
-              v.focus.map((n,m)=>{
-                if(this.correct.imageIndex == n.imageIndex){
-                    this.listDetail = this.correct
-                    this.exampleStudyImageIds[k].focus[m].diameter = this.correct.diameter
-                    this.exampleStudyImageIds[k].focus[m].location = this.correct.location
-                    this.cornerstone.setEllipticalRoi(this.exampleStudyImageIds[k])
-                    this.cornerstone1.setEllipticalRoi(this.exampleStudyImageIds[k])
+            this.exampleStudyImageIds1.map((u, i) => {
+                if (u.imageIndex == data.imageIndex) {
+                  this.exampleStudyImageIds1[i].diseaseTypeDesc = data.diseaseTypeDesc;
+                  this.exampleStudyImageIds1[i].probability = data.probability;
                 }
-              })
-            })
+              });
+            this.exampleStudyImageIds.map((v, k) => {
+              //删除指定并且赋值
+              v.focus.map((n, m) => {
+                if (this.correct.imageIndex == n.imageIndex) {
+                  this.listDetail = this.deepClone(this.correct);
+                  this.exampleStudyImageIds[k].focus[
+                    m
+                  ].diameter = this.correct.diameter;
+                  this.exampleStudyImageIds[k].focus[
+                    m
+                  ].location = this.correct.location;
+                  this.cornerstone.setEllipticalRoi(
+                    this.exampleStudyImageIds[k]
+                  );
+                  this.cornerstone1.setEllipticalRoi(
+                    this.exampleStudyImageIds[k]
+                  );
+                }
+              });
+            });
             this.isCorrect = false;
           }
         });
       } else if (type == 2) {
         //2删除
-        data.deletedFlag = 1
+        data.deletedFlag = 1;
         this.$post("/api/serialImage", data).then(res => {
           if (res.code == "000000") {
             if (data.deletedFlag == 1) {
-                this.exampleStudyImageIds.map((v,k)=>{ //删除指定并且赋值
-                  v.focus.map((n,m)=>{
-                    if(this.correct.imageIndex == n.imageIndex){
-                        this.listDetail = n
-                        this.exampleStudyImageIds[k].focus.splice(m, 1)
-                        // console.log(this.exampleStudyImageIds[k],22222)
-                        this.exampleStudyImageIds1.map((u,i)=>{
-                          if(u.imageIndex == n.imageIndex){
-                            this.isDetail = false;
-                            this.exampleStudyImageIds1.splice(i, 1)
-                          }
-                        })
-                        if(this.exampleStudyImageIds[k].focus.length == 0){
-                          this.isDetail = false;
-                        }
-                        this.cornerstone.setEllipticalRoi(this.exampleStudyImageIds[k])
-                        this.cornerstone1.setEllipticalRoi(this.exampleStudyImageIds[k])
+              this.exampleStudyImageIds.map((v, k) => {
+                //删除指定并且赋值
+                v.focus.map((n, m) => {
+                  if (this.correct.imageIndex == n.imageIndex) {
+                    this.listDetail = n;
+                    this.exampleStudyImageIds[k].focus.splice(m, 1);
+                    // console.log(this.exampleStudyImageIds[k],22222)
+                    this.exampleStudyImageIds1.map((u, i) => {
+                      if (u.imageIndex == n.imageIndex) {
+                        this.isDetail = false;
+                        this.exampleStudyImageIds1.splice(i, 1);
+                      }
+                    });
+                    if (this.exampleStudyImageIds[k].focus.length == 0) {
+                      this.isDetail = false;
                     }
-                  })
-                })
-                
-                this.listIndex = -1
-                // this.getSerialImages()
-                this.$message({
-                  message: "删除成功",
-                  type: "success"
+                    this.cornerstone.setEllipticalRoi(
+                      this.exampleStudyImageIds[k]
+                    );
+                    this.cornerstone1.setEllipticalRoi(
+                      this.exampleStudyImageIds[k]
+                    );
+                  }
                 });
+              });
+
+              this.listIndex = -1;
+              // this.getSerialImages()
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
             }
           }
         });
         this.isDelete = false;
       } else if (type == 3) {
-      let data = this.exampleStudyImageIds[this.$refs.slider.getIndex()]
-        this.$post("/api/image/missDiagnosis", Object.assign(query,{imageNo:data.imageNo,missedDiagnosisFlag:1})).then(res => {
+        let data = this.exampleStudyImageIds[this.$refs.slider.getIndex()];
+        this.$post(
+          "/api/image/missDiagnosis",
+          Object.assign(query, {
+            imageNo: data.imageNo,
+            missedDiagnosisFlag: 1
+          })
+        ).then(res => {
           if (res.code == "000000") {
             if (data.missedDiagnosisFlag == 1) {
               this.$message({
@@ -700,31 +735,39 @@ export default {
         });
       }
     },
+    deepClone(source){ //深度拷贝
+      return JSON.parse(JSON.stringify(source));
+    },
+    showCorrect(){
+      this.correct.probability = Number(this.listDetail.probability.replace('%', ''))
+    },
     listClick(index) {
       //点击列表
-      if(index >= this.exampleStudyImageIds1.length){
-        index = this.exampleStudyImageIds1.length-1
-      }else if(index<0){
-        index = 0
+      if (index >= this.exampleStudyImageIds1.length) {
+        index = this.exampleStudyImageIds1.length - 1;
+      } else if (index < 0) {
+        index = 0;
       }
-      let data = this.exampleStudyImageIds1[index]
+      let data = this.exampleStudyImageIds1[index];
       this.listIndex = index;
-      this.listDetail = data;
-      this.correct = data
-      this.correct.imageId = index+1
-      if(!this.correct.diseaseTypeDesc){
-        this.correct.diseaseTypeDesc = '肺结节'
+      this.listDetail = this.deepClone(data);
+      this.correct = this.deepClone(data);
+      this.correct.imageId = index + 1;
+      this.correct.x = data.location.split(',')[0]
+      this.correct.y = data.location.split(',')[1]
+      if (!this.correct.diseaseTypeDesc) {
+        this.correct.diseaseTypeDesc = "肺结节";
       }
       if (data.location) {
         this.isDetail = true;
       } else {
         this.isDetail = false;
       }
-      this.exampleStudyImageIds.map((v,k)=>{
-        if(data.imageNo == v.imageNo){
+      this.exampleStudyImageIds.map((v, k) => {
+        if (data.imageNo == v.imageNo) {
           this.$refs.slider.setIndex(k);
         }
-      })
+      });
     },
     sliderCallback() {
       //拖动回调
@@ -737,19 +780,19 @@ export default {
         this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
       // this.listIndex = this.$refs.slider.getIndex();
-      this.exampleStudyImageIds.map((v,k)=>{
-         v.focus.map((n,m)=>{
-          if(this.exampleStudyImageIds1[this.listIndex].imageIndex == n.imageIndex){
-              this.listDetail = n
+      this.exampleStudyImageIds.map((v, k) => {
+        v.focus.map((n, m) => {
+          if (
+            this.exampleStudyImageIds1[this.listIndex].imageIndex ==
+            n.imageIndex
+          ) {
+            this.listDetail = n;
           }
-        })
-      })
-      // if (this.listDetail.location) {
-      //   this.isDetail = true;
-      // } else {
-      //   this.isDetail = false;
-      // }
-      this.windowFun(400, 40, 0);
+        });
+      });
+      this.active = "";
+      this.isWindow = false;
+      // this.windowFun(400, 40, 0);
     },
     sliderSwitch(type) {
       //切换
@@ -777,10 +820,18 @@ export default {
         ) {
           this.$confirm("内容未提交，是否直接关闭？")
             .then(_ => {
+              this.doctor = {
+                describe: "",
+                result: ""
+              }
               done();
             })
             .catch(_ => {});
         } else {
+          this.doctor = {
+                describe: "",
+                result: ""
+              }
           done();
         }
       } else {
@@ -821,7 +872,7 @@ export default {
       this.cornerstone.lengthTool().deactivate();
       switch (data) {
         case "yd":
-            this.cornerstone.pan().activate();
+          this.cornerstone.pan().activate();
           break;
         case "xz":
           this.cornerstone.rotate(90);
@@ -864,39 +915,47 @@ export default {
         this.isWindow = false;
       }
     },
-    getSerialImages(){//请求病灶
-        let data = this.$route.query;
-       this.$post("/api/serialImages", data).then(res => {
+    getSerialImages() {
+      //请求病灶
+      let data = this.$route.query;
+      this.$post("/api/serialImages", data).then(res => {
         this.exampleStudyImageIds1 = res.data;
         this.listDetail = this.exampleStudyImageIds1[0];
-        this.correct = this.exampleStudyImageIds1[0]
-        this.correct.imageId = 1
-        if(!this.correct.diseaseTypeDesc){
-          this.correct.diseaseTypeDesc = '肺结节'
+        this.correct = this.exampleStudyImageIds1[0];
+        this.correct.imageId = 1;
+        this.correct.x =  this.exampleStudyImageIds1[0].location.split(',')[0]
+        this.correct.y =  this.exampleStudyImageIds1[0].location.split(',')[1]
+        if (!this.correct.diseaseTypeDesc) {
+          this.correct.diseaseTypeDesc = "肺结节";
         }
-        this.exampleStudyImageIds.map((v,k)=>{
-          this.exampleStudyImageIds1.map((n,m)=>{
-            if(v.imageNo == n.imageNo){
-                this.exampleStudyImageIds[k].focus.push(n)
+        this.exampleStudyImageIds.map((v, k) => {
+          this.exampleStudyImageIds1.map((n, m) => {
+            if (v.imageNo == n.imageNo) {
+              this.exampleStudyImageIds[k].focus.push(n);
             }
-          })
-        })
+          });
+        });
       });
     },
-    myDate(value){//格式化时间
-      if(!value) return ''
-      let myDate = value.split('-')
-      return myDate[0]+'年'+myDate[1]+'月'+myDate[2].substring(0,2)+'日'
-    },
+    myDate(value) {
+      //格式化时间
+      if (!value) return "";
+      let myDate = value.split("-");
+      return (
+        myDate[0] + "年" + myDate[1] + "月" + myDate[2].substring(0, 2) + "日"
+      );
+    }
   },
   created() {
     let data = this.$route.query;
 
-    this.$post("/api/serial", data).then(res => { //获取患者信息
+    this.$post("/api/serial", data).then(res => {
+      //获取患者信息
       this.detail = res.data;
     });
 
-     this.$post("/api/listOriginalImages", data).then(res => { //请求全部影像列表
+    this.$post("/api/listOriginalImages", data).then(res => {
+      //请求全部影像列表
       this.exampleStudyImageIds = res.data;
       this.slider.max = res.data.lenght - 1;
       this.$refs.cornerstone
@@ -914,11 +973,10 @@ export default {
           //初始化缩略图
           this.cornerstone1 = this.$refs.cornerstone1;
         });
-        this.exampleStudyImageIds.map((v,k)=>{
-          v.focus = []
-        })
-      this.getSerialImages()
-     
+      this.exampleStudyImageIds.map((v, k) => {
+        v.focus = [];
+      });
+      this.getSerialImages();
     });
   },
   computed: {
@@ -939,28 +997,28 @@ export default {
     }
   },
   filters: {
-     genderFilter(value) {
-      if (value == 'm' || value == 0 || value == '男') {
-        return '男'
-      } else if (value == 'f' || value == 1 || value == '女') {
-        return '女'
+    genderFilter(value) {
+      if (value == "m" || value == 0 || value == "男") {
+        return "男";
+      } else if (value == "f" || value == 1 || value == "女") {
+        return "女";
       } else {
-        return '--'
+        return "--";
       }
     },
     toFixedTwo(value) {
       return Number(value).toFixed(2);
     },
-    
-    identifier(value){
-      if(value<10){
-        return '00'+value
-      }else if(value>9){
-        return '0'+value
-      }else if(value>100){
-        return value
+
+    identifier(value) {
+      if (value < 10) {
+        return "00" + value;
+      } else if (value > 9) {
+        return "0" + value;
+      } else if (value > 100) {
+        return value;
       }
-    },
+    }
   }
 };
 </script>
@@ -1007,6 +1065,26 @@ export default {
       color: #fff;
       position: absolute;
       text-align: left;
+    }
+    .a {
+      top: 18px;
+      left: 50%;
+      transform: translate(-50%, 0%);
+    }
+    .r {
+      top: 50%;
+      right: 18px;
+      transform: translate(0%, -50%);
+    }
+    .l {
+      top: 50%;
+      left: 18px;
+      transform: translate(0%, -50%);
+    }
+    .d {
+      bottom: 18px;
+      left: 50%;
+      transform: translate(-50%, 0%);
     }
   }
   .popup {

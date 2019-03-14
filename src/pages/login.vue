@@ -7,7 +7,7 @@
           <div class="login-title">用户登录</div>
           <div class="input-box">
             <div class="icon">
-              <img src="./assets/login/username.png">
+              <img src="../assets/login/username.png">
               <div>手机号</div>
             </div>
             <input placeholder="11位手机号" class="so-input" v-model.trim="userParameter.phoneNum" maxlength="25"
@@ -15,7 +15,7 @@
           </div>
           <div class="input-box">
             <div class="icon">
-              <img src="./assets/login/password.png">
+              <img src="../assets/login/password.png">
               <div>验证码</div>
             </div>
             <div class="validate">
@@ -24,7 +24,7 @@
               <div class="button-validate" @click="getSmsCode">获取验证码</div>
             </div>
             <div class="validate-msg" v-if="msg">
-              <img src="./assets/login/warning.png"/>
+              <img src="../assets/login/warning.png"/>
               <div>
                 {{msg}}
               </div>
@@ -48,10 +48,10 @@
 </template>
 
 <script>
-  import top from './components/top'
-  import login_bg_1 from './assets/login/login-bg-1.png'
-  import login_bg_2 from './assets/login/login-bg-2.png'
-  import login_kuang from './assets/login/login-kuang.png'
+  import top from '@/components/top'
+  import login_bg_1 from '@/assets/login/login-bg-1.png'
+  import login_bg_2 from '@/assets/login/login-bg-2.png'
+  import login_kuang from '@/assets/login/login-kuang.png'
 
   export default {
     name: "login",

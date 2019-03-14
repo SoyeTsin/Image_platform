@@ -9,8 +9,8 @@
 </template>
 
 <script>
-  import top from './components/top'
-  import menuAside from './components/aside'
+  import top from '@/components/top'
+  import menuAside from '@/components/aside'
 
   export default {
     name: "index",

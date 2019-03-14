@@ -61,12 +61,29 @@
   .tips {
     height: 88px;
     text-align: center;
-
     p {
+      display: block;
       text-align: left;
-
       span {
+        display: block;
+        float: left;
         line-height: 30px;
+        height: 30px;
+        input{
+          width: 100%;
+        }
+        &:nth-child(1){
+          width: 70px;
+        }
+        &:nth-child(2){
+          width:154px;
+          position: relative;
+          i{
+            position: absolute;
+            right: 3px;
+            top: 1px;
+          }
+        }
       }
     }
 

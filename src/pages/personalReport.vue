@@ -13,7 +13,7 @@
         </div>
         <div class="report-main">
           <div class="report-title">
-            <img src="./assets/grbg.png" class="title-icon">
+            <img src="../assets/grbg.png" class="title-icon">
             AI辅助筛查统计报告（个人）
           </div>
           <div class="report-content">
@@ -26,13 +26,13 @@
             </div>
             <div class="report-nav report-nav-left">
               <div>
-                <img src="./assets/tishi.png" class="tishi-icon">平安颖像肺结节智能筛查系统提示：通过对您病区患者的肺结节影像智能筛查，筛查状况见下表，此提示仅供您参考，请进一步诊断确认！
+                <img src="../assets/tishi.png" class="tishi-icon">平安颖像肺结节智能筛查系统提示：通过对您病区患者的肺结节影像智能筛查，筛查状况见下表，此提示仅供您参考，请进一步诊断确认！
               </div>
             </div>
             <div class="report-des">
               <div class="report-main-left">
                 <div class="report-label">
-                  <img src="./assets/jbxx.png" class="tishi-icon">患者基本信息
+                  <img src="../assets/jbxx.png" class="tishi-icon">患者基本信息
                 </div>
                 <el-row class="report-item">
                   <el-col :span="8">患者姓名：{{serial.patientName}}</el-col>
@@ -40,12 +40,12 @@
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
                 <el-row class="report-item">
-                  <el-col :span="8">拍摄部位：{{serial.bodyPartExamined}}</el-col>
+                  <el-col :span="8">拍摄部位：{{serial.bodyPartExamined?serial.bodyPartExamined:'--'}}</el-col>
                   <el-col :span="8">检查设备：{{serial.modality}}</el-col>
                   <el-col :span="8">检查时间：{{serial.examDate}}</el-col>
                 </el-row>
                 <div class="report-label">
-                  <img src="./assets/zdjg.png" class="tishi-icon">AI诊断结果
+                  <img src="../assets/zdjg.png" class="tishi-icon">AI诊断结果
                 </div>
                 <el-row class="report-item">
                   <el-col :span="24">AI检测结果：该患者疑似存在{{tableData.length}}个肺结节</el-col>
@@ -111,7 +111,7 @@
               <el-col :span="24" style="position: relative;">
                 <el-input type="textarea" :rows="5" placeholder="请输入内容" :maxlength='500' v-model="ruleForm.textarea"></el-input>
                 <div class="text-length">
-                  {{textarea.length}}/500
+                  {{ruleForm.textarea.length}}/500
                 </div>
               </el-col>
             </el-row>
@@ -125,9 +125,9 @@
   </el-container>
 </template>
 <script>
-import top from "./components/top";
+import top from "@/components/top";
 import CornerstoneCanvas from "@/components/CornerstoneCanvas";
-import feedback from "./components/feedback";
+import feedback from "@/components/feedback";
 export default {
   name: "userInfo",
   data() {
@@ -194,7 +194,7 @@ export default {
       });
     },
     handleClose(done) {
-      if (this.textarea.length > 0) {
+      if (this.ruleForm.textarea.length > 0) {
         this.$confirm("内容未提交,是否直接关闭？")
           .then(_ => {
             this.textarea = "";

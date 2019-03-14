@@ -40,7 +40,7 @@
         </el-col>
         <el-col :span="4" class="display-right">
           <el-button type="success" class="search-button"  @click="refreshFun" style="margin: 0">
-            <!--<img src="./assets/chongzhi.png" class="so-icon"/>-->
+            <!--<img src="../assets/chongzhi.png" class="so-icon"/>-->
             清空
           </el-button>
           <el-button type="success" class="search-button" @click="search">查询</el-button>
@@ -94,9 +94,9 @@
 </template>
 
 <script>
-  import common from './common/common'
-  import icon_edit from './assets/list/edit.png'
-  import addMechanism from './components/addMechanism'
+  import common from '@/common/common'
+  import icon_edit from '@/assets/list/edit.png'
+  import addMechanism from '@/components/addMechanism'
 
   export default {
     name: "mechanism",

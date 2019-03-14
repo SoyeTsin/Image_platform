@@ -13,7 +13,7 @@
         </div>
         <div class="report-main">
           <div class="report-title">
-            <img src="./assets/zdbg.png" class="title-icon">
+            <img src="../assets/zdbg.png" class="title-icon">
             诊断报告
           </div>
           <div class="report-content">
@@ -27,7 +27,7 @@
             <div class="report-des">
               <div class="report-main-left">
                 <div class="report-label">
-                  <img src="./assets/jbxx.png" class="tishi-icon">患者基本信息
+                  <img src="../assets/jbxx.png" class="tishi-icon">患者基本信息
                 </div>
                 <el-row class="report-item">
                   <el-col :span="8">患者姓名：{{serial.patientName}}</el-col>
@@ -35,12 +35,12 @@
                   <el-col :span="8">患者性别：{{serial.sex|genderFilter}}</el-col>
                 </el-row>
                 <el-row class="report-item">
-                  <el-col :span="8">拍摄部位：{{serial.bodyPartExamined}}</el-col>
+                  <el-col :span="8">拍摄部位：{{serial.bodyPartExamined?serial.bodyPartExamined:'--'}}</el-col>
                   <el-col :span="8">检查设备：{{serial.modality}}</el-col>
                   <el-col :span="8">检查时间：{{serial.examDate}}</el-col>
                 </el-row>
                 <div class="report-label">
-                  <img src="./assets/zdjg.png" class="tishi-icon">影像描述
+                  <img src="../assets/zdjg.png" class="tishi-icon">影像描述
                 </div>
                 <el-row class="report-item">
                   <!-- <el-col :span="24" class="label">中线位置：居中</el-col> -->
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import top from "./components/top";
+import top from "@/components/top";
 import CornerstoneCanvas from "@/components/CornerstoneCanvas";
 export default {
   name: "userInfo",

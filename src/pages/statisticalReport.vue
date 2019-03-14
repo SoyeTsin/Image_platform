@@ -33,7 +33,7 @@
         </div>
         <div class="report-main">
           <div class="report-title">
-            <img src="./assets/statisticalReport.png" class="title-icon">
+            <img src="../assets/statisticalReport.png" class="title-icon">
             AI辅助筛查统计报告
           </div>
           <div class="report-content">
@@ -46,7 +46,7 @@
             </div>
             <div class="report-nav report-nav-left">
               <div>
-                <img src="./assets/tishi.png" class="tishi-icon">
+                <img src="../assets/tishi.png" class="tishi-icon">
                 平安颖像肺结节智能筛查系统提示：通过对您病区患者的肺结节影像智能筛查，筛查状况见下表，此提示仅供您参考，请进一步诊断确认！
               </div>
             </div>
@@ -71,10 +71,10 @@
 
 <script>
   import G2 from "@antv/g2";
-  import columnG2 from "./components/columnG23";
+  import columnG2 from "@/components/columnG23";
   // import pieG2 from "./components/pieG2";
-  import top from "./components/top";
-  import feedback from './components/feedback'
+  import top from "@/components/top";
+  import feedback from '@/components/feedback'
 
   export default {
     name: "userInfo",

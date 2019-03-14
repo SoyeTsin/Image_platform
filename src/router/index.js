@@ -2,15 +2,23 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/pages/index'
 import login from '@/pages/login'
-import admin from '@/pages/admin'
-import fjjCT from '@/pages/fjjCT'
-import mechanism from '@/pages/mechanism'
-import userinfo from '@/pages/userinfo'
-import personalReport from '@/pages/personalReport'
-import statisticalReport from '@/pages/statisticalReport'
-import report from '@/pages/report'
-import imageList from '@/pages/imageList'
+// import admin from '@/pages/admin'
+// import fjjCT from '@/pages/fjjCT'
+// import mechanism from '@/pages/mechanism'
+// import userinfo from '@/pages/userinfo'
+// import personalReport from '@/pages/personalReport'
+// import statisticalReport from '@/pages/statisticalReport'
+// import report from '@/pages/report'
+// import imageList from '@/pages/imageList'
 
+const admin = () => import('@/pages/admin')
+const fjjCT = () => import('@/pages/fjjCT')
+const mechanism = () => import('@/pages/mechanism')
+const userinfo = () => import('@/pages/userinfo')
+const personalReport = () => import('@/pages/personalReport')
+const statisticalReport = () => import('@/pages/statisticalReport')
+const report = () => import('@/pages/report')
+const imageList = () => import('@/pages/imageList')
 Vue.use(Router)
 
 export default new Router({

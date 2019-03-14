@@ -55,7 +55,7 @@
         </el-col>
         <el-col :span="3" class="display-right">
           <el-button type="success" class="search-button" @click="refreshFun" style="margin: 0">
-            <!--<img src="./assets/chongzhi.png" class="so-icon"/>-->
+            <!--<img src="../assets/chongzhi.png" class="so-icon"/>-->
             清空
           </el-button>
           <el-button type="success" class="search-button" @click="search">查询</el-button>
@@ -104,11 +104,11 @@
 </template>
 
 <script>
-  import icon_delete from './assets/list/delete.png'
-  import icon_edit from './assets/list/edit.png'
-  import icon_report from './assets/list/report.png'
-  import common from './common/common'
-  import addUser from './components/addUser'
+  import icon_delete from '@/assets/list/delete.png'
+  import icon_edit from '@/assets/list/edit.png'
+  import icon_report from '@/assets/list/report.png'
+  import common from '@/common/common'
+  import addUser from '@/components/addUser'
 
   export default {
     name: "userInfo",

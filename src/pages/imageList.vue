@@ -67,7 +67,7 @@
           </el-col>
           <el-col :span="4" class="display-right">
             <el-button type="success" class="search-button" @click="refreshFun" style="margin: 0">
-              <!--<img src="./assets/chongzhi.png" class="so-icon"/>-->
+              <!--<img src="../assets/chongzhi.png" class="so-icon"/>-->
               清空
             </el-button>
             <el-button type="success" class="search-button" @click="search">查询</el-button>
@@ -106,23 +106,23 @@
                 <el-tooltip class="item" effect="dark" content="查看影像" placement="bottom">
                   <router-link
                     :to="{path:'fjjCT',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
-                    <img src="./assets/image/ck.png" class="table-icon">
+                    <img src="../assets/image/ck.png" class="table-icon">
                   </router-link>
                   npm install jsencrypt
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="查看报告" placement="bottom">
                   <router-link
                     :to="{path:'personalReport',query:{institutionId:scope.row.institutionId,serialUID: scope.row.serialUID,channelId: scope.row.channelId,diseaseType: scope.row.diseaseType}}">
-                    <img src="./assets/image/bg.png" class="table-icon">
+                    <img src="../assets/image/bg.png" class="table-icon">
                   </router-link>
                 </el-tooltip>
               </div>
               <div v-show='scope.row.aiCode!="000000"'>
                 <el-tooltip class="item" effect="dark" placement="bottom" content="无法查看">
-                  <img src="./assets/list/listyxh@2x.png" class="table-icon">
+                  <img src="../assets/list/listyxh@2x.png" class="table-icon">
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" placement="bottom" content="无法查看">
-                  <img src="./assets/list/listbgh@2x.png" class="table-icon">
+                  <img src="../assets/list/listbgh@2x.png" class="table-icon">
                 </el-tooltip>
               </div>
             </template>
@@ -148,8 +148,8 @@
 </template>
 
 <script>
-  import top from './components/top'
-  import common from './common/common'
+  import top from '@/components/top'
+  import common from '@/common/common'
 
   export default {
     name: "mechanism",

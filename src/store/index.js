@@ -4,7 +4,11 @@ Vue.use(Vuex)
 const state = {
     cornerstone:{},
     point:{},
-    ctdata:{}
+    ctdata:{},
+    viewport:{
+        windowWidth:400,
+        windowCenter:40
+    }
 }
 
 const getters = {
@@ -20,6 +24,9 @@ const mutations = {
     },
     SET_CTDATA(state, payload) {
         state.ctdata = payload
+    },
+    SET_VIEWPORT(state, payload) {
+        state.viewport = payload
     },
 }
 

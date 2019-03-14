@@ -129,8 +129,8 @@ export default {
             if (!image.minPixelValue) {
               image.minPixelValue = 0;
             }
-            viewport.voi.windowWidth = 400;
-            viewport.voi.windowCenter = 40;
+            viewport.voi.windowWidth = this.$store.state.viewport.windowWidth;
+            viewport.voi.windowCenter = this.$store.state.viewport.windowCenter;;
             // 显示图像
             cornerstone.displayImage(canvas, image, viewport);
             if (data && data.location) {
@@ -482,6 +482,7 @@ export default {
     },
     windowWidth(ww, wl) {
       //设置窗宽窗位
+      this.$store.commit('SET_VIEWPORT',{windowWidth:ww,windowCenter:wl})
       let viewport = cornerstone.getViewport(this.element);
       viewport.voi.windowWidth = ww;
       viewport.voi.windowCenter = wl;
@@ -503,8 +504,8 @@ export default {
             this.element,
             image
           );
-          viewport.voi.windowWidth = 400;
-          viewport.voi.windowCenter = 40;
+          viewport.voi.windowWidth = this.$store.state.viewport.windowWidth;
+          viewport.voi.windowCenter = this.$store.state.viewport.windowCenter;;
           cornerstoneTools.clearToolState(this.element, "simpleAngle");
           cornerstoneTools.clearToolState(this.element, "length");
           this.isTagging = false;

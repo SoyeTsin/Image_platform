@@ -7,21 +7,21 @@
           <div class="login-title">用户登录</div>
           <div class="input-box">
             <div class="icon">
-              <img src="./assets/login/usernameadmin.png">
+              <img src="../assets/login/usernameadmin.png">
               <div>用户名</div>
             </div>
             <input placeholder="输入用户名" class="so-input" v-model.trim="userParameter.userName" maxlength="25"></input>
           </div>
           <div class="input-box">
             <div class="icon">
-              <img src="./assets/login/password.png">
+              <img src="../assets/login/password.png">
               <div>密码</div>
             </div>
             <input placeholder="输入密码" type="password" class="so-input" v-model.trim="userParameter.password"
                    maxlength="25"
                    @keyup.enter="getPublicKey"></input>
             <div class="validate-msg" v-if="msg">
-              <img src="./assets/login/warning.png"/>
+              <img src="../assets/login/warning.png"/>
               <div>
                 {{msg}}
               </div>
@@ -45,10 +45,10 @@
 </template>
 
 <script>
-  import top from './components/top'
-  import login_bg_1 from './assets/login/login-bg-1.png'
-  import login_bg_2 from './assets/login/login-bg-2.png'
-  import login_kuang from './assets/login/login-kuang.png'
+  import top from '@/components/top'
+  import login_bg_1 from '@/assets/login/login-bg-1.png'
+  import login_bg_2 from '@/assets/login/login-bg-2.png'
+  import login_kuang from '@/assets/login/login-kuang.png'
 
   export default {
     name: "login",
