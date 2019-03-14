@@ -418,6 +418,7 @@
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
         this.timeArr = []
+        this.pageParameter.currentPage = 1
         this.parameter = {
           institutionId: this.institution.value,
           diseaseType: this.disease.value * 1,
