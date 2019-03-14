@@ -311,13 +311,15 @@
               this.$message.error(response.msg);
               return
             }
-            if (msg) {
-              this.$message(msg);
-            }
             this.tableData = response.data.list
             this.pageParameter.total = response.data.total || 0
             this.pageParameter.nowPage = response.data.pageNum || 0
             this.findAllDiseaseTypeCountList()
+            if (msg) {
+              this.$message({
+                message: msg, type: 'success'
+              });
+            }
           })
       },
       queryOrganizationList(dataType = 1, channelId = '') {
@@ -396,7 +398,7 @@
             this.getData()
           })
       },
-      refreshFun() {
+      refresh() {
         this.institution.value = this.institution.list[0].institutionId
         this.aiResult.value = ''
         this.disease.value = this.disease.list[0].id
@@ -404,6 +406,31 @@
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
         this.timeArr = []
+        this.parameter = {
+          institutionId: this.institution.value,
+          diseaseType: this.disease.value * 1,
+          aiMsg: this.aiResult.value,
+          pageNum: 1,
+          pageSize: common.pageParameter.pageSize
+        }
+        this.getData('刷新成功')
+      },
+      refreshFun() {
+        this.institution.value = this.institution.list[0].institutionId
+        this.aiResult.value = ''
+        this.disease.value = this.disease.list[0].id
+        // this.aiResult.value=''
+        const end = new Date();
+        const start = new Date();
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+        this.timeArr = []
+        this.parameter = {
+          institutionId: this.institution.value,
+          diseaseType: this.disease.value * 1,
+          aiMsg: this.aiResult.value,
+          pageNum: 1,
+          pageSize: common.pageParameter.pageSize
+        }
         // this.search()
       },
       search() {
@@ -465,9 +492,6 @@
             }
             this.diseaseCount = response.data
           })
-      },
-      refresh() {
-        this.getData('刷新成功')
       },
       intoReport() {
         let institutionName = ''
