@@ -424,6 +424,13 @@
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
         this.timeArr = []
+        this.parameter = {
+          institutionId: this.institution.value,
+          diseaseType: this.disease.value * 1,
+          aiMsg: this.aiResult.value,
+          pageNum: 1,
+          pageSize: common.pageParameter.pageSize
+        }
         // this.search()
       },
       search() {
