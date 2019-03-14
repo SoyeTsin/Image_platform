@@ -139,19 +139,18 @@ export default {
       var currentdate = year + seperator1 + month + seperator1 + strDate;
       return currentdate;
     }
-    console.log(myDate())
     this.FormatDate = myDate()
   },
   filters: {
-    genderFilter(value) {
-      if (value == "m") {
-        return "男";
-      } else if (value == "f") {
-        return "女";
-      } else {
-        return "--";
-      }
-    }
+     genderFilter(value) {
+        if (value == 'm' || value == 0 || value == '男') {
+          return '男'
+        } else if (value == 'f' || value == 1 || value == '女') {
+          return '女'
+        } else {
+          return '--'
+        }
+      },
   }
 };
 </script>

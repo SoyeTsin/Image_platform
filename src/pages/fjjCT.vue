@@ -3,10 +3,10 @@
     <el-aside :width="asideWidth" style="background-color:#131f2c;">
       <div class="top">
         <i class="icon-fanhui iconfont" style="cursor: pointer;" @click="asideFun"></i>
-        <i style="padding-left: 26.5px;">
+        <i style="padding-left: 16.5px;">
           <img src="../../static/fjj-icon/yx.png" alt>
         </i>
-        <p>{{detail?detail.modality:''}}</p>
+        <p style="word-wrap: break-word;width: 62%;text-align: left;">{{detail.serialUID}}&nbsp{{detail.bodyPartExamined}}{{detail?detail.modality:''}}</p>
       </div>
       <div class="info">
         <div class="img">
@@ -69,24 +69,6 @@
           <i class="icon-fanhui iconfont"></i>
         </div>
         <el-row type="flex" class="header-btn">
-          <!-- <el-col>
-           <p>
-            <img src="../../static/fjj-icon/xq.png">
-            <span>向前</span>
-          </p>
-        </el-col>
-        <el-col>
-           <p>
-            <img src="../../static/fjj-icon/xh.png">
-            <span>向后</span>
-          </p>
-          </el-col>-->
-          <!-- <el-col>
-           <p>
-            <img src="../../static/fjj-icon/bc.png">
-            <span>保存</span>
-          </p>
-          </el-col>-->
           <el-col :class="[active == 'yd'?'active':'']">
             <p @click="activeFun('yd')">
               <img src="../../static/fjj-icon/yd.png">
@@ -351,7 +333,7 @@
           <br>T : 2.5mm &nbsp&nbsp L : -46.8
           <br>
         </div>
-        <div class="right-bottom" style="right:18px;bottom:18px;">50mA &nbsp&nbsp 140KV
+        <div class="right-bottom" style="right:18px;bottom:18px;">{{$store.state.ctdata.ma}}mA &nbsp&nbsp {{$store.state.ctdata.kv}}KV
           <br>
           {{detail.examDate}}
           <br>
@@ -640,7 +622,8 @@ export default {
         density:this.correct.density,
         location:this.correct.location,
         diseaseTypeDesc:this.correct.diseaseTypeDesc,
-        deletedFlag:0
+        deletedFlag:0,
+        imageIndex:this.correct.imageIndex
       }
       if (type == 1) {
         //1 编辑
@@ -651,7 +634,17 @@ export default {
               message: "修正成功",
               type: "success"
             });
-            this.getSerialImages()
+            this.exampleStudyImageIds.map((v,k)=>{ //删除指定并且赋值
+              v.focus.map((n,m)=>{
+                if(this.correct.imageIndex == n.imageIndex){
+                    this.listDetail = this.correct
+                    this.exampleStudyImageIds[k].focus[m].diameter = this.correct.diameter
+                    this.exampleStudyImageIds[k].focus[m].location = this.correct.location
+                    this.cornerstone.setEllipticalRoi(this.exampleStudyImageIds[k])
+                    this.cornerstone1.setEllipticalRoi(this.exampleStudyImageIds[k])
+                }
+              })
+            })
             this.isCorrect = false;
           }
         });
@@ -661,30 +654,33 @@ export default {
         this.$post("/api/serialImage", data).then(res => {
           if (res.code == "000000") {
             if (data.deletedFlag == 1) {
-              let sliderIndex = this.$refs.slider.getIndex()
-              if(sliderIndex>1){
-                this.$refs.slider.setIndex(this.$refs.slider.getIndex() - 1)
-              }else{
-                this.$refs.slider.setIndex(this.$refs.slider.getIndex() + 1)
-              }
-               this.cornerstone.loadImage(
-                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
-                    .imageUrl,
-                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
-                );
-                this.cornerstone1.loadImage(
-                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
-                    .imageUrl,
-                  this.exampleStudyImageIds[this.$refs.slider.getIndex()-1]
-                );
+                this.exampleStudyImageIds.map((v,k)=>{ //删除指定并且赋值
+                  v.focus.map((n,m)=>{
+                    if(this.correct.imageIndex == n.imageIndex){
+                        this.listDetail = n
+                        this.exampleStudyImageIds[k].focus.splice(m, 1)
+                        // console.log(this.exampleStudyImageIds[k],22222)
+                        this.exampleStudyImageIds1.map((u,i)=>{
+                          if(u.imageIndex == n.imageIndex){
+                            this.isDetail = false;
+                            this.exampleStudyImageIds1.splice(i, 1)
+                          }
+                        })
+                        if(this.exampleStudyImageIds[k].focus.length == 0){
+                          this.isDetail = false;
+                        }
+                        this.cornerstone.setEllipticalRoi(this.exampleStudyImageIds[k])
+                        this.cornerstone1.setEllipticalRoi(this.exampleStudyImageIds[k])
+                    }
+                  })
+                })
                 
-              this.isDetail = false
-              this.listIndex = -1
-              this.getSerialImages()
-              this.$message({
-                message: "删除成功",
-                type: "success"
-              });
+                this.listIndex = -1
+                // this.getSerialImages()
+                this.$message({
+                  message: "删除成功",
+                  type: "success"
+                });
             }
           }
         });
@@ -724,14 +720,9 @@ export default {
       } else {
         this.isDetail = false;
       }
-      this.cornerstone.loadImage(
-        this.exampleStudyImageIds1[index].imageUrl,
-        this.exampleStudyImageIds1[index]
-      );
       this.exampleStudyImageIds.map((v,k)=>{
         if(data.imageNo == v.imageNo){
           this.$refs.slider.setIndex(k);
-          
         }
       })
     },
@@ -746,12 +737,18 @@ export default {
         this.exampleStudyImageIds[this.$refs.slider.getIndex()]
       );
       // this.listIndex = this.$refs.slider.getIndex();
-      this.listDetail = this.exampleStudyImageIds[this.slider.value];
-      if (this.listDetail.location) {
-        this.isDetail = true;
-      } else {
-        this.isDetail = false;
-      }
+      this.exampleStudyImageIds.map((v,k)=>{
+         v.focus.map((n,m)=>{
+          if(this.exampleStudyImageIds1[this.listIndex].imageIndex == n.imageIndex){
+              this.listDetail = n
+          }
+        })
+      })
+      // if (this.listDetail.location) {
+      //   this.isDetail = true;
+      // } else {
+      //   this.isDetail = false;
+      // }
       this.windowFun(400, 40, 0);
     },
     sliderSwitch(type) {
@@ -765,22 +762,6 @@ export default {
           this.$refs.slider.setIndex(this.$refs.slider.getIndex() + 1);
         }
       }
-      // this.cornerstone.loadImage(
-      //   this.exampleStudyImageIds[this.slider.value].imageUrl,
-      //   this.exampleStudyImageIds[this.slider.value]
-      // );
-      // this.cornerstone1.loadImage(
-      //   this.exampleStudyImageIds[this.slider.value].imageUrl,
-      //   this.exampleStudyImageIds[this.slider.value]
-      // );
-      // // this.listIndex = this.$refs.slider.getIndex();
-      // this.listDetail = this.exampleStudyImageIds[this.slider.value];
-      // if (this.listDetail.location) {
-      //   this.isDetail = true;
-      // } else {
-      //   this.isDetail = false;
-      // }
-      // this.windowFun(400, 40, 0);
     },
     handleClose(done) {
       //弹窗关闭回调
@@ -840,9 +821,7 @@ export default {
       this.cornerstone.lengthTool().deactivate();
       switch (data) {
         case "yd":
-          this.cornerstone.lengthTool().deactivate();
-          this.cornerstone.simpleAngle().deactivate();
-          this.cornerstone.pan().activate();
+            this.cornerstone.pan().activate();
           break;
         case "xz":
           this.cornerstone.rotate(90);
@@ -897,12 +876,11 @@ export default {
         }
         this.exampleStudyImageIds.map((v,k)=>{
           this.exampleStudyImageIds1.map((n,m)=>{
-            if(v.imageUrl == n.imageUrl){
-                this.exampleStudyImageIds[k] = n
+            if(v.imageNo == n.imageNo){
+                this.exampleStudyImageIds[k].focus.push(n)
             }
           })
         })
-         
       });
     },
     myDate(value){//格式化时间
@@ -921,23 +899,24 @@ export default {
      this.$post("/api/listOriginalImages", data).then(res => { //请求全部影像列表
       this.exampleStudyImageIds = res.data;
       this.slider.max = res.data.lenght - 1;
-      setTimeout(() => {
-          this.$refs.cornerstone
-            .init(
-              this.exampleStudyImageIds[0].imageUrl,
-              this.exampleStudyImageIds[0]
-            )
-            .then(res => {
-              //初始化工具
-              this.cornerstone = this.$refs.cornerstone;
-            });
-          this.$refs.cornerstone1
-            .init(this.exampleStudyImageIds[0].imageUrl)
-            .then(res => {
-              //初始化缩略图
-              this.cornerstone1 = this.$refs.cornerstone1;
-            });
-        }, 100);
+      this.$refs.cornerstone
+        .init(
+          this.exampleStudyImageIds[0].imageUrl,
+          this.exampleStudyImageIds[0]
+        )
+        .then(res => {
+          //初始化工具
+          this.cornerstone = this.$refs.cornerstone;
+        });
+      this.$refs.cornerstone1
+        .init(this.exampleStudyImageIds[0].imageUrl)
+        .then(res => {
+          //初始化缩略图
+          this.cornerstone1 = this.$refs.cornerstone1;
+        });
+        this.exampleStudyImageIds.map((v,k)=>{
+          v.focus = []
+        })
       this.getSerialImages()
      
     });
@@ -960,13 +939,13 @@ export default {
     }
   },
   filters: {
-    genderFilter(value) {
-      if (value == "m") {
-        return "男";
-      } else if (value == "f") {
-        return "女";
+     genderFilter(value) {
+      if (value == 'm' || value == 0 || value == '男') {
+        return '男'
+      } else if (value == 'f' || value == 1 || value == '女') {
+        return '女'
       } else {
-        return "";
+        return '--'
       }
     },
     toFixedTwo(value) {

@@ -87,7 +87,7 @@
                     class="ct-button-1"
                     @click="$router.push({path:'fjjCT',query:$route.query})"
                   >查看影像</el-button>
-                  <el-button type="success" class="ct-button-2" @click="dialogVisible = true">错误反馈</el-button>
+                  <el-button type="success" class="ct-button-2" @click="getFeedback()">错误反馈</el-button>
                 </div>
               </div>
             </div>
@@ -156,6 +156,16 @@ export default {
     top
   },
   methods: {
+    getFeedback(){
+      let query = this.$route.query;
+      this.$post("/api/getLastPatientFeedback",query).then(res=>{
+        if(res.data){
+          this.ruleForm.textarea = res.data.content
+          this.checked = res.data.canCall == 1?true:false
+        }
+      })
+      this.dialogVisible = true
+    },
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -254,24 +264,26 @@ export default {
     });
     this.$post("/api/serialImages", this.$route.query).then(res => {
       this.tableData = res.data;
-      this.$refs.cornerstone.init(this.tableData[0].imageUrl).then(res => {
-        this.cornerstone = this.$refs.cornerstone;
-      });
+      if(this.tableData.length>0){
+          this.$refs.cornerstone.init(this.tableData[0].imageUrl).then(res => {
+          this.cornerstone = this.$refs.cornerstone;
+        });
+      }
     });
     this.$post("/api/queryDiagnosis", this.$route.query).then(res => {
       this.queryDiagnosis = res.data;
     });
   },
   filters: {
-    genderFilter(value) {
-      if (value == "m") {
-        return "男";
-      } else if (value == "f") {
-        return "女";
-      } else {
-        return "--";
-      }
-    }
+     genderFilter(value) {
+        if (value == 'm' || value == 0 || value == '男') {
+          return '男'
+        } else if (value == 'f' || value == 1 || value == '女') {
+          return '女'
+        } else {
+          return '--'
+        }
+      },
   }
 };
 </script>

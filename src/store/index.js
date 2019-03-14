@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
     cornerstone:{},
-    point:{}
+    point:{},
+    ctdata:{}
 }
 
 const getters = {
@@ -16,6 +17,9 @@ const mutations = {
     },
     SET_POINT(state, payload) {
         state.point = payload
+    },
+    SET_CTDATA(state, payload) {
+        state.ctdata = payload
     },
 }
 
