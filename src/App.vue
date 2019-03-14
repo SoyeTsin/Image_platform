@@ -18,7 +18,7 @@
 
 <style lang="scss">
   @import "./assets/css/common.css";
-  @import "./pages/sass/alicss";
+  @import "./sass/alicss";
 
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;

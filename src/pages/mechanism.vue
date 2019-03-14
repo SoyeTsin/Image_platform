@@ -303,7 +303,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "sass/common";
+   @import "../sass/common";
 
   .two-col {
     padding: 4px 0;

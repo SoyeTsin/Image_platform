@@ -282,7 +282,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "sass/common";
+   @import "../sass/common";
 
   .el-main {
     box-sizing: border-box;

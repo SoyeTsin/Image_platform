@@ -143,7 +143,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "sass/login";
+  @import "../sass/login";
 
 </style>
 

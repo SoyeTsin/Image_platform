@@ -517,7 +517,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "sass/common";
+  @import "../sass/common";
 
   .el-header {
     padding: 0;
