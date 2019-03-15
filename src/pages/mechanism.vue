@@ -104,7 +104,7 @@
     data() {
       return {
         icon_edit,
-        pageParameter: common.pageParameter,
+        pageParameter: JSON.parse(JSON.stringify(common.pageParameter)),
         parameter: {
           channelId: "",
           institutionId: "",
@@ -126,12 +126,14 @@
         let a = val - c
         let b = a / pageSize
         let d = b + (c > 0 ? 1 : 0)
+        console.log(888888888)
+        console.log(d)
         return d
       }
     },
     mounted() {
-      this.pageParameter.currentPage = common.mechanismParameter.newPage
-      this.parameter.pageNum = common.mechanismParameter.newPage
+      this.pageParameter.currentPage = 1
+      this.parameter.pageNum = 1
       this.getData()
       this.queryRegionInfo()
       this.queryOrganizationList()

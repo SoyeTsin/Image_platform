@@ -10,8 +10,8 @@ axios.defaults.baseURL = 'https://generic-stg1.yingxiang.pingan.com:8080';
 //http request 拦截器
 axios.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('token');//注意使用的时候需要引入cookie方法，推荐js-cookie
-    const userId = localStorage.getItem('userId');//注意使用的时候需要引入cookie方法，推荐js-cookie
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
     const phoneNum = localStorage.getItem('phoneNum');//注意使用的时候需要引入cookie方法，推荐js-cookie
     config.data = JSON.stringify(config.data);
     config.headers = {
