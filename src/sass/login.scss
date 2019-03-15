@@ -72,7 +72,7 @@
 
 .form-content {
   width: 390px;
-  height: 390px;
+  height: 447px;
   position: absolute;
   text-align: left;
   color: #ffffff;
@@ -82,6 +82,7 @@
   padding: 0 50px;
   z-index: 3;
   background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 .login-title {
@@ -169,7 +170,7 @@
 .bg-title {
   display: block;
   position: absolute;
-  top: 120px;
+  top: 140px;
   left: 256px;
   font-family: PingFangSC-Thin;
   font-size: 40px;
@@ -198,7 +199,7 @@
   width: 580px;
   height: 480px;
   position: absolute;
-  top: 50%;
+  top: 55%;
   left: 119px;
   transform: translateY(-50%);
 

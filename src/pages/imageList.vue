@@ -66,11 +66,11 @@
             </el-date-picker>
           </el-col>
           <el-col :span="4" class="display-right">
-            <el-button type="success" class="search-button" @click="refreshFun" style="margin: 0">
+            <el-button type="success" class="add-button" @click="refreshFun" style="margin: 0;width:112px;">
               <!--<img src="../assets/chongzhi.png" class="so-icon"/>-->
               清空
             </el-button>
-            <el-button type="success" class="search-button" @click="search">查询</el-button>
+            <el-button type="success" class="search-button" @click="search" style="width:112px;">查询</el-button>
           </el-col>
         </el-row>
         <el-table :data="tableData" stripe :header-cell-style="{background:'#F3F6FC '}">
