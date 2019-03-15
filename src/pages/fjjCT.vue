@@ -8,7 +8,7 @@
         </i>
         <p
           style="word-wrap: break-word;width: 62%;text-align: left;"
-        >{{detail.serialUID}}&nbsp{{detail.bodyPartExamined}}&nbsp{{detail?detail.modality:''}}</p>
+        >{{detail.serialUID}}&nbsp;{{detail.bodyPartExamined}}&nbsp;{{detail?detail.modality:''}}</p>
       </div>
       <div class="info">
         <div class="img">
@@ -244,61 +244,81 @@
             <i @click="listClick(listIndex+1)">
               <img src="../assets/fjj-icon/jgr.png" alt>
             </i>
-            <el-popover placement="top" width="240" v-model="isCorrect" trigger="click" @show="showCorrect">
+            <el-popover
+              placement="top"
+              width="240"
+              v-model="isCorrect"
+              trigger="click"
+              @show="showCorrect"
+            >
               <div class="tips" style="height: auto;padding: 8px;" v-if="isCorrect">
                 <p style="padding-bottom: 20px;display: block;">信息修正</p>
                 <!-- <p
                   style=""
                 >AI提示：{{listDetail.diseaseTypeDesc?listDetail.diseaseTypeDesc:"肺结节"}}</p>-->
                 <el-form :model="correct" :rules="correctRules" ref="ruleForm">
-                    <p>
-                      <span>直径：</span>
-                      <el-form-item prop="diameter" >
-                          <span>
-                            <input type="number" v-model="correct.diameter" placeholder="请输入">
-                          </span>
-                      </el-form-item>
-                    </p>
-                    <p style="display: flex;">
-                      <span>密度：</span>
-                       <el-form-item prop="density">
+                  <p>
+                    <span>直径：</span>
+                    <el-form-item prop="diameter">
+                      <span>
+                        <input type="number" v-model="correct.diameter" placeholder="请输入">
+                      </span>
+                    </el-form-item>
+                  </p>
+                  <p style="display: flex;">
+                    <span>密度：</span>
+                    <el-form-item prop="density">
                       <span>
                         <input type="number" v-model="correct.density" placeholder="请输入">
                       </span>
-                  </el-form-item>
-                    </p>
-                    <p style="display: flex;">
-                      <span>可能性：</span>
-                      <el-form-item prop="probability">
-                          <span>
-                            <input type="number" max="100" v-model="correct.probability" placeholder="请输入">
-                            <i>%</i>
-                          </span>
-                      </el-form-item>
-                    </p>
-                    <p style="display: flex;">
-                      <span>坐标：</span>
-                      <el-form-item prop="x" style="width:72px;margin-right: 8px;">
+                    </el-form-item>
+                  </p>
+                  <p style="display: flex;">
+                    <span>可能性：</span>
+                    <el-form-item prop="probability">
                       <span>
-                        <input type="number" style="width:100%" v-model="correct.x" placeholder="请输入">
+                        <input
+                          type="number"
+                          max="100"
+                          v-model="correct.probability"
+                          placeholder="请输入"
+                        >
+                        <i>%</i>
                       </span>
-                      </el-form-item>
-                      <el-form-item prop="y" style="width:72px;">
+                    </el-form-item>
+                  </p>
+                  <p style="display: flex;">
+                    <span>坐标：</span>
+                    <el-form-item prop="x" style="width:72px;margin-right: 8px;">
+                      <span>
+                        <input
+                          type="number"
+                          style="width:100%"
+                          v-model="correct.x"
+                          placeholder="请输入"
+                        >
+                      </span>
+                    </el-form-item>
+                    <el-form-item prop="y" style="width:72px;">
                       <span style="width:72px;">
-                        <input type="number" style="width:100%" v-model="correct.y" placeholder="请输入">
+                        <input
+                          type="number"
+                          style="width:100%"
+                          v-model="correct.y"
+                          placeholder="请输入"
+                        >
                       </span>
-                      </el-form-item>
-                    </p>
-                  
-                    <p style="display: flex;">
-                      <span>病灶描述：</span>
-                  <el-form-item prop="diseaseTypeDesc">
+                    </el-form-item>
+                  </p>
 
+                  <p style="display: flex;">
+                    <span>病灶描述：</span>
+                    <el-form-item prop="diseaseTypeDesc">
                       <span>
                         <input type="text" v-model="correct.diseaseTypeDesc" placeholder="请输入">
                       </span>
-                  </el-form-item>
-                    </p>
+                    </el-form-item>
+                  </p>
                 </el-form>
 
                 <div class="btn">
@@ -332,14 +352,14 @@
           <br>CT LUNG SCREEN
         </div>
         <div class="left-bottom" style="left:18px;bottom:18px;">
-          X : {{$store.state.point.x}} &nbsp&nbsp Y : {{$store.state.point.y}} &nbsp&nbsp Val : {{$store.state.point.val}}
+          X : {{$store.state.point.x}} &nbsp;&nbsp; Y : {{$store.state.point.y}} &nbsp;&nbsp; Val : {{$store.state.point.val}}
           <br>
-          WW : {{windowWidth}} &nbsp&nbsp WL :{{windowCenter}} 「CT Chest 」
-          <br>T : 2.5mm &nbsp&nbsp L : -46.8
+          WW : {{windowWidth}} &nbsp;&nbsp; WL :{{windowCenter}} 「CT Chest 」
+          <br>T : 2.5mm &nbsp;&nbsp; L : -46.8
           <br>
         </div>
         <div class="right-bottom" style="right:18px;bottom:18px;">
-          {{$store.state.ctdata.ma}}mA &nbsp&nbsp {{$store.state.ctdata.kv}}KV
+          {{$store.state.ctdata.ma}}mA &nbsp;&nbsp; {{$store.state.ctdata.kv}}KV
           <br>
           {{detail.examDate}}
           <br>
@@ -530,12 +550,12 @@ export default {
       },
       correctRules: {
         diameter: [{ required: true, message: "请输入直径", trigger: "blur" }],
-        density: [{required: true, message: "请输入密度", trigger: "blur" }],
+        density: [{ required: true, message: "请输入密度", trigger: "blur" }],
         probability: [
-          {required: true, message: "请输入可能性", trigger: "blur" }
+          { required: true, message: "请输入可能性", trigger: "blur" }
         ],
-        x: [{required: true, message: "请输入坐标X", trigger: "blur" }],
-        y: [{required: true, message: "请输入坐标Y", trigger: "blur" }],
+        x: [{ required: true, message: "请输入坐标X", trigger: "blur" }],
+        y: [{ required: true, message: "请输入坐标Y", trigger: "blur" }],
         diseaseTypeDesc: [
           { required: true, message: "请输入病灶描述", trigger: "blur" }
         ]
@@ -583,9 +603,9 @@ export default {
         if (res.code == "000000") {
           if (type == 1) {
             this.doctor = {
-                describe: "",
-                result: ""
-              }
+              describe: "",
+              result: ""
+            };
             this.queryDiagnosis = res.data;
             if (res.data) {
               this.doctor.describe = res.data.doctor_desc;
@@ -629,19 +649,20 @@ export default {
         imageId: this.correct.imageId,
         imageNo: this.correct.imageNo,
         diameter: this.correct.diameter,
-        probability: Number(this.correct.probability)+'%',
+        probability: Number(this.correct.probability) + "%",
         density: this.correct.density,
-        location: this.correct.x+','+this.correct.y+','+this.correct.imageNo,
+        location:
+          this.correct.x + "," + this.correct.y + "," + this.correct.imageNo,
         diseaseTypeDesc: this.correct.diseaseTypeDesc,
         deletedFlag: 0,
         imageIndex: this.correct.imageIndex
       };
-      this.correct.location = data.location
-      this.correct.probability = data.probability
+      this.correct.location = data.location;
+      this.correct.probability = data.probability;
       if (type == 1) {
         //1 编辑
         data.deletedFlag = 0;
-        console.log(data.probability)
+        console.log(data.probability);
         this.$post("/api/serialImage", data).then(res => {
           if (res.code == "000000") {
             this.$message({
@@ -649,11 +670,12 @@ export default {
               type: "success"
             });
             this.exampleStudyImageIds1.map((u, i) => {
-                if (u.imageIndex == data.imageIndex) {
-                  this.exampleStudyImageIds1[i].diseaseTypeDesc = data.diseaseTypeDesc;
-                  this.exampleStudyImageIds1[i].probability = data.probability;
-                }
-              });
+              if (u.imageIndex == data.imageIndex) {
+                this.exampleStudyImageIds1[i].diseaseTypeDesc =
+                  data.diseaseTypeDesc;
+                this.exampleStudyImageIds1[i].probability = data.probability;
+              }
+            });
             this.exampleStudyImageIds.map((v, k) => {
               //删除指定并且赋值
               v.focus.map((n, m) => {
@@ -729,27 +751,28 @@ export default {
           })
         ).then(res => {
           if (res.code == "000000") {
-            if (data.missedDiagnosisFlag == 1) {
-              this.$message({
-                message: "已提交漏诊提醒，我们将会近一步核对详情",
-                type: "success"
-              });
-            }
+            this.$message({
+              message: "已提交漏诊提醒，我们将会近一步核对详情",
+              type: "success"
+            });
             this.isRemind = false;
           }
         });
       }
     },
-    deepClone(source){ //深度拷贝
+    deepClone(source) {
+      //深度拷贝
       return JSON.parse(JSON.stringify(source));
     },
-    showCorrect(){
-      let data = this.deepClone(this.listDetail)
+    showCorrect() {
+      let data = this.deepClone(this.listDetail);
       this.correct = data;
       this.correct.imageId = this.listIndex + 1;
-      this.correct.x = data.location.split(',')[0]
-      this.correct.y = data.location.split(',')[1]
-      this.correct.probability = Number(this.listDetail.probability.replace('%', ''))
+      this.correct.x = data.location.split(",")[0];
+      this.correct.y = data.location.split(",")[1];
+      this.correct.probability = Number(
+        this.listDetail.probability.replace("%", "")
+      );
     },
     listClick(index) {
       //点击列表
@@ -763,8 +786,8 @@ export default {
       this.listDetail = this.deepClone(data);
       this.correct = this.deepClone(data);
       this.correct.imageId = index + 1;
-      this.correct.x = data.location.split(',')[0]
-      this.correct.y = data.location.split(',')[1]
+      this.correct.x = data.location.split(",")[0];
+      this.correct.y = data.location.split(",")[1];
       if (!this.correct.diseaseTypeDesc) {
         this.correct.diseaseTypeDesc = "肺结节";
       }
@@ -833,15 +856,15 @@ export default {
               this.doctor = {
                 describe: "",
                 result: ""
-              }
+              };
               done();
             })
             .catch(_ => {});
         } else {
           this.doctor = {
-                describe: "",
-                result: ""
-              }
+            describe: "",
+            result: ""
+          };
           done();
         }
       } else {
@@ -933,8 +956,8 @@ export default {
         this.listDetail = this.exampleStudyImageIds1[0];
         this.correct = this.exampleStudyImageIds1[0];
         this.correct.imageId = 1;
-        this.correct.x =  this.exampleStudyImageIds1[0].location.split(',')[0]
-        this.correct.y =  this.exampleStudyImageIds1[0].location.split(',')[1]
+        this.correct.x = this.exampleStudyImageIds1[0].location.split(",")[0];
+        this.correct.y = this.exampleStudyImageIds1[0].location.split(",")[1];
         if (!this.correct.diseaseTypeDesc) {
           this.correct.diseaseTypeDesc = "肺结节";
         }
@@ -1201,7 +1224,7 @@ export default {
             font-size: 12px;
           }
           &:nth-child(odd) {
-            background: #000000;
+            background: #0C161F;
           }
         }
         .active {
