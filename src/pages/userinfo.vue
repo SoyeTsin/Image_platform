@@ -139,8 +139,8 @@
       }
     },
     mounted() {
-      this.pageParameter.currentPage = common.userInfoParameter.newPage
-      this.parameter.pageNum = common.userInfoParameter.newPage
+      this.pageParameter.currentPage = 1
+      this.parameter.pageNum = 1
       this.getData()
       this.queryOfficeList()
       this.queryRegionInfo()

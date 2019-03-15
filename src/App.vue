@@ -5,7 +5,6 @@
 </template>
 
 <script>
-  // require('./pages/common/bluebird')
   export default {
     name: 'app',
     computed: {

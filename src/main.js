@@ -21,7 +21,6 @@ Vue.prototype.$patch = patch;
 Vue.prototype.$put = put;
 Vue.prototype.$token = 'token';
 Vue.use(ElementUI)
-Vue.use(require('vue-cookies'))
 Vue.config.productionTip = false
 /* eslint-disable no-new */
 sync(store, router)

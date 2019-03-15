@@ -21,7 +21,7 @@
 
 <script>
   import logo from '../assets/logo@2x.png'
-  import logoPA from '../assets/logo.png'
+  import logoPA from '../assets/logo2@2x.png'
 
   export default {
     name: "top",
