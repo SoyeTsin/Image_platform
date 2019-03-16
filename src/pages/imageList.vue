@@ -287,13 +287,16 @@
         this.parameter.institutionId = institutionId
         console.log(institutionId)
         this.findAllDiseaseTypeCountList(institutionId)
+        common.imageListParameter.institutionIdValue = val
       },
       diseaseValue(val) {
         console.log(val)
         this.disease.key = val
+        common.imageListParameter.diseaseValue = val
       },
       aiResultValue(val) {
         this.aiResult.key = val
+        common.imageListParameter.aiResultValue = val
       },
       nowPageValue(val) {
         console.log(val)
@@ -301,6 +304,7 @@
       }
     },
     mounted() {
+      common.imageListParameter.initState = true
       this.pageParameter.currentPage = common.imageListParameter.newPage
       this.parameter.pageNum = common.imageListParameter.newPage
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
@@ -351,6 +355,9 @@
               this.institution.list.push(response.data.downRelate[i])
             }
             this.institution.value = this.userInstitution.institutionId //response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
+            if (common.imageListParameter.initState) {
+              this.institution.value = this.imageListParameter.institutionIdValue
+            }
             this.getAiResult()
           })
       },
@@ -386,6 +393,9 @@
             }
             this.aiResult.list = list
             // this.aiResult.value = list.length > 0 ? list[0].id : ''
+            if (common.imageListParameter.initState) {
+              this.aiResult.value = this.imageListParameter.aiResultValue
+            }
             this.diseaseType()
 
           })
@@ -407,6 +417,9 @@
             }
             this.disease.list = list
             this.disease.value = list.length > 0 ? list[0].id : ''
+            if (common.imageListParameter.initState) {
+              this.disease.value = this.imageListParameter.diseaseValue
+            }
             this.getData()
           })
       },
