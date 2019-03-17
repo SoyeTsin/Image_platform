@@ -216,7 +216,6 @@ export default {
     border-left: solid 4px #2fdac5;
     box-sizing: border-box;
     padding-left: 10px;
-    font-family: MicrosoftYaHei-Bold;
     font-size: 16px;
     color: #32456d;
     text-align: left;
@@ -236,7 +235,6 @@ export default {
   .report-item {
     height: 36px;
     line-height: 36px;
-    font-family: MicrosoftYaHei;
     font-size: 14px;
     color: #30333f;
     letter-spacing: 0;

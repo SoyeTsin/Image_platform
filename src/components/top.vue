@@ -101,7 +101,6 @@
     line-height: 60px;
     background: #1A2B39;
     box-shadow: 0 2px 10px 0 rgba(1, 2, 3, 0.14);
-    font-family: MicrosoftYaHei;
     font-size: 15px;
     color: #FFFFFF;
     letter-spacing: 0.16px;

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/pages/index'
+import admin from '@/pages/admin'
 import login from '@/pages/login'
 // import admin from '@/pages/admin'
 // import fjjCT from '@/pages/fjjCT'
@@ -11,7 +12,7 @@ import login from '@/pages/login'
 // import report from '@/pages/report'
 // import imageList from '@/pages/imageList'
 
-const admin = () => import('@/pages/admin')
+
 const fjjCT = () => import('@/pages/fjjCT')
 const mechanism = () => import('@/pages/mechanism')
 const userinfo = () => import('@/pages/userinfo')
@@ -24,62 +25,72 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      des: '管理登录页面',
       path: '/admin',
       name: 'admin',
-      component: admin
+      component: admin,
+      meta: {
+        des: '管理登录页面',
+      },
     }, {
-      des: '登录页面',
       path: '/login',
       name: 'login',
-      component: login
+      component: login, meta: {
+        des: '登录页面',
+      },
     },
 
     {
-      des: '影像管理',
       path: '/fjjCT',
       name: 'fjjCT',
-      component: fjjCT
+      component: fjjCT, meta: {
+        des: '影像管理',
+      },
     }, {
-      des: '影像列表',
       path: '/imageList',
       name: 'imageList',
-      component: imageList
+      component: imageList, meta: {
+        des: '影像列表',
+      },
     },
     {
-      des: '诊断结果',
       path: '/report',
       name: 'report',
-      component: report
+      component: report, meta: {
+        des: '诊断结果',
+      },
     }, {
-      des: '个人报告',
       path: '/personalReport',
       name: 'personalReport',
-      component: personalReport
+      component: personalReport, meta: {
+        des: '个人报告',
+      },
     }, {
-      des: '统计报告',
       path: '/statisticalReport',
       name: 'statisticalReport',
-      component: statisticalReport
+      component: statisticalReport, meta: {
+        des: '统计报告',
+      },
     }, {
-      des: '主页',
       path: '/',
       name: 'index',
-      component: index,
+      component: index, meta: {
+        des: '主页',
+      },
 
       children: [
         {
-          des: '机构管理',
           path: '/mechanism',
           name: 'mechanism',
-          component: mechanism
+          component: mechanism, meta: {
+            des: '机构管理',
+          },
         }, {
-          des: '用户管理',
           path: '/userinfo',
           name: 'userinfo',
-          component: userinfo
+          component: userinfo, meta: {
+            des: '用户管理',
+          },
         },
-
       ], redirect: '/login'//默认显示此子路由
     },
   ]

@@ -10,7 +10,8 @@ common.pageParameter = {
   total: 100
 }
 common.imageListParameter = {
-  initState: false,
+  timeArr: null,
+  initState: true,
   newPage: 1
 }
 common.userInfoParameter = {

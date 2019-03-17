@@ -135,7 +135,6 @@
     border-radius: 1px;
 
     .title {
-      font-family: MicrosoftYaHei-Bold;
       font-size: 16px;
       color: #32456D;
       text-align: left;

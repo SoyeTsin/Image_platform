@@ -59,7 +59,7 @@
               <!--</div>-->
             </div>
             <div class="button-right">
-              <el-button type="success" class="button-center" @click="addFeedbackFun">错误反馈</el-button>
+              <el-button type="success" class="search-button" @click="addFeedbackFun">错误反馈</el-button>
             </div>
           </div>
         </div>
@@ -316,7 +316,6 @@
     float: right;
 
     .button-center {
-      font-family: MicrosoftYaHei-Bold;
       font-size: 14px;
       color: #ffffff;
       letter-spacing: 1px;
@@ -369,7 +368,6 @@
       border-left: solid 4px #2fdac5;
       box-sizing: border-box;
       padding-left: 10px;
-      font-family: MicrosoftYaHei-Bold;
       font-size: 16px;
       color: #32456d;
       text-align: left;
@@ -381,7 +379,6 @@
     .report-item {
       height: 36px;
       line-height: 36px;
-      font-family: MicrosoftYaHei;
       font-size: 14px;
       color: #30333f;
       letter-spacing: 0;

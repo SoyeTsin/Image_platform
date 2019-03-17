@@ -60,7 +60,6 @@
     z-index: 99;
 
     .menu-item {
-      font-family: MicrosoftYaHei;
       font-size: 16px;
       color: #FFFFFF;
       letter-spacing: 0;

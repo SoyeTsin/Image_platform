@@ -18,7 +18,7 @@
         </el-row>
         <el-row class="text-left main-screen">
           <el-col :span="20">
-            <el-button plain type="primary" class="add-button" @click="refresh"><i
+            <el-button plain type="primary" class="add-button refresh" @click="refresh"><i
               class="el-icon-refresh"></i>刷新数据
             </el-button>
             <el-select v-model="institution.value" filterable placeholder="机构" class="main-input main-right">
@@ -281,6 +281,9 @@
       }
     },
     watch: {
+      timeArr(val) {
+        common.imageListParameter.timeArr = val
+      },
       institutionIdValue(val) {
         let institutionId = val
         this.institution.key = institutionId
@@ -291,11 +294,11 @@
       },
       diseaseValue(val) {
         console.log(val)
-        this.disease.key = val
+        this.parameter.diseaseType = val
         common.imageListParameter.diseaseValue = val
       },
       aiResultValue(val) {
-        this.aiResult.key = val
+        this.parameter.aiMsg = val
         common.imageListParameter.aiResultValue = val
       },
       nowPageValue(val) {
@@ -304,7 +307,10 @@
       }
     },
     mounted() {
-      common.imageListParameter.initState = true
+      let timeArr = common.imageListParameter.timeArr
+      if (timeArr) {
+        this.timeArr = common.imageListParameter.timeArr
+      }
       this.pageParameter.currentPage = common.imageListParameter.newPage
       this.parameter.pageNum = common.imageListParameter.newPage
       this.userInstitution = JSON.parse(localStorage.getItem('institution'))
@@ -355,8 +361,8 @@
               this.institution.list.push(response.data.downRelate[i])
             }
             this.institution.value = this.userInstitution.institutionId //response.data.downRelate.length > 0 ? response.data.downRelate[0].institutionId : ''
-            if (common.imageListParameter.initState) {
-              this.institution.value = this.imageListParameter.institutionIdValue
+            if (common.imageListParameter.institutionIdValue) {
+              this.institution.value = common.imageListParameter.institutionIdValue
             }
             this.getAiResult()
           })
@@ -392,9 +398,9 @@
               })
             }
             this.aiResult.list = list
-            // this.aiResult.value = list.length > 0 ? list[0].id : ''
-            if (common.imageListParameter.initState) {
-              this.aiResult.value = this.imageListParameter.aiResultValue
+            this.aiResult.value = list.length > 0 ? list[0].id : ''
+            if (common.imageListParameter.aiResultValue) {
+              this.aiResult.value = common.imageListParameter.aiResultValue
             }
             this.diseaseType()
 
@@ -417,8 +423,8 @@
             }
             this.disease.list = list
             this.disease.value = list.length > 0 ? list[0].id : ''
-            if (common.imageListParameter.initState) {
-              this.disease.value = this.imageListParameter.diseaseValue
+            if (common.imageListParameter.diseaseValue) {
+              this.disease.value = common.imageListParameter.diseaseValue
             }
             this.getData()
           })
@@ -570,7 +576,6 @@
   .image-list-des {
     margin-bottom: 8px;
     height: 26px;
-    font-family: MicrosoftYaHei;
     font-size: 14px;
     color: #333333;
     letter-spacing: 0;
@@ -581,5 +586,6 @@
       cursor: pointer;
     }
   }
+
 
 </style>

@@ -12,12 +12,11 @@
   position: relative;
   display: block;
   box-sizing: border-box;
-  opacity: 0.5;
-  background-image: linear-gradient(to right, #34EDB6, #28C3D5);
+  width: 160px;
+  background-image: linear-gradient(90deg, #28C3D5 0%, #34EDB6 100%);
   box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
   border-radius: 1px;
-  width: 160px;
-  border: solid 1px transparent;
+  border: none;
 }
 
 .button-center-def {
@@ -26,7 +25,6 @@
   position: relative;
   display: block;
   box-sizing: border-box;
-  opacity: 0.5;
   background: #FFFFFF;
   border: 1px solid #C9C9C9;
   border-radius: 1px;
@@ -70,8 +68,8 @@
   margin-right: 20px;
 }
 
+
 .main-title {
-  font-family: MicrosoftYaHei-Bold;
   font-size: 18px;
   color: #32456D;
   font-weight: 600;
@@ -114,7 +112,7 @@
   border-radius: 1px;
 }
 
-.add-button, .add-button:active, .add-button:hover, .add-button:valid, .add-button:focus {
+.add-button, .add-button:hover, .add-button:valid, .add-button:focus {
   border: solid 1px #2FDAC5;
   color: #2FDAC5;
   background: #ffffff;
@@ -122,11 +120,16 @@
   margin-right: 26px;
 }
 
+.add-button:active {
+  border: solid 1px #1ECEB8;
+  background-color: #F6FFFE;
+}
+
 .search-button {
   background-image: linear-gradient(90deg, #28C3D5 0%, #34EDB6 100%);
   box-shadow: 0 6px 10px 0 rgba(44, 212, 200, 0.25);
   border-radius: 1px;
-  border: solid 0px transparent;
+  border: none;
 }
 
 .so-return {
@@ -145,7 +148,6 @@
 }
 
 .report-title {
-  font-family: MicrosoftYaHei-Bold;
   font-size: 26px;
   color: #30333F;
   letter-spacing: 0;
